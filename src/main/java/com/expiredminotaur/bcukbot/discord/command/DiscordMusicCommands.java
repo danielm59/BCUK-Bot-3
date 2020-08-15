@@ -43,19 +43,20 @@ public class DiscordMusicCommands
 
     public Mono<Void> play(DiscordCommandEvent event)
     {
-        return Mono.justOrEmpty(event.getFinalMessage())
-                .map(content -> Arrays.asList(content.split(" ", 2)))
-                .filter(command -> command.size() > 1)
-                .doOnNext(command -> musicHandler.loadAndPlay(event.getEvent(), command.get(1)))
-                .then();
+        return play("", event);
     }
 
     public Mono<Void> playYT(DiscordCommandEvent event)
     {
+        return play("ytsearch:", event);
+    }
+
+    private Mono<Void> play(String prefix, DiscordCommandEvent event)
+    {
         return Mono.justOrEmpty(event.getFinalMessage())
                 .map(content -> Arrays.asList(content.split(" ", 2)))
                 .filter(command -> command.size() > 1)
-                .doOnNext(command -> musicHandler.loadAndPlay(event.getEvent(), "ytsearch:" + command.get(1)))
+                .doOnNext(command -> musicHandler.loadAndPlay(event.getEvent(), prefix + command.get(1)))
                 .then();
     }
 
