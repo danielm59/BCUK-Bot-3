@@ -1,0 +1,42 @@
+server:
+  port: 9090
+vaadin:
+  compatibilityMode: false
+logging:
+  level:
+    org:
+      atmosphere: warn
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          discord:
+            client-id: ${BCUK_BOT_DISCORD_CLIENT_ID}
+            client-secret: ${BCUK_BOT_DISCORD_CLIENT_SECRET}
+            clientAuthenticationMethod: post
+            authorizationGrantType: authorization_code
+            scope:
+              - identify
+              - guilds
+            redirect-uri: "{baseUrl}/login/oauth2/code/discord"
+            clientName: BCUK BOT
+        provider:
+          discord:
+            authorizationUri: https://discordapp.com/api/oauth2/authorize
+            tokenUri: https://discordapp.com/api/oauth2/token
+            userInfoUri: https://discordapp.com/api/users/@me
+            usernameAttribute: username
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bcukbot?serverTimezone=UTC
+    username: ${BCUK_BOT_SQL_USER}
+    password: ${BCUK_BOT_SQL_PASSWORD}
+  jpa:
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    show-sql: false
+    open-in-view: false
+  servlet:
+    multipart:
+      enabled: false

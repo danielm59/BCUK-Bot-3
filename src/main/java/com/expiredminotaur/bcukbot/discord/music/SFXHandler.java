@@ -1,0 +1,65 @@
+package com.expiredminotaur.bcukbot.discord.music;
+
+import com.expiredminotaur.bcukbot.json.Settings;
+import com.expiredminotaur.bcukbot.sql.sfx.SFX;
+import com.expiredminotaur.bcukbot.sql.sfx.SFXRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.util.List;
+import java.util.Random;
+
+@Component
+public class SFXHandler
+{
+    private static final Random rng = new Random();
+    private static long lastSFX = -1L;
+    @Autowired
+    private SFXRepository sfxRepository;
+    @Autowired
+    private MusicHandler musicHandler;
+    @Autowired
+    private Settings settings;
+
+    public void play(String trigger)
+    {
+        long time = System.currentTimeMillis();
+        if (time - lastSFX > settings.getSfxDelay() * 1000)
+        {
+            List<SFX> sfxList = sfxRepository.findByTrigger(trigger.toLowerCase());
+            if (sfxList.size() > 0)
+            {
+                SFX sound = pickSound(sfxList);
+                musicHandler.loadAndPlayPriority(getFilePath(sound));
+                lastSFX = time;
+            }
+        }
+    }
+
+    private SFX pickSound(List<SFX> sounds)
+    {
+        int totalWeight = 0;
+        for (SFX sound : sounds)
+        {
+            totalWeight += sound.getWeight();
+        }
+        rng.nextInt(totalWeight);
+        int idx = 0;
+        while (totalWeight > sounds.get(idx).getWeight())
+        {
+            totalWeight -= sounds.get(idx).getWeight();
+            idx++;
+        }
+        return sounds.get(idx);
+    }
+
+    private String getFilePath(SFX sound)
+    {
+        return "." +
+                File.separator +
+                "SFX" +
+                File.separator +
+                sound.getFile();
+    }
+}
