@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.discord.command;
 
+import com.expiredminotaur.bcukbot.discord.PointsSystem;
 import com.expiredminotaur.bcukbot.fun.counters.CounterHandler;
 import com.expiredminotaur.bcukbot.fun.dadjokes.JokeAPI;
 import com.expiredminotaur.bcukbot.sql.collection.clip.ClipUtils;
@@ -46,6 +47,9 @@ public class DiscordCommands
 
     @Autowired
     private DiscordMusicCommands musicCommands;
+
+    @Autowired
+    private PointsSystem pointsSystem;
     //endregion
 
     public DiscordCommands()
@@ -61,8 +65,9 @@ public class DiscordCommands
         commands.get(DiscordCommandCategory.GENERAL).put("!Clip", new DiscordCommand(e -> clipUtils.processCommand(e), DiscordPermissions::general));
         commands.get(DiscordCommandCategory.GENERAL).put("!Joke", new DiscordCommand(e -> jokeUtils.processCommand(e), DiscordPermissions::general));
 
-        //TODO points command
-        //commands.get(CommandCategory.GENERAL).put("!Points", new Command(PointSystem::points, Permissions::general));
+        commands.get(DiscordCommandCategory.GENERAL).put("!Points", new DiscordCommand(e -> pointsSystem.points(e), DiscordPermissions::general));
+        //TODO slot command
+        //TODO trivia command
 
         commands.get(DiscordCommandCategory.MUSIC).put("!Join", new DiscordCommand(e -> musicCommands.join(e), DiscordPermissions::general));
         commands.get(DiscordCommandCategory.MUSIC).put("!Play", new DiscordCommand(e -> musicCommands.play(e), DiscordPermissions::general));
@@ -82,7 +87,6 @@ public class DiscordCommands
 
         //TODO minecraft whitelist command
         //commands.get(CommandCategory.MINECRAFT).put("!Whitelist", new Command(Minecraft::whitelist, event -> Permissions.hasRole(event, Snowflake.of(489887389725229066L))));
-
     }
 
     public Mono<Void> processCommand(MessageCreateEvent event)

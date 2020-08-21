@@ -23,6 +23,8 @@ public class DiscordBot
     DiscordCommands commands;
     @Autowired
     private SFXHandler sfxHandler;
+    @Autowired
+    private PointsSystem pointsSystem;
 
     public DiscordBot()
     {
@@ -108,6 +110,7 @@ public class DiscordBot
                 String command = event.getMessage().getContent().split(" ", 2)[0];
                 sfxHandler.play(command);
                 commands.processCommand(event).subscribe();
+                event.getMember().ifPresent(m -> pointsSystem.addXP(m));
             }
         }
     }

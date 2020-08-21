@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.twitch.command;
 
+import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
 import com.expiredminotaur.bcukbot.fun.counters.CounterHandler;
 import com.expiredminotaur.bcukbot.fun.dadjokes.JokeAPI;
 import com.expiredminotaur.bcukbot.sql.collection.joke.JokeUtils;
@@ -7,6 +8,7 @@ import com.expiredminotaur.bcukbot.sql.command.alias.Alias;
 import com.expiredminotaur.bcukbot.sql.command.alias.AliasRepository;
 import com.expiredminotaur.bcukbot.sql.sfx.SFXRepository;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +35,9 @@ public class TwitchCommands extends TreeMap<String, TwitchCommand>
 
     @Autowired
     private JokeUtils jokeUtils;
+
+    @Autowired
+    private MusicHandler musicHandler;
     //endregion
 
     public TwitchCommands()
@@ -42,10 +47,9 @@ public class TwitchCommands extends TreeMap<String, TwitchCommand>
         this.put("!SO", new TwitchCommand(this::shoutOut, TwitchPermissions::modPlus));
         this.put("!DadJoke", new TwitchCommand(JokeAPI::jokeCommand, TwitchPermissions::everyone));
         this.put("!Joke", new TwitchCommand(e -> jokeUtils.processCommand(e), TwitchPermissions::everyone));
-
+        this.put("!Playing", new TwitchCommand(this::playing, TwitchPermissions::everyone));
         /*
         this.put("!Multi", new Command(e -> LiveStreams.postMultiTwitch(c)));
-        this.put("!Playing", new Command(e -> playing(c)));
          */
     }
 
@@ -60,6 +64,18 @@ public class TwitchCommands extends TreeMap<String, TwitchCommand>
                             channel, channel));
         }
         return null;
+    }
+
+    public Void playing(TwitchCommandEvent event)
+    {
+        AudioTrack track = musicHandler.getScheduler().currentTrack();
+        if (track != null)
+        {
+            return event.respond("Playing: " + track.getInfo().title);
+        } else
+        {
+            return event.respond("Nothing is playing");
+        }
     }
 
     public void processCommand(ChannelMessageEvent event)
