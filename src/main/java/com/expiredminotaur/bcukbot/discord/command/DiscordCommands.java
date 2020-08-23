@@ -4,6 +4,7 @@ import com.expiredminotaur.bcukbot.discord.PointsSystem;
 import com.expiredminotaur.bcukbot.fun.counters.CounterHandler;
 import com.expiredminotaur.bcukbot.fun.dadjokes.JokeAPI;
 import com.expiredminotaur.bcukbot.fun.slot.SlotGame;
+import com.expiredminotaur.bcukbot.fun.trivia.TriviaGame;
 import com.expiredminotaur.bcukbot.sql.collection.clip.ClipUtils;
 import com.expiredminotaur.bcukbot.sql.collection.joke.JokeUtils;
 import com.expiredminotaur.bcukbot.sql.collection.quote.QuoteUtils;
@@ -54,6 +55,9 @@ public class DiscordCommands
 
     @Autowired
     private SlotGame slotGame;
+
+    @Autowired
+    private TriviaGame triviaGame;
     //endregion
 
     public DiscordCommands()
@@ -71,7 +75,7 @@ public class DiscordCommands
 
         commands.get(DiscordCommandCategory.GAMES).put("!Points", new DiscordCommand(e -> pointsSystem.points(e), DiscordPermissions::general));
         commands.get(DiscordCommandCategory.GAMES).put("!Slot", new DiscordCommand(e -> slotGame.startGame(e), DiscordPermissions::general));
-        //TODO trivia command
+        commands.get(DiscordCommandCategory.GAMES).put("!Trivia", new DiscordCommand(e -> triviaGame.trivia(e), DiscordPermissions::general));
 
         commands.get(DiscordCommandCategory.MUSIC).put("!Join", new DiscordCommand(e -> musicCommands.join(e), DiscordPermissions::general));
         commands.get(DiscordCommandCategory.MUSIC).put("!Play", new DiscordCommand(e -> musicCommands.play(e), DiscordPermissions::general));
