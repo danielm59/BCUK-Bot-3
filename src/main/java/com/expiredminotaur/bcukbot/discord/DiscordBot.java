@@ -105,7 +105,7 @@ public class DiscordBot
         private void onMessage(MessageCreateEvent event)
         {
             Optional<User> author = event.getMessage().getAuthor();
-            if (author.isPresent() && !author.get().isBot())
+            if (author.isPresent() && !author.get().isBot() && event.getGuildId().isPresent())
             {
                 String command = event.getMessage().getContent().split(" ", 2)[0];
                 sfxHandler.play(command);
