@@ -44,11 +44,11 @@ public class SFXHandler
         {
             totalWeight += sound.getWeight();
         }
-        rng.nextInt(totalWeight);
+        int rand = rng.nextInt(totalWeight);
         int idx = 0;
-        while (totalWeight > sounds.get(idx).getWeight())
+        while (rand > sounds.get(idx).getWeight())
         {
-            totalWeight -= sounds.get(idx).getWeight();
+            rand -= sounds.get(idx).getWeight();
             idx++;
         }
         return sounds.get(idx);
