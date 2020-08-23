@@ -23,10 +23,18 @@ public class ProcessLoginView extends Div implements AfterNavigationObserver
     public void afterNavigation(AfterNavigationEvent event)
     {
         Long userID = userTools.getCurrentUsersID();
-        String username = userTools.getCurrentUsersName();
-        User user = users.findById(userID).orElse(new User(userID));
-        user.setDiscordName(username);
-        users.save(user);
-        UI.getCurrent().getPage().setLocation("/");
+
+        if(users.findById(userID).isPresent())
+        {
+            String username = userTools.getCurrentUsersName();
+            User user = users.findById(userID).orElse(new User(userID));
+            user.setDiscordName(username);
+            users.save(user);
+            UI.getCurrent().getPage().setLocation("/");
+        }else
+        {
+            userTools.getAuthentication().setAuthenticated(false);
+            UI.getCurrent().navigate(UnauthorisedView.class);
+        }
     }
 }

@@ -41,7 +41,7 @@ public class UserTools
         return client.getAccessToken().getTokenValue();
     }
 
-    private OAuth2AuthenticationToken getAuthentication()
+    public OAuth2AuthenticationToken getAuthentication()
     {
         return (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
     }
@@ -49,13 +49,15 @@ public class UserTools
     private String getPrincipalAttribute(String key)
     {
         String error = "ERROR please report to the Admin";
-        Object principal = getAuthentication().getPrincipal();
-        if (principal instanceof DefaultOAuth2User)
+        OAuth2AuthenticationToken auth = getAuthentication();
+        if (auth != null)
         {
-            return (String) ((DefaultOAuth2User) principal).getAttributes().get(key);
-        } else
-        {
-            return error;
+            Object principal = auth.getPrincipal();
+            if (principal instanceof DefaultOAuth2User)
+            {
+                return (String) ((DefaultOAuth2User) principal).getAttributes().get(key);
+            }
         }
+        return error;
     }
 }
