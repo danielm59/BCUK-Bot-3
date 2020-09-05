@@ -7,6 +7,7 @@ import com.expiredminotaur.bcukbot.web.view.collection.ClipView;
 import com.expiredminotaur.bcukbot.web.view.collection.JokeView;
 import com.expiredminotaur.bcukbot.web.view.collection.QuoteView;
 import com.expiredminotaur.bcukbot.web.view.settings.CountersView;
+import com.expiredminotaur.bcukbot.web.view.settings.DatabaseView;
 import com.expiredminotaur.bcukbot.web.view.settings.MusicSettingsView;
 import com.expiredminotaur.bcukbot.web.view.settings.SFXView;
 import com.expiredminotaur.bcukbot.web.view.settings.StreamAnnouncementsView;
@@ -44,7 +45,7 @@ public class MainLayout extends AppLayout
 
         menu.addItem("Home", e -> UI.getCurrent().navigate(MainView.class));
         MenuItem bots = menu.addItem("Bots");
-        MenuItem Music = menu.addItem("Music", e -> UI.getCurrent().getPage().setLocation("/music"));
+        menu.addItem("Music", e -> UI.getCurrent().getPage().setLocation("/music"));
         MenuItem collections = menu.addItem("Collections");
         MenuItem settings = menu.addItem("Settings");
         menu.addItem("Logout", e -> UI.getCurrent().getPage().setLocation("/logout"));
@@ -63,6 +64,7 @@ public class MainLayout extends AppLayout
         settingSubMenu.addItem("Counters", e -> UI.getCurrent().navigate(CountersView.class));
         settingSubMenu.addItem("SFX", e -> UI.getCurrent().navigate(SFXView.class));
         settingSubMenu.addItem("Music", e -> UI.getCurrent().navigate(MusicSettingsView.class));
+        settingSubMenu.addItem("Database", e -> UI.getCurrent().navigate(DatabaseView.class));
 
         addToNavbar(true, logo, menu);
 
