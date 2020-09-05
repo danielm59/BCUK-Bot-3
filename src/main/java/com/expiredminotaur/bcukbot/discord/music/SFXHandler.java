@@ -4,6 +4,7 @@ import com.expiredminotaur.bcukbot.json.Settings;
 import com.expiredminotaur.bcukbot.sql.sfx.SFX;
 import com.expiredminotaur.bcukbot.sql.sfx.SFXRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class SFXHandler
     @Autowired
     private SFXRepository sfxRepository;
     @Autowired
+    @Lazy
     private MusicHandler musicHandler;
     @Autowired
     private Settings settings;
