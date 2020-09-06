@@ -17,7 +17,7 @@ public class LoginView extends VerticalLayout
         setJustifyContentMode(JustifyContentMode.CENTER);
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         String resolvedImage = VaadinService.getCurrent().resolveResource(
-                "frontend/BCUK_BOT.png", VaadinSession.getCurrent().getBrowser());
+                "img/BCUK_BOT.png", VaadinSession.getCurrent().getBrowser());
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
         Image logo = new Image(resolvedImage, "logo");
         Button button = new Button("Login", e -> getUI().ifPresent(ui -> ui.getPage().setLocation("/oauth2/authorization/discord")));
