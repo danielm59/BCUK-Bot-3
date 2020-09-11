@@ -39,7 +39,7 @@ public class MainLayout extends AppLayout
     {
         MenuBar menu = new MenuBar();
         String resolvedImage = VaadinService.getCurrent().resolveResource(
-                "frontend/BCUK.png", VaadinSession.getCurrent().getBrowser());
+                "img/BCUK.png", VaadinSession.getCurrent().getBrowser());
         Image logo = new Image(resolvedImage, "logo");
         menu.addThemeVariants(MenuBarVariant.LUMO_PRIMARY);
 
