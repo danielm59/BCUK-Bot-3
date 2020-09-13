@@ -11,6 +11,7 @@ import com.expiredminotaur.bcukbot.sql.collection.quote.QuoteUtils;
 import com.expiredminotaur.bcukbot.sql.command.alias.Alias;
 import com.expiredminotaur.bcukbot.sql.command.alias.AliasRepository;
 import com.expiredminotaur.bcukbot.sql.sfx.SFXRepository;
+import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,9 @@ public class DiscordCommands
 
     @Autowired
     private TriviaGame triviaGame;
+
+    @Autowired
+    private MinecraftCommands minecraftCommands;
     //endregion
 
     public DiscordCommands()
@@ -93,8 +97,7 @@ public class DiscordCommands
 
         commands.get(DiscordCommandCategory.GENERAL).put("!SFX", new DiscordCommand(this::sfx, DiscordPermissions::general));
 
-        //TODO minecraft whitelist command
-        //commands.get(CommandCategory.MINECRAFT).put("!Whitelist", new Command(Minecraft::whitelist, event -> Permissions.hasRole(event, Snowflake.of(489887389725229066L))));
+        commands.get(DiscordCommandCategory.MINECRAFT).put("!Whitelist", new DiscordCommand(e->minecraftCommands.whitelist(e), event -> DiscordPermissions.hasRole(event, Snowflake.of(489887389725229066L))));
     }
 
     public Mono<Void> processCommand(MessageCreateEvent event)
