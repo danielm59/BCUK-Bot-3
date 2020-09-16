@@ -81,6 +81,16 @@ public class MultiTwitchHandler
         return link.toString();
     }
 
+    public String getMultiTwitch(String channel)
+    {
+        for (MultiTwitch mt: multiTwitchs.values())
+        {
+            if(mt.users.contains(channel))
+                return createLink(mt.users);
+        }
+        return null;
+    }
+
     private static class MultiTwitch
     {
         Set<String> users;

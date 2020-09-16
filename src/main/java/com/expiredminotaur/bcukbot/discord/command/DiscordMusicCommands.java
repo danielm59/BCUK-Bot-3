@@ -110,10 +110,10 @@ public class DiscordMusicCommands
             String[] args = content.split(" ");
             if (args.length > 1)
             {
-                return musicHandler.setVolume(event.getEvent(), args[1]);
+                return musicHandler.setVolume(event, args[1]);
             } else
             {
-                return musicHandler.getVolume(event.getEvent());
+                return musicHandler.getVolume(event);
             }
         }
         return Mono.empty();
@@ -121,7 +121,7 @@ public class DiscordMusicCommands
 
     public Mono<Void> pause(DiscordCommandEvent event)
     {
-        return musicHandler.togglePause(event.getEvent());
+        return musicHandler.togglePause(event);
     }
 
     public Mono<Void> leave(DiscordCommandEvent event)

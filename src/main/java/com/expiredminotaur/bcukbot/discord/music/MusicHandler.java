@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.discord.music;
 
+import com.expiredminotaur.bcukbot.command.CommandEvent;
 import com.expiredminotaur.bcukbot.discord.DiscordBot;
 import com.expiredminotaur.bcukbot.json.Settings;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -181,7 +182,7 @@ public class MusicHandler
         });
     }
 
-    public Mono<Void> setVolume(MessageCreateEvent event, String volume)
+    public <R> R setVolume(CommandEvent<?, R> event, String volume)
     {
         int vol = getInt(volume);
         if (vol >= 0 && vol <= 100)
@@ -191,68 +192,25 @@ public class MusicHandler
             return getVolume(event);
         } else
         {
-            return event.getMessage().getChannel().flatMap(mc -> mc.createMessage("Please enter a number between 0 and 100")).then();
+            return event.respond("Please enter a number between 0 and 100");
         }
     }
 
-    //TODO twitch set volume
-    /*
-    public void setVolume(WhisperEvent event, String volume)
+    public <R> R getVolume(CommandEvent<?, R> event)
     {
-        int vol = Utils.getInt(volume);
-        if (vol >= 0 && vol <= 100)
-        {
-            player.setVolume(Integer.parseInt(vol));
-            MusicConfig.getInstance().setVolume(Integer.parseInt(vol));
-            getVolume(event);
-        } else
-        {
-            event.sendReply("Please enter a number between 0 and 100");
-        }
-    }
-     */
-
-    public Mono<Void> getVolume(MessageCreateEvent event)
-    {
-        return event.getMessage().getChannel().flatMap(mc -> mc.createMessage("Volume set to " + player.getVolume())).then();
+        return event.respond("Volume set to " + player.getVolume());
     }
 
-    //TODO twitch get volume
-    /*
-    public static void getVolume(WhisperEvent event)
-    {
-        event.sendReply("Volume set to " + player.getVolume());
-    }
-     */
 
-    public Mono<Void> togglePause(MessageCreateEvent event)
+    public <R> R togglePause(CommandEvent<?, R> event)
     {
         player.setPaused(!player.isPaused());
 
         if (player.isPaused())
-        {
-            return event.getMessage().getChannel().flatMap(mc -> mc.createMessage("Music Paused")).then();
-        } else
-        {
-            return event.getMessage().getChannel().flatMap(mc -> mc.createMessage("Music Resumed")).then();
-        }
+            return event.respond("Music Paused");
+        else
+            return event.respond("Music Resumed");
     }
-
-    //TODO twitch pause
-    /*
-    public void togglePause(WhisperEvent event)
-    {
-        player.setPaused(!player.isPaused());
-
-        if (player.isPaused())
-        {
-            event.sendReply("Music Paused");
-        } else
-        {
-            event.sendReply("Music Resumed");
-        }
-    }
-     */
 
     private int getInt(String s)
     {

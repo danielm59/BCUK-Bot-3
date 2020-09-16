@@ -1,4 +1,4 @@
-package com.expiredminotaur.bcukbot.twitch.command;
+package com.expiredminotaur.bcukbot.twitch.command.chat;
 
 import com.expiredminotaur.bcukbot.command.Command;
 

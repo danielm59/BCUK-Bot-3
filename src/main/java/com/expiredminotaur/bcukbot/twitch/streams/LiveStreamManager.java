@@ -5,6 +5,7 @@ import com.expiredminotaur.bcukbot.sql.twitch.streams.group.Group;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.group.GroupRepository;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.streamer.Streamer;
 import com.expiredminotaur.bcukbot.twitch.TwitchBot;
+import com.expiredminotaur.bcukbot.twitch.command.chat.TwitchCommandEvent;
 import com.github.twitch4j.helix.domain.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -53,5 +54,16 @@ public class LiveStreamManager
                 multiTwitchHandlers.computeIfAbsent(group.getName(), k -> new MultiTwitchHandler(discordBot)).update(groupData, group);
             }
         });
+    }
+
+    public Void getMultiTwitch(TwitchCommandEvent event)
+    {
+        for (MultiTwitchHandler mth : multiTwitchHandlers.values())
+        {
+            String link = mth.getMultiTwitch(event.getEvent().getChannel().getName());
+            if (link != null)
+                return event.respond(link);
+        }
+        return event.empty();
     }
 }

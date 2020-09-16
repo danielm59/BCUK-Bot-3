@@ -1,11 +1,13 @@
 package com.expiredminotaur.bcukbot.twitch;
 
-import com.expiredminotaur.bcukbot.twitch.command.TwitchCommands;
+import com.expiredminotaur.bcukbot.twitch.command.chat.TwitchCommands;
+import com.expiredminotaur.bcukbot.twitch.command.whisper.WhisperCommands;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+import com.github.twitch4j.common.events.user.PrivateMessageEvent;
 import com.github.twitch4j.helix.domain.Game;
 import com.github.twitch4j.helix.domain.Stream;
 import com.google.gson.JsonElement;
@@ -31,6 +33,8 @@ public class TwitchBot
     private final Logger log = LoggerFactory.getLogger(TwitchBot.class);
     @Autowired
     private TwitchCommands twitchCommands;
+    @Autowired
+    private WhisperCommands whisperCommands;
     private TwitchClient twitchClient;
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
     private String accessToken;
@@ -120,11 +124,17 @@ public class TwitchBot
     {
         SimpleEventHandler handler = twitchClient.getEventManager().getEventHandler(SimpleEventHandler.class);
         handler.onEvent(ChannelMessageEvent.class, this::onChannelMessage);
+        handler.onEvent(PrivateMessageEvent.class, this::onWhisper);
     }
 
     private void onChannelMessage(ChannelMessageEvent event)
     {
         twitchCommands.processCommand(event);
+    }
+
+    private void onWhisper(PrivateMessageEvent event)
+    {
+        whisperCommands.processCommand(event, twitchClient);
     }
 
     public void joinChat()

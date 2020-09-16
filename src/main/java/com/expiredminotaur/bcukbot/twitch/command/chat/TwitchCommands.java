@@ -1,4 +1,4 @@
-package com.expiredminotaur.bcukbot.twitch.command;
+package com.expiredminotaur.bcukbot.twitch.command.chat;
 
 import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
 import com.expiredminotaur.bcukbot.fun.counters.CounterHandler;
@@ -7,6 +7,7 @@ import com.expiredminotaur.bcukbot.sql.collection.joke.JokeUtils;
 import com.expiredminotaur.bcukbot.sql.command.alias.Alias;
 import com.expiredminotaur.bcukbot.sql.command.alias.AliasRepository;
 import com.expiredminotaur.bcukbot.sql.sfx.SFXRepository;
+import com.expiredminotaur.bcukbot.twitch.streams.LiveStreamManager;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,11 @@ import java.util.Set;
 import java.util.TreeMap;
 
 @Component
-public class TwitchCommands extends TreeMap<String, TwitchCommand>
+public class TwitchCommands
 {
-    //region Autowired
-    @Autowired
-    private TwitchCommands commands;
+    private final TreeMap<String, TwitchCommand> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
+    //region Autowired
     @Autowired
     private AliasRepository aliasRepository;
 
@@ -38,19 +38,19 @@ public class TwitchCommands extends TreeMap<String, TwitchCommand>
 
     @Autowired
     private MusicHandler musicHandler;
+
+    @Autowired
+    private LiveStreamManager liveStreamManager;
     //endregion
 
     public TwitchCommands()
     {
-        super(String.CASE_INSENSITIVE_ORDER);
-        this.put("!Sfx", new TwitchCommand(e -> e.respond(sfx()), TwitchPermissions::everyone));
-        this.put("!SO", new TwitchCommand(this::shoutOut, TwitchPermissions::modPlus));
-        this.put("!DadJoke", new TwitchCommand(JokeAPI::jokeCommand, TwitchPermissions::everyone));
-        this.put("!Joke", new TwitchCommand(e -> jokeUtils.processCommand(e), TwitchPermissions::everyone));
-        this.put("!Playing", new TwitchCommand(this::playing, TwitchPermissions::everyone));
-        /*
-        this.put("!Multi", new Command(e -> LiveStreams.postMultiTwitch(c)));
-         */
+        commands.put("!Sfx", new TwitchCommand(e -> e.respond(sfx()), TwitchPermissions::everyone));
+        commands.put("!SO", new TwitchCommand(this::shoutOut, TwitchPermissions::modPlus));
+        commands.put("!DadJoke", new TwitchCommand(JokeAPI::jokeCommand, TwitchPermissions::everyone));
+        commands.put("!Joke", new TwitchCommand(e -> jokeUtils.processCommand(e), TwitchPermissions::everyone));
+        commands.put("!Playing", new TwitchCommand(this::playing, TwitchPermissions::everyone));
+        commands.put("!Multi", new TwitchCommand(e -> liveStreamManager.getMultiTwitch(e), TwitchPermissions::everyone));
     }
 
     private Void shoutOut(TwitchCommandEvent e)
