@@ -29,7 +29,7 @@ spring:
             usernameAttribute: username
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bcukbot?serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1:3306/bcukbot?serverTimezone=UTC
     username: ${BCUK_BOT_SQL_USER}
     password: ${BCUK_BOT_SQL_PASSWORD}
   jpa:
