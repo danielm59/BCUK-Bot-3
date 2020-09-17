@@ -157,7 +157,7 @@ public class TwitchBot
         return twitchClient.getHelix().getStreams(accessToken, "", null, 1, null, null, null, null, channels).execute().getStreams();
     }
 
-    //TODO cache game names
+    //TODO: cache game names
     public String getGameName(String gameId)
     {
         List<Game> games = twitchClient.getHelix().getGames(accessToken, Collections.singletonList(gameId), null).execute().getGames();

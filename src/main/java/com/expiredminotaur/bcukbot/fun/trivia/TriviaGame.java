@@ -179,7 +179,7 @@ public class TriviaGame
             {
                 s = new StringBuilder();
                 s.append("Correct: ");
-                //TODO we should convert to members and get display names here
+                //TODO: we should convert to members and get display names here
                 s.append(correct.stream().map(User::getUsername).collect(Collectors.joining(", ")));
                 spec.setFooter(s.toString(), "");
             }

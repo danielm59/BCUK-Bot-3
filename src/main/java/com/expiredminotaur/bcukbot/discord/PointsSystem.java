@@ -36,7 +36,7 @@ public class PointsSystem
             pointsUser.setLastPointsReceived(time);
             int points = RNG.nextInt(pointsMax - pointsMin + 1) + pointsMin;
             pointsUser.givePoints(points);
-            //TODO pointsRewards.process(user, member.points);
+            //TODO: pointsRewards.process(user, member.points);
             pointsData.save(pointsUser);
         }
     }
