@@ -44,7 +44,7 @@ public class LiveStreamManager
                 List<Stream> streams = twitchBot.getStreams(streamerNames);
                 streams.forEach(s ->
                 {
-                    StreamData streamData = groupData.computeIfAbsent(s.getUserName(), n -> new StreamData(twitchBot, discordBot));
+                    StreamData streamData = groupData.computeIfAbsent(s.getUserName().toLowerCase(), n -> new StreamData(twitchBot, discordBot));
                     streamData.update(group, s);
                 });
             }
@@ -66,4 +66,15 @@ public class LiveStreamManager
         }
         return event.empty();
     }
+
+    public boolean checkLive(String twitchName)
+    {
+        for (Map<String, StreamData> group : streams.values())
+        {
+            if (group.containsKey(twitchName.toLowerCase()))
+                return true;
+        }
+        return false;
+    }
+
 }

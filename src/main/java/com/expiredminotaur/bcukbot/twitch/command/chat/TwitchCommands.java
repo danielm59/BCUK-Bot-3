@@ -11,6 +11,7 @@ import com.expiredminotaur.bcukbot.twitch.streams.LiveStreamManager;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -37,6 +38,7 @@ public class TwitchCommands
     private JokeUtils jokeUtils;
 
     @Autowired
+    @Lazy
     private MusicHandler musicHandler;
 
     @Autowired

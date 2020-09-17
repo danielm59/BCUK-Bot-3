@@ -1,7 +1,6 @@
 package com.expiredminotaur.bcukbot.discord.music;
 
 import com.expiredminotaur.bcukbot.command.CommandEvent;
-import com.expiredminotaur.bcukbot.discord.DiscordBot;
 import com.expiredminotaur.bcukbot.json.Settings;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -32,21 +31,22 @@ import java.util.List;
 @Component
 public class MusicHandler
 {
+    private final TrackScheduler scheduler;
+    private final Settings settings;
     private final AudioPlayerManager playerManager;
     private final AudioPlayer player;
     private final discord4j.voice.AudioProvider provider;
-    private final TrackScheduler scheduler;
-    private final Settings settings;
 
-    public MusicHandler(@Autowired DiscordBot discordBot, @Autowired Settings settings)
+    public MusicHandler(@Autowired Settings settings, @Autowired TrackScheduler scheduler)
     {
+        this.scheduler = scheduler;
         this.settings = settings;
         playerManager = new DefaultAudioPlayerManager();
         playerManager.getConfiguration().setFrameBufferFactory(NonAllocatingAudioFrameBuffer::new);
         registerSources();
         player = playerManager.createPlayer();
         player.setVolume(settings.getMusicVolume());
-        scheduler = new TrackScheduler(player, discordBot, settings);
+        scheduler.setup(player);
         provider = new AudioProvider(player);
     }
 

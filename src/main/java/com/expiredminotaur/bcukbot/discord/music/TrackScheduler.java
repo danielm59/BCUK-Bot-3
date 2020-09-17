@@ -2,30 +2,49 @@ package com.expiredminotaur.bcukbot.discord.music;
 
 import com.expiredminotaur.bcukbot.discord.DiscordBot;
 import com.expiredminotaur.bcukbot.json.Settings;
+import com.expiredminotaur.bcukbot.sql.user.User;
+import com.expiredminotaur.bcukbot.sql.user.UserRepository;
+import com.expiredminotaur.bcukbot.twitch.TwitchBot;
+import com.expiredminotaur.bcukbot.twitch.streams.LiveStreamManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.Presence;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
+@Component
 public class TrackScheduler extends AudioEventAdapter
 {
-    private final DiscordBot discordBot;
-    private final AudioPlayer player;
-    private final LinkedBlockingDeque<AudioTrack> queue;
-    private final Settings settings;
+    @Autowired
+    private DiscordBot discordBot;
+
+    @Autowired
+    TwitchBot twitchBot;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private Settings settings;
+
+    @Autowired
+    private LiveStreamManager liveStreamManager;
+
+    private AudioPlayer player;
+    private LinkedBlockingDeque<AudioTrack> queue;
+
     private boolean sfx = false;
     private boolean resume = false;
 
-    TrackScheduler(final AudioPlayer player, DiscordBot discordBot, Settings settings)
+    void setup(final AudioPlayer player)
     {
-        this.discordBot = discordBot;
         this.player = player;
-        this.settings = settings;
         player.addListener(this);
         this.queue = new LinkedBlockingDeque<>();
     }
@@ -98,16 +117,14 @@ public class TrackScheduler extends AudioEventAdapter
                 long channelId = settings.getSongAnnouncementChannel();
                 if (channelId >= 0)
                     discordBot.sendMessage(channelId, playing);
-                //TODO send song to live twitch channels
-                /*
-                for (Map.Entry<String, Long> twitchChat : Config.getInstance().getTwitchChats().entrySet())
+
+                for (User user : userRepository.findAll())
                 {
-                    if (LiveStreams.checkLive(twitchChat.getKey()))
+                    if (liveStreamManager.checkLive(user.getTwitchName()))
                     {
-                        IRCBot.getInstance().sendMessage("#" + twitchChat.getKey(), playing);
+                        twitchBot.sendMessage(user.getTwitchName(), playing);
                     }
                 }
-                 */
             } else
             {
                 resume = false;

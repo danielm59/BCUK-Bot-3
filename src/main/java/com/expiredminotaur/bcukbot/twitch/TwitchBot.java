@@ -147,6 +147,10 @@ public class TwitchBot
         twitchClient.getChat().sendMessage("ExpiredMinotaur", "Testing!");
     }
 
+    public void sendMessage(String channel, String message)
+    {
+        twitchClient.getChat().sendMessage(channel, message);
+    }
 
     public List<Stream> getStreams(List<String> channels)
     {

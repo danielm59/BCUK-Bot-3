@@ -6,8 +6,8 @@ import com.expiredminotaur.bcukbot.sql.command.alias.AliasRepository;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.common.events.user.PrivateMessageEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.TreeMap;
@@ -21,12 +21,13 @@ public class WhisperCommands
     private AliasRepository aliasRepository;
 
     @Autowired
+    @Lazy
     private MusicHandler musicHandler;
 
     public WhisperCommands()
     {
         commands.put("!volume", new WhisperCommand(this::volume));
-        commands.put("!pause", new WhisperCommand(e->musicHandler.togglePause(e)));
+        commands.put("!pause", new WhisperCommand(e -> musicHandler.togglePause(e)));
     }
 
     private Void volume(WhisperCommandEvent event)
