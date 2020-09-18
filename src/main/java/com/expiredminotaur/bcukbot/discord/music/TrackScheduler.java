@@ -118,7 +118,7 @@ public class TrackScheduler extends AudioEventAdapter
                 if (channelId >= 0)
                     discordBot.sendMessage(channelId, playing);
 
-                for (User user : userRepository.findAll())
+                for (User user : userRepository.chatBotUsers())
                 {
                     if (liveStreamManager.checkLive(user.getTwitchName()))
                     {

@@ -1,5 +1,7 @@
 package com.expiredminotaur.bcukbot.twitch;
 
+import com.expiredminotaur.bcukbot.sql.user.User;
+import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import com.expiredminotaur.bcukbot.twitch.command.chat.TwitchCommands;
 import com.expiredminotaur.bcukbot.twitch.command.whisper.WhisperCommands;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
@@ -35,12 +37,14 @@ public class TwitchBot
     private TwitchCommands twitchCommands;
     @Autowired
     private WhisperCommands whisperCommands;
+    private final UserRepository userRepository;
     private TwitchClient twitchClient;
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
     private String accessToken;
 
-    public TwitchBot()
+    public TwitchBot(@Autowired UserRepository userRepository)
     {
+        this.userRepository = userRepository;
         start();
     }
 
@@ -97,6 +101,7 @@ public class TwitchBot
                 .withDefaultAuthToken(appOAuth)
                 .build();
         setupEvents(accessToken);
+        joinChannels();
     }
 
     private void stop()
@@ -137,14 +142,17 @@ public class TwitchBot
         whisperCommands.processCommand(event, twitchClient);
     }
 
-    public void joinChat()
+    public void joinChannels()
     {
-        twitchClient.getChat().joinChannel("ExpiredMinotaur");
-    }
+        for (User user : userRepository.chatBotUsers())
+        {
+            String name = user.getTwitchName();
+            if (name != null && !name.equals(""))
+            {
+                twitchClient.getChat().joinChannel(name);
+            }
+        }
 
-    public void sendTestMessage()
-    {
-        twitchClient.getChat().sendMessage("ExpiredMinotaur", "Testing!");
     }
 
     public void sendMessage(String channel, String message)

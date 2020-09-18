@@ -12,9 +12,7 @@ public class TwitchBotView extends VerticalLayout
 {
     public TwitchBotView(@Autowired TwitchBot bot)
     {
-        Button joinButton = new Button("Join", e -> bot.joinChat());
-        Button testButton = new Button("Test", e -> bot.sendTestMessage());
         Button restartButton = new Button("Restart", e -> bot.restart());
-        add(joinButton, testButton, restartButton);
+        add(restartButton);
     }
 }

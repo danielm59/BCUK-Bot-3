@@ -2,6 +2,7 @@ package com.expiredminotaur.bcukbot.sql.user;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -16,6 +17,10 @@ public interface UserRepository extends CrudRepository<User, Long>
     @Override
     @Cacheable(value = "Users")
     Optional<User> findById(Long UserId);
+
+    @Query("from User where isTwitchBotEnabled=1")
+    @Cacheable(value = "Users")
+    List<User> chatBotUsers();
 
     @Override
     @CacheEvict(value = "Users", allEntries = true)
