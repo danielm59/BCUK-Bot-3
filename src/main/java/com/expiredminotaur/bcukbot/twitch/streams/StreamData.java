@@ -31,6 +31,7 @@ public class StreamData
             discordMessage = discordBot.sendAndGetMessage(group.getDiscordChannel(), getLiveMessage(group));
         } else
         {
+            //TODO handle issue when game id is null
             if (!stream.getGameId().equals(newStream.getGameId()))
             {
                 stream = newStream;
