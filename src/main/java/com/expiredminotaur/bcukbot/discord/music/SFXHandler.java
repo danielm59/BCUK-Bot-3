@@ -60,7 +60,7 @@ public class SFXHandler
     {
         return "." +
                 File.separator +
-                "SFX" +
+                "sfx" +
                 File.separator +
                 sound.getFile();
     }
