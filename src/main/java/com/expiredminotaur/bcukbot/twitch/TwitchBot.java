@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.twitch;
 
+import com.expiredminotaur.bcukbot.discord.music.SFXHandler;
 import com.expiredminotaur.bcukbot.sql.user.User;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import com.expiredminotaur.bcukbot.twitch.command.chat.TwitchCommands;
@@ -37,6 +38,8 @@ public class TwitchBot
     private TwitchCommands twitchCommands;
     @Autowired
     private WhisperCommands whisperCommands;
+    @Autowired
+    private SFXHandler sfxHandler;
     private final UserRepository userRepository;
     private TwitchClient twitchClient;
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
@@ -134,6 +137,8 @@ public class TwitchBot
 
     private void onChannelMessage(ChannelMessageEvent event)
     {
+        String command = event.getMessage().split(" ", 2)[0];
+        sfxHandler.play(command);
         twitchCommands.processCommand(event);
     }
 
