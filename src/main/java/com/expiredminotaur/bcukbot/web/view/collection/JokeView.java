@@ -63,12 +63,12 @@ public class JokeView extends VerticalLayout
                 new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
                 new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
 
-        TextField quoteField = new TextField();
-        quoteField.setWidthFull();
+        TextField jokeField = new TextField();
+        jokeField.setWidthFull();
 
         Binder<Joke> binder = new Binder<>(Joke.class);
-        binder.forField(quoteField).bind("quote");
-        layout.addFormItem(quoteField, "Quote");
+        binder.forField(jokeField).bind("joke");
+        layout.addFormItem(jokeField, "Joke");
 
         HorizontalLayout buttons = new HorizontalLayout();
         Button save = new Button("Save", e ->
