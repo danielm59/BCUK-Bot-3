@@ -173,10 +173,13 @@ public class TwitchBot
     //TODO: cache game names
     public String getGameName(String gameId)
     {
-        List<Game> games = twitchClient.getHelix().getGames(accessToken, Collections.singletonList(gameId), null).execute().getGames();
-        if (games.size() == 1)
+        if (gameId != null)
         {
-            return games.get(0).getName();
+            List<Game> games = twitchClient.getHelix().getGames(accessToken, Collections.singletonList(gameId), null).execute().getGames();
+            if (games.size() == 1)
+            {
+                return games.get(0).getName();
+            }
         }
         return "?Unknown Game?";
     }

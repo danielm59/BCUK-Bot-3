@@ -6,6 +6,7 @@ import com.expiredminotaur.bcukbot.twitch.TwitchBot;
 import com.github.twitch4j.helix.domain.Stream;
 import discord4j.core.object.entity.Message;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class StreamData
@@ -31,8 +32,7 @@ public class StreamData
             discordMessage = discordBot.sendAndGetMessage(group.getDiscordChannel(), getLiveMessage(group));
         } else
         {
-            //TODO handle issue when game id is null
-            if (!stream.getGameId().equals(newStream.getGameId()))
+            if (!Objects.equals(stream.getGameId(), newStream.getGameId()))
             {
                 stream = newStream;
                 if (group.isDeleteOldPosts())
