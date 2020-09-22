@@ -12,7 +12,6 @@ import java.util.Set;
 public class MultiTwitchHandler
 {
     private final DiscordBot discordBot;
-    private final Map<String, HashSet<String>> currentStreams = new HashMap<>();
     private final Map<String, MultiTwitch> multiTwitchs = new HashMap<>();
 
     public MultiTwitchHandler(DiscordBot discordBot)
@@ -22,9 +21,10 @@ public class MultiTwitchHandler
 
     public void update(Map<String, StreamData> groupData, Group group)
     {
-        for (String user : groupData.keySet())
+        Map<String, HashSet<String>> currentStreams = new HashMap<>();
+        for (Map.Entry<String, StreamData> user : groupData.entrySet())
         {
-            currentStreams.computeIfAbsent(groupData.get(user).getGame(), k -> new HashSet<>()).add(user);
+            currentStreams.computeIfAbsent(user.getValue().getGame(), k -> new HashSet<>()).add(user.getKey());
         }
 
         for (String game : currentStreams.keySet())
@@ -83,9 +83,9 @@ public class MultiTwitchHandler
 
     public String getMultiTwitch(String channel)
     {
-        for (MultiTwitch mt: multiTwitchs.values())
+        for (MultiTwitch mt : multiTwitchs.values())
         {
-            if(mt.users.contains(channel))
+            if (mt.users.contains(channel))
                 return createLink(mt.users);
         }
         return null;
