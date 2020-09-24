@@ -9,7 +9,6 @@ import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.reaction.ReactionEmoji;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -17,8 +16,6 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -33,14 +30,6 @@ public class TriviaGame
     private TriviaAPI triviaAPI;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private final HashMap<String, Color> difficultyColor = new LinkedHashMap<>();
-
-    public TriviaGame()
-    {
-        difficultyColor.put("easy", Color.of(0, 255, 0));
-        difficultyColor.put("medium", Color.of(255, 255, 0));
-        difficultyColor.put("hard", Color.of(255, 0, 0));
-    }
 
     public Mono<Void> trivia(DiscordCommandEvent event)
     {
@@ -50,29 +39,42 @@ public class TriviaGame
             try
             {
                 Questions.Question question = triviaAPI.getQuestion();
-                Consumer<EmbedCreateSpec> embed = spec ->
-                {
-                    spec.setTitle(parseText(question.getQuestion()));
-                    spec.setColor(difficultyColor.get(question.getDifficulty()));
-                };
+                Consumer<EmbedCreateSpec> embed = setupEmbed(question);
 
-                switch (question.getType())
-                {
-                    case "multiple":
-                        multiQuestion(embed, question, channel);
-                        break;
-                    case "boolean":
-                        boolQuestion(embed, question, channel);
-                        break;
-                    default:
-                        throw new IllegalArgumentException(question.getType());
-                }
+                postQuestion(embed, question, channel);
+
             } catch (Exception e)
             {
                 e.printStackTrace();
             }
         }
         return Mono.empty().then();
+    }
+
+    private Consumer<EmbedCreateSpec> setupEmbed(Questions.Question question)
+    {
+        return spec ->
+        {
+            spec.setTitle(parseText(question.getQuestion()));
+            DifficultyColour difficultyColour = DifficultyColour.fromString(question.getDifficulty());
+            if (difficultyColour != null)
+                spec.setColor(difficultyColour.color);
+        };
+    }
+
+    private void postQuestion(Consumer<EmbedCreateSpec> embed, Questions.Question question, MessageChannel channel) throws IllegalArgumentException
+    {
+        switch (question.getType())
+        {
+            case "multiple":
+                multiQuestion(embed, question, channel);
+                break;
+            case "boolean":
+                boolQuestion(embed, question, channel);
+                break;
+            default:
+                throw new IllegalArgumentException(question.getType());
+        }
     }
 
     private void multiQuestion(Consumer<EmbedCreateSpec> embed, Questions.Question question, MessageChannel channel)
@@ -145,23 +147,18 @@ public class TriviaGame
 
         List<User> correct = new ArrayList<>();
         ReactionEmoji.Unicode correctEmoji;
-        if (question.getCorrectAnswer().equals("True"))
-        {
-            List<User> correctList = message.getReactors(correctEmoji = Emoji.TRUE).collectList().block();
-            if (correctList != null)
-                correct.addAll(correctList);
-            List<User> wrongList = message.getReactors(Emoji.FALSE).collectList().block();
-            if (wrongList != null)
-                correct.removeAll(wrongList);
-        } else
-        {
-            List<User> correctList = message.getReactors(correctEmoji = Emoji.FALSE).collectList().block();
-            if (correctList != null)
-                correct.addAll(correctList);
-            List<User> wrongList = message.getReactors(Emoji.TRUE).collectList().block();
-            if (wrongList != null)
-                correct.removeAll(wrongList);
-        }
+        ReactionEmoji.Unicode incorrectEmoji;
+        boolean answer = question.getCorrectAnswer().equals("True");
+        correctEmoji = answer ? Emoji.TRUE : Emoji.FALSE;
+        incorrectEmoji = answer ? Emoji.FALSE : Emoji.TRUE;
+
+        List<User> correctList = message.getReactors(correctEmoji).collectList().block();
+        if (correctList != null)
+            correct.addAll(correctList);
+        List<User> wrongList = message.getReactors(incorrectEmoji).collectList().block();
+        if (wrongList != null)
+            correct.removeAll(wrongList);
+
         message.delete().subscribe();
         correctAnswerPost(channel, question, correctEmoji, question.getCorrectAnswer(), correct);
     }
@@ -170,7 +167,9 @@ public class TriviaGame
     {
         Consumer<EmbedCreateSpec> embed = spec ->
         {
-            spec.setColor(difficultyColor.get(question.getDifficulty()));
+            DifficultyColour difficultyColour = DifficultyColour.fromString(question.getDifficulty());
+            if (difficultyColour != null)
+                spec.setColor(difficultyColour.color);
             spec.setTitle(parseText(question.getQuestion()));
             StringBuilder s = new StringBuilder();
             s.append(emoji.getRaw()).append(parseText(answer));
