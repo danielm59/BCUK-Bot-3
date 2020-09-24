@@ -147,23 +147,18 @@ public class TriviaGame
 
         List<User> correct = new ArrayList<>();
         ReactionEmoji.Unicode correctEmoji;
-        if (question.getCorrectAnswer().equals("True"))
-        {
-            List<User> correctList = message.getReactors(correctEmoji = Emoji.TRUE).collectList().block();
-            if (correctList != null)
-                correct.addAll(correctList);
-            List<User> wrongList = message.getReactors(Emoji.FALSE).collectList().block();
-            if (wrongList != null)
-                correct.removeAll(wrongList);
-        } else
-        {
-            List<User> correctList = message.getReactors(correctEmoji = Emoji.FALSE).collectList().block();
-            if (correctList != null)
-                correct.addAll(correctList);
-            List<User> wrongList = message.getReactors(Emoji.TRUE).collectList().block();
-            if (wrongList != null)
-                correct.removeAll(wrongList);
-        }
+        ReactionEmoji.Unicode incorrectEmoji;
+        boolean answer = question.getCorrectAnswer().equals("True");
+        correctEmoji = answer ? Emoji.TRUE : Emoji.FALSE;
+        incorrectEmoji = answer ? Emoji.FALSE : Emoji.TRUE;
+
+        List<User> correctList = message.getReactors(correctEmoji).collectList().block();
+        if (correctList != null)
+            correct.addAll(correctList);
+        List<User> wrongList = message.getReactors(incorrectEmoji).collectList().block();
+        if (wrongList != null)
+            correct.removeAll(wrongList);
+
         message.delete().subscribe();
         correctAnswerPost(channel, question, correctEmoji, question.getCorrectAnswer(), correct);
     }
