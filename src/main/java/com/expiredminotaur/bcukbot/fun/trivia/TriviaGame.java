@@ -39,31 +39,42 @@ public class TriviaGame
             try
             {
                 Questions.Question question = triviaAPI.getQuestion();
-                Consumer<EmbedCreateSpec> embed = spec ->
-                {
-                    spec.setTitle(parseText(question.getQuestion()));
-                    DifficultyColour difficultyColour = DifficultyColour.fromString(question.getDifficulty());
-                    if (difficultyColour != null)
-                        spec.setColor(difficultyColour.color);
-                };
+                Consumer<EmbedCreateSpec> embed = setupEmbed(question);
 
-                switch (question.getType())
-                {
-                    case "multiple":
-                        multiQuestion(embed, question, channel);
-                        break;
-                    case "boolean":
-                        boolQuestion(embed, question, channel);
-                        break;
-                    default:
-                        throw new IllegalArgumentException(question.getType());
-                }
+                postQuestion(embed, question, channel);
+
             } catch (Exception e)
             {
                 e.printStackTrace();
             }
         }
         return Mono.empty().then();
+    }
+
+    private Consumer<EmbedCreateSpec> setupEmbed(Questions.Question question)
+    {
+        return spec ->
+        {
+            spec.setTitle(parseText(question.getQuestion()));
+            DifficultyColour difficultyColour = DifficultyColour.fromString(question.getDifficulty());
+            if (difficultyColour != null)
+                spec.setColor(difficultyColour.color);
+        };
+    }
+
+    private void postQuestion(Consumer<EmbedCreateSpec> embed, Questions.Question question, MessageChannel channel) throws IllegalArgumentException
+    {
+        switch (question.getType())
+        {
+            case "multiple":
+                multiQuestion(embed, question, channel);
+                break;
+            case "boolean":
+                boolQuestion(embed, question, channel);
+                break;
+            default:
+                throw new IllegalArgumentException(question.getType());
+        }
     }
 
     private void multiQuestion(Consumer<EmbedCreateSpec> embed, Questions.Question question, MessageChannel channel)
