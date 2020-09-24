@@ -9,7 +9,6 @@ import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.reaction.ReactionEmoji;
 import discord4j.core.spec.EmbedCreateSpec;
-import discord4j.rest.util.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -17,8 +16,6 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -33,14 +30,6 @@ public class TriviaGame
     private TriviaAPI triviaAPI;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private final HashMap<String, Color> difficultyColor = new LinkedHashMap<>();
-
-    public TriviaGame()
-    {
-        difficultyColor.put("easy", Color.of(0, 255, 0));
-        difficultyColor.put("medium", Color.of(255, 255, 0));
-        difficultyColor.put("hard", Color.of(255, 0, 0));
-    }
 
     public Mono<Void> trivia(DiscordCommandEvent event)
     {
@@ -53,7 +42,9 @@ public class TriviaGame
                 Consumer<EmbedCreateSpec> embed = spec ->
                 {
                     spec.setTitle(parseText(question.getQuestion()));
-                    spec.setColor(difficultyColor.get(question.getDifficulty()));
+                    DifficultyColour difficultyColour = DifficultyColour.fromString(question.getDifficulty());
+                    if (difficultyColour != null)
+                        spec.setColor(difficultyColour.color);
                 };
 
                 switch (question.getType())
@@ -170,7 +161,9 @@ public class TriviaGame
     {
         Consumer<EmbedCreateSpec> embed = spec ->
         {
-            spec.setColor(difficultyColor.get(question.getDifficulty()));
+            DifficultyColour difficultyColour = DifficultyColour.fromString(question.getDifficulty());
+            if (difficultyColour != null)
+                spec.setColor(difficultyColour.color);
             spec.setTitle(parseText(question.getQuestion()));
             StringBuilder s = new StringBuilder();
             s.append(emoji.getRaw()).append(parseText(answer));
