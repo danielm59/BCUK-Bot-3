@@ -74,30 +74,36 @@ public abstract class CollectionView<T> extends VerticalLayout
         binder.forField(textField).bind(dataField);
         layout.addFormItem(textField, label);
 
-        HorizontalLayout buttons = new HorizontalLayout();
-        Button save = new Button("Save", e ->
-        {
-            try
-            {
-                binder.writeBean(data);
-                repository.save(data);
-                grid.getDataProvider().refreshItem(data);
-                editDialog.close();
+        editDialog.add(layout, createButtons(data, editDialog));
 
-            } catch (ValidationException ex)
-            {
-                ex.printStackTrace();
-            }
-        });
+        binder.readBean(data);
+        editDialog.open();
+    }
+
+    private HorizontalLayout createButtons(T data, Dialog editDialog)
+    {
+        HorizontalLayout buttons = new HorizontalLayout();
+        Button save = new Button("Save", e -> save(data, editDialog));
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         Button cancel = new Button("Cancel", e -> editDialog.close());
         cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         buttons.add(save, cancel);
         buttons.setJustifyContentMode(JustifyContentMode.END);
+        return buttons;
+    }
 
-        editDialog.add(layout, buttons);
+    private void save(T data, Dialog editDialog)
+    {
+        try
+        {
+            binder.writeBean(data);
+            repository.save(data);
+            grid.getDataProvider().refreshItem(data);
+            editDialog.close();
 
-        binder.readBean(data);
-        editDialog.open();
+        } catch (ValidationException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 }
