@@ -167,7 +167,7 @@ public class TwitchBot
 
     public List<Stream> getStreams(List<String> channels)
     {
-        return twitchClient.getHelix().getStreams(accessToken, "", null, 1, null, null, null, null, channels).execute().getStreams();
+        return twitchClient.getHelix().getStreams(accessToken, "", null, 1, null, null, null, channels).execute().getStreams();
     }
 
     //TODO: cache game names
