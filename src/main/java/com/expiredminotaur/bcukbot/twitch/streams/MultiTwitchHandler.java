@@ -32,24 +32,7 @@ public class MultiTwitchHandler
 
             if (multiTwitchs.containsKey(game))
             {
-                MultiTwitch multiTwitch = multiTwitchs.get(game);
-                if (!currentStreams.get(game).containsAll(multiTwitch.users) || !multiTwitch.users.containsAll(currentStreams.get(game)))
-                {
-                    if (group.isDeleteOldPosts())
-                    {
-                        multiTwitch.message.delete("Offline Stream").subscribe();
-                    }
-                    if (currentStreams.get(game).size() > 1)
-                    {
-                        multiTwitch.message = formatAndSendMulti(group, currentStreams.get(game), game);
-                        multiTwitch.users = currentStreams.get(game);
-
-                    } else
-                    {
-                        multiTwitchs.remove(game);
-                    }
-                }
-                multiTwitch.lastOnline = System.currentTimeMillis();
+                updateGame(game, group, currentStreams);
             } else
             {
                 if (currentStreams.get(game).size() > 1)
@@ -59,6 +42,28 @@ public class MultiTwitchHandler
                 }
             }
         }
+    }
+
+    private void updateGame(String game, Group group, Map<String, HashSet<String>> currentStreams)
+    {
+        MultiTwitch multiTwitch = multiTwitchs.get(game);
+        if (!currentStreams.get(game).containsAll(multiTwitch.users) || !multiTwitch.users.containsAll(currentStreams.get(game)))
+        {
+            if (group.isDeleteOldPosts())
+            {
+                multiTwitch.message.delete("Offline Stream").subscribe();
+            }
+            if (currentStreams.get(game).size() > 1)
+            {
+                multiTwitch.message = formatAndSendMulti(group, currentStreams.get(game), game);
+                multiTwitch.users = currentStreams.get(game);
+
+            } else
+            {
+                multiTwitchs.remove(game);
+            }
+        }
+        multiTwitch.lastOnline = System.currentTimeMillis();
     }
 
     private Message formatAndSendMulti(Group group, Set<String> users, String game)
