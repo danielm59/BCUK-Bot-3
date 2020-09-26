@@ -25,18 +25,7 @@ public class MultiTwitchHandler
 
         for (String game : currentStreams.keySet())
         {
-
-            if (multiTwitchs.containsKey(game))
-            {
-                updateGame(game, group, currentStreams);
-            } else
-            {
-                if (currentStreams.get(game).size() > 1)
-                {
-                    Message message = formatAndSendMulti(group, currentStreams.get(game), game);
-                    multiTwitchs.put(game, new MultiTwitch(currentStreams.get(game), message, System.currentTimeMillis()));
-                }
-            }
+            processGame(game, group, currentStreams);
         }
     }
 
@@ -48,6 +37,21 @@ public class MultiTwitchHandler
             currentStreams.computeIfAbsent(user.getValue().getGame(), k -> new HashSet<>()).add(user.getKey());
         }
         return currentStreams;
+    }
+
+    private void processGame(String game, Group group, Map<String, Set<String>> currentStreams)
+    {
+        if (multiTwitchs.containsKey(game))
+        {
+            updateGame(game, group, currentStreams);
+        } else
+        {
+            if (currentStreams.get(game).size() > 1)
+            {
+                Message message = formatAndSendMulti(group, currentStreams.get(game), game);
+                multiTwitchs.put(game, new MultiTwitch(currentStreams.get(game), message, System.currentTimeMillis()));
+            }
+        }
     }
 
     private void updateGame(String game, Group group, Map<String, Set<String>> currentStreams)
