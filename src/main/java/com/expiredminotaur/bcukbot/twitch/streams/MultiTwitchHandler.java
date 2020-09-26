@@ -21,43 +21,63 @@ public class MultiTwitchHandler
 
     public void update(Map<String, StreamData> groupData, Group group)
     {
-        Map<String, HashSet<String>> currentStreams = new HashMap<>();
+        Map<String, Set<String>> currentStreams = setupMap(groupData);
+
+        for (String game : currentStreams.keySet())
+        {
+            processGame(game, group, currentStreams);
+        }
+    }
+
+    private Map<String, Set<String>> setupMap(Map<String, StreamData> groupData)
+    {
+        Map<String, Set<String>> currentStreams = new HashMap<>();
         for (Map.Entry<String, StreamData> user : groupData.entrySet())
         {
             currentStreams.computeIfAbsent(user.getValue().getGame(), k -> new HashSet<>()).add(user.getKey());
         }
+        return currentStreams;
+    }
 
-        for (String game : currentStreams.keySet())
+    private void processGame(String game, Group group, Map<String, Set<String>> currentStreams)
+    {
+        if (multiTwitchs.containsKey(game))
         {
-
-            if (multiTwitchs.containsKey(game))
+            updateGame(game, group, currentStreams);
+        } else
+        {
+            if (currentStreams.get(game).size() > 1)
             {
-                MultiTwitch multiTwitch = multiTwitchs.get(game);
-                if (!currentStreams.get(game).containsAll(multiTwitch.users) || !multiTwitch.users.containsAll(currentStreams.get(game)))
-                {
-                    if (group.isDeleteOldPosts())
-                    {
-                        multiTwitch.message.delete("Offline Stream").subscribe();
-                    }
-                    if (currentStreams.get(game).size() > 1)
-                    {
-                        multiTwitch.message = formatAndSendMulti(group, currentStreams.get(game), game);
-                        multiTwitch.users = currentStreams.get(game);
+                Message message = formatAndSendMulti(group, currentStreams.get(game), game);
+                multiTwitchs.put(game, new MultiTwitch(currentStreams.get(game), message, System.currentTimeMillis()));
+            }
+        }
+    }
 
-                    } else
-                    {
-                        multiTwitchs.remove(game);
-                    }
-                }
-                multiTwitch.lastOnline = System.currentTimeMillis();
+    private void updateGame(String game, Group group, Map<String, Set<String>> currentStreams)
+    {
+        MultiTwitch multiTwitch = multiTwitchs.get(game);
+        if (!currentStreams.get(game).equals(multiTwitch.users))
+        {
+            deleteOldMessage(group, multiTwitch);
+            if (currentStreams.get(game).size() > 1)
+            {
+                multiTwitch.message = formatAndSendMulti(group, currentStreams.get(game), game);
+                multiTwitch.users = currentStreams.get(game);
+
             } else
             {
-                if (currentStreams.get(game).size() > 1)
-                {
-                    Message message = formatAndSendMulti(group, currentStreams.get(game), game);
-                    multiTwitchs.put(game, new MultiTwitch(currentStreams.get(game), message, System.currentTimeMillis()));
-                }
+                multiTwitchs.remove(game);
             }
+        }
+        multiTwitch.lastOnline = System.currentTimeMillis();
+    }
+
+    private void deleteOldMessage(Group group, MultiTwitch multiTwitch)
+    {
+        if (group.isDeleteOldPosts())
+        {
+            multiTwitch.message.delete("Offline Stream").subscribe();
         }
     }
 
