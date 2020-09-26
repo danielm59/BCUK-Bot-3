@@ -21,11 +21,7 @@ public class MultiTwitchHandler
 
     public void update(Map<String, StreamData> groupData, Group group)
     {
-        Map<String, HashSet<String>> currentStreams = new HashMap<>();
-        for (Map.Entry<String, StreamData> user : groupData.entrySet())
-        {
-            currentStreams.computeIfAbsent(user.getValue().getGame(), k -> new HashSet<>()).add(user.getKey());
-        }
+        Map<String, Set<String>> currentStreams = setupMap(groupData);
 
         for (String game : currentStreams.keySet())
         {
@@ -44,15 +40,22 @@ public class MultiTwitchHandler
         }
     }
 
-    private void updateGame(String game, Group group, Map<String, HashSet<String>> currentStreams)
+    private Map<String, Set<String>> setupMap(Map<String, StreamData> groupData)
+    {
+        Map<String, Set<String>> currentStreams = new HashMap<>();
+        for (Map.Entry<String, StreamData> user : groupData.entrySet())
+        {
+            currentStreams.computeIfAbsent(user.getValue().getGame(), k -> new HashSet<>()).add(user.getKey());
+        }
+        return currentStreams;
+    }
+
+    private void updateGame(String game, Group group, Map<String, Set<String>> currentStreams)
     {
         MultiTwitch multiTwitch = multiTwitchs.get(game);
-        if (!currentStreams.get(game).containsAll(multiTwitch.users) || !multiTwitch.users.containsAll(currentStreams.get(game)))
+        if (!currentStreams.get(game).equals(multiTwitch.users))
         {
-            if (group.isDeleteOldPosts())
-            {
-                multiTwitch.message.delete("Offline Stream").subscribe();
-            }
+            deleteOldMessage(group, multiTwitch);
             if (currentStreams.get(game).size() > 1)
             {
                 multiTwitch.message = formatAndSendMulti(group, currentStreams.get(game), game);
@@ -64,6 +67,14 @@ public class MultiTwitchHandler
             }
         }
         multiTwitch.lastOnline = System.currentTimeMillis();
+    }
+
+    private void deleteOldMessage(Group group, MultiTwitch multiTwitch)
+    {
+        if (group.isDeleteOldPosts())
+        {
+            multiTwitch.message.delete("Offline Stream").subscribe();
+        }
     }
 
     private Message formatAndSendMulti(Group group, Set<String> users, String game)
