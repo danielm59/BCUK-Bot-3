@@ -30,4 +30,6 @@ public abstract class CommandEvent<T, R>
     public abstract R respond(String message);
 
     public abstract R empty();
+
+    public abstract String getSourceName();
 }

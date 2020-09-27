@@ -14,8 +14,19 @@ public class Quote
     private int id;
 
     private String quote;
-    private String Source;
+    private String source;
     private Date date;
+
+    private Quote()
+    {
+    }
+
+    public Quote(String quote, String source)
+    {
+        this.quote = quote;
+        this.source = source;
+        date = new Date(System.currentTimeMillis());
+    }
 
     public int getId()
     {
@@ -39,12 +50,12 @@ public class Quote
 
     public String getSource()
     {
-        return Source;
+        return source;
     }
 
     public void setSource(String source)
     {
-        Source = source;
+        this.source = source;
     }
 
     public Date getDate()

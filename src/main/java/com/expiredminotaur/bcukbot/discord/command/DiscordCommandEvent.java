@@ -38,4 +38,10 @@ public class DiscordCommandEvent extends CommandEvent<MessageCreateEvent, Mono<V
     {
         return Mono.empty();
     }
+
+    @Override
+    public String getSourceName()
+    {
+        return "Discord";
+    }
 }

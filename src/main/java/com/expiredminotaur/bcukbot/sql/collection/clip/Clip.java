@@ -14,8 +14,19 @@ public class Clip
     private int id;
 
     private String clip;
-    private String Source;
+    private String source;
     private Date date;
+
+    private Clip()
+    {
+    }
+
+    public Clip(String clip, String source)
+    {
+        this.clip = clip;
+        this.source = source;
+        date = new Date(System.currentTimeMillis());
+    }
 
     public int getId()
     {
@@ -39,12 +50,12 @@ public class Clip
 
     public String getSource()
     {
-        return Source;
+        return source;
     }
 
     public void setSource(String source)
     {
-        Source = source;
+        this.source = source;
     }
 
     public Date getDate()

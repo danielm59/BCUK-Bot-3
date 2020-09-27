@@ -14,8 +14,19 @@ public class Joke
     private int id;
 
     private String joke;
-    private String Source;
+    private String source;
     private Date date;
+
+    private Joke()
+    {
+    }
+
+    public Joke(String joke, String source)
+    {
+        this.joke = joke;
+        this.source = source;
+        date = new Date(System.currentTimeMillis());
+    }
 
     public int getId()
     {
@@ -39,12 +50,12 @@ public class Joke
 
     public String getSource()
     {
-        return Source;
+        return source;
     }
 
     public void setSource(String source)
     {
-        Source = source;
+        this.source = source;
     }
 
     public Date getDate()

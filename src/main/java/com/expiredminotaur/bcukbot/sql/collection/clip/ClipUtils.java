@@ -14,6 +14,18 @@ public class ClipUtils extends CollectionUtil
     private ClipRepository clips;
 
     @Override
+    public String add(String newEntry, String source)
+    {
+        if (newEntry.trim().length() > 0)
+        {
+            Clip clip = new Clip(newEntry, source);
+            clip = clips.save(clip);
+            return String.format("Added Clip %d: %s [%s]", clip.getId(), clip.getClip(), clip.getDate());
+        }
+        return "No clip given";
+    }
+
+    @Override
     public String get(int id)
     {
         Optional<Clip> oClip = clips.findById(id);

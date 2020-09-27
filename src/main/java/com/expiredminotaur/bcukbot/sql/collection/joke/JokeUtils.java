@@ -14,6 +14,18 @@ public class JokeUtils extends CollectionUtil
     JokeRepository jokes;
 
     @Override
+    public String add(String newEntry, String source)
+    {
+        if (newEntry.trim().length() > 0)
+        {
+            Joke joke = new Joke(newEntry, source);
+            joke = jokes.save(joke);
+            return String.format("Added Joke %d: %s [%s]", joke.getId(), joke.getJoke(), joke.getDate());
+        }
+        return "No joke given";
+    }
+
+    @Override
     public String get(int id)
     {
         Optional<Joke> oJoke = jokes.findById(id);

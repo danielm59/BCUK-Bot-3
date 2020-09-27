@@ -14,6 +14,18 @@ public class QuoteUtils extends CollectionUtil
     private QuoteRepository quotes;
 
     @Override
+    public String add(String newEntry, String source)
+    {
+        if (newEntry.trim().length() > 0)
+        {
+            Quote quote = new Quote(newEntry, source);
+            quote = quotes.save(quote);
+            return String.format("Added Quote %d: %s [%s]", quote.getId(), quote.getQuote(), quote.getDate());
+        }
+        return "No quote given";
+    }
+
+    @Override
     public String get(int id)
     {
         Optional<Quote> oQuote = quotes.findById(id);
