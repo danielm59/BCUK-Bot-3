@@ -28,4 +28,10 @@ public class TwitchCommandEvent extends CommandEvent<ChannelMessageEvent, Void>
     {
         return null;
     }
+
+    @Override
+    public String getSourceName()
+    {
+        return "Twitch_" + event.getChannel().getName();
+    }
 }

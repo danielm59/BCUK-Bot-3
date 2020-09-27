@@ -32,4 +32,10 @@ public class WhisperCommandEvent extends CommandEvent<PrivateMessageEvent, Void>
     {
         return null;
     }
+
+    @Override
+    public String getSourceName()
+    {
+        return "Twitch_Whisper";
+    }
 }
