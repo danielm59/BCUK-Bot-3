@@ -102,6 +102,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
                 "/frontend/**",
                 "/img/**",
                 "/icons/**",
-                "/unauthorised");
+                "/unauthorised",
+                "/playsfx");
     }
 }

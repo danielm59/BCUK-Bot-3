@@ -39,6 +39,20 @@ public class SFXHandler
         }
     }
 
+    public void play(String trigger, boolean override)
+    {
+        if (override)
+        {
+            List<SFX> sfxList = sfxRepository.findByTrigger(trigger.toLowerCase());
+            if (sfxList.size() > 0)
+            {
+                SFX sound = pickSound(sfxList);
+                musicHandler.loadAndPlayPriority(getFilePath(sound));
+            }
+        } else
+            play(trigger);
+    }
+
     private SFX pickSound(List<SFX> sounds)
     {
         int totalWeight = 0;
