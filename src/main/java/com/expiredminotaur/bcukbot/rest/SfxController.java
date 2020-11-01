@@ -2,19 +2,19 @@ package com.expiredminotaur.bcukbot.rest;
 
 import com.expiredminotaur.bcukbot.discord.music.SFXHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class sfxController
+public class SfxController
 {
     @Autowired
     SFXHandler sfxHandler;
 
-    @PostMapping("/playsfx/{sfx}")
-    void playSFX(@PathVariable String sfx)
+    @PostMapping("/playsfx")
+    void playSFX(@RequestBody SfxRequest request)
     {
-        sfxHandler.play(sfx);
+        sfxHandler.play(request.getSfx(), true);
     }
 }
