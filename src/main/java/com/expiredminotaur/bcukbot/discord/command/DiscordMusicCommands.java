@@ -5,7 +5,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import discord4j.core.object.VoiceState;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.channel.MessageChannel;
-import discord4j.voice.VoiceConnection;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,29 +15,15 @@ import java.util.Arrays;
 @Component
 public class DiscordMusicCommands
 {
-    private VoiceConnection voiceConnection;
-
     @Autowired
     private MusicHandler musicHandler;
 
     public Mono<Void> join(DiscordCommandEvent event)
     {
-        if (voiceConnection != null)
-        {
-            try
-            {
-                voiceConnection.disconnect();
-            } finally
-            {
-                voiceConnection = null;
-            }
-        }
-        Mono.justOrEmpty(event.getEvent().getMember())
+        return Mono.justOrEmpty(event.getEvent().getMember())
                 .flatMap(Member::getVoiceState)
                 .flatMap(VoiceState::getChannel)
-                .flatMap(channel -> channel.join(spec -> spec.setProvider(musicHandler.getProvider())))
-                .subscribe(vc -> voiceConnection = vc);
-        return Mono.empty();
+                .flatMap(channel -> musicHandler.joinChannel(channel));
     }
 
     public Mono<Void> play(DiscordCommandEvent event)
@@ -127,20 +112,10 @@ public class DiscordMusicCommands
     public Mono<Void> leave(DiscordCommandEvent event)
     {
         Mono<MessageChannel> channel = event.getEvent().getMessage().getChannel();
-        if (voiceConnection != null)
-        {
-            try
-            {
-                musicHandler.getScheduler().clear();
-                musicHandler.getScheduler().nextTrack();
-                voiceConnection.disconnect().subscribe();
-            } finally
-            {
-                voiceConnection = null;
-            }
+        if (musicHandler.leaveChannel())
             return channel.flatMap(mc -> mc.createMessage("Music stopped and queue cleared"))
                     .then(channel.flatMap(mc -> mc.createMessage("Goodbye")).then());
-        }
-        return channel.flatMap(mc -> mc.createMessage("I can't leave a room if i'm not in one")).then();
+        else
+            return channel.flatMap(mc -> mc.createMessage("I can't leave a room if i'm not in one")).then();
     }
 }

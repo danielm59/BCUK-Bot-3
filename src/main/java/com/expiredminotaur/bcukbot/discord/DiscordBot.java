@@ -8,9 +8,11 @@ import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.User;
+import discord4j.core.object.entity.channel.Channel;
 import discord4j.core.object.entity.channel.MessageChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
@@ -83,6 +85,11 @@ public class DiscordBot
     {
         return botThread.gateway.getChannelById(Snowflake.of(channelID))
                 .cast(MessageChannel.class).flatMap(c -> c.createMessage(message)).block();
+    }
+
+    public Mono<Channel> getChannel(Long channelId)
+    {
+        return botThread.gateway.getChannelById(Snowflake.of(channelId));
     }
 
     public class BotThread implements Runnable
