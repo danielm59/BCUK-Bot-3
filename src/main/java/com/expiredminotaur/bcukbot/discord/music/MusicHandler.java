@@ -20,6 +20,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.NonAllocatingAudioFrameBuffer;
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.channel.VoiceChannel;
+import discord4j.voice.VoiceConnection;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,6 +38,7 @@ public class MusicHandler
     private final AudioPlayerManager playerManager;
     private final AudioPlayer player;
     private final discord4j.voice.AudioProvider provider;
+    private VoiceConnection voiceConnection;
 
     public MusicHandler(@Autowired Settings settings, @Autowired TrackScheduler scheduler)
     {
@@ -74,6 +77,40 @@ public class MusicHandler
     public TrackScheduler getScheduler()
     {
         return scheduler;
+    }
+
+    public Mono<Void> joinChannel(VoiceChannel channel)
+    {
+        if (voiceConnection != null)
+        {
+            try
+            {
+                voiceConnection.disconnect();
+            } finally
+            {
+                voiceConnection = null;
+            }
+        }
+        channel.join(spec -> spec.setProvider(provider)).subscribe(vc -> voiceConnection = vc);
+        return Mono.empty();
+    }
+
+    public boolean leaveChannel()
+    {
+        if (voiceConnection != null)
+        {
+            try
+            {
+                scheduler.clear();
+                scheduler.nextTrack();
+                voiceConnection.disconnect().subscribe();
+            } finally
+            {
+                voiceConnection = null;
+            }
+            return true;
+        }
+        return false;
     }
 
     public Mono<Void> listTracks(MessageCreateEvent event, int page)
