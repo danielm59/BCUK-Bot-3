@@ -3,6 +3,7 @@ package com.expiredminotaur.bcukbot.twitch;
 import com.expiredminotaur.bcukbot.discord.music.SFXHandler;
 import com.expiredminotaur.bcukbot.sql.user.User;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
+import com.expiredminotaur.bcukbot.twitch.command.chat.TwitchCommandEvent;
 import com.expiredminotaur.bcukbot.twitch.command.chat.TwitchCommands;
 import com.expiredminotaur.bcukbot.twitch.command.whisper.WhisperCommands;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
@@ -40,6 +41,8 @@ public class TwitchBot
     private WhisperCommands whisperCommands;
     @Autowired
     private SFXHandler sfxHandler;
+    @Autowired
+    private BanHandler banHandler;
     private final UserRepository userRepository;
     private TwitchClient twitchClient;
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
@@ -137,9 +140,13 @@ public class TwitchBot
 
     private void onChannelMessage(ChannelMessageEvent event)
     {
-        String command = event.getMessage().split(" ", 2)[0];
-        sfxHandler.play(command);
-        twitchCommands.processCommand(event);
+        TwitchCommandEvent cEvent = new TwitchCommandEvent(event);
+        if(!banHandler.checkBannedPhrases(cEvent))
+        {
+            String command = event.getMessage().split(" ", 2)[0];
+            sfxHandler.play(command);
+            twitchCommands.processCommand(cEvent);
+        }
     }
 
     private void onWhisper(PrivateMessageEvent event)
