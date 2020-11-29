@@ -8,7 +8,6 @@ import com.expiredminotaur.bcukbot.sql.command.alias.Alias;
 import com.expiredminotaur.bcukbot.sql.command.alias.AliasRepository;
 import com.expiredminotaur.bcukbot.sql.sfx.SFXRepository;
 import com.expiredminotaur.bcukbot.twitch.streams.LiveStreamManager;
-import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -80,10 +79,9 @@ public class TwitchCommands
         }
     }
 
-    public void processCommand(ChannelMessageEvent event)
+    public void processCommand(TwitchCommandEvent event)
     {
-        TwitchCommandEvent cEvent = new TwitchCommandEvent(event);
-        String message = event.getMessage();
+        String message = event.getOriginalMessage();
         String[] command = message.split(" ", 2);
 
         List<Alias> alias = aliasRepository.findByTrigger(command[0]);
@@ -91,7 +89,7 @@ public class TwitchCommands
         {
             String newCommand = alias.get(0).getFullCommand();
             command = newCommand.split(" ", 2);
-            cEvent.setAliased(newCommand);
+            event.setAliased(newCommand);
         }
 
 
@@ -99,13 +97,13 @@ public class TwitchCommands
         {
             TwitchCommand com = commands.get(command[0]);
 
-            if (com.hasPermission(cEvent))
+            if (com.hasPermission(event))
             {
-                com.runTask(cEvent);
+                com.runTask(event);
             }
         }
 
-        counterHandler.processCommand(cEvent);
+        counterHandler.processCommand(event);
     }
 
     private String sfx()

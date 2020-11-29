@@ -7,6 +7,7 @@ import com.expiredminotaur.bcukbot.web.view.collection.ClipView;
 import com.expiredminotaur.bcukbot.web.view.collection.JokeView;
 import com.expiredminotaur.bcukbot.web.view.collection.QuoteView;
 import com.expiredminotaur.bcukbot.web.view.settings.AliasView;
+import com.expiredminotaur.bcukbot.web.view.settings.BannedPhrasesView;
 import com.expiredminotaur.bcukbot.web.view.settings.CountersView;
 import com.expiredminotaur.bcukbot.web.view.settings.DatabaseView;
 import com.expiredminotaur.bcukbot.web.view.settings.MusicSettingsView;
@@ -67,6 +68,7 @@ public class MainLayout extends AppLayout
         settingSubMenu.addItem("Music", e -> UI.getCurrent().navigate(MusicSettingsView.class));
         settingSubMenu.addItem("Database", e -> UI.getCurrent().navigate(DatabaseView.class));
         settingSubMenu.addItem("Alias", e -> UI.getCurrent().navigate(AliasView.class));
+        settingSubMenu.addItem("Banned Phrases", e -> UI.getCurrent().navigate(BannedPhrasesView.class));
 
         addToNavbar(true, logo, menu);
 
