@@ -52,7 +52,7 @@ public class SFXView extends HorizontalLayout
             folder.mkdir();
         }
 
-        upload.setAcceptedFileTypes(".mp3", ".flac", ".wav", ".mp4", ".m4a", ".ogg", ".aac");
+        upload.setAcceptedFileTypes(".mp3", ".flac", ".wav", ".mp4", ".m4a", ".ogg", ".aac", ".opus");
         upload.addStartedListener(event -> message.setText(""));
         upload.addFileRejectedListener(event -> message.setText(event.getErrorMessage()));
         upload.addSucceededListener(event ->
