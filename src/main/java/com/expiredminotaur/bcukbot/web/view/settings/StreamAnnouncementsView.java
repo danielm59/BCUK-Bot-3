@@ -6,6 +6,7 @@ import com.expiredminotaur.bcukbot.sql.twitch.streams.streamer.Streamer;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.streamer.StreamerRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -18,6 +19,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -132,7 +134,16 @@ public class StreamAnnouncementsView extends VerticalLayout
             save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
             streamersGrid.setColumns("name");
-            Button addStreamer = new Button("Add Streamer", e -> addStreamer());
+            streamersGrid.addColumn(new ComponentRenderer<>(streamer -> new Button("Edit", e -> editStreamer(streamer))))
+                    .setHeader("Edit")
+                    .setFlexGrow(0);
+            streamersGrid.addColumn(new ComponentRenderer<>(streamer -> new Button("Delete", e -> deleteStreamer(streamer))))
+                    .setHeader("Delete")
+                    .setFlexGrow(0);
+            streamersGrid.getColumns().forEach(c -> c.setAutoWidth(true));
+            streamersGrid.recalculateColumnWidths();
+
+            Button addStreamer = new Button("Add Streamer", e -> editStreamer(new Streamer()));
             addStreamer.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
             binder.forField(discordChannelId)
@@ -150,7 +161,7 @@ public class StreamAnnouncementsView extends VerticalLayout
             add(infoLayout, StreamerLayout);
         }
 
-        private void addStreamer()
+        private void editStreamer(Streamer streamer)
         {
             Dialog addStreamerDialog = new Dialog();
             addStreamerDialog.setCloseOnOutsideClick(false);
@@ -165,17 +176,17 @@ public class StreamAnnouncementsView extends VerticalLayout
             Binder<Streamer> binder = new Binder<>(Streamer.class);
             binder.forField(nameFiled).bind("name");
             layout.addFormItem(nameFiled, "Name");
+            binder.readBean(streamer);
 
             HorizontalLayout buttons = new HorizontalLayout();
             Button save = new Button("Save", e ->
             {
                 try
                 {
-                    Streamer newStreamer = new Streamer();
-                    binder.writeBean(newStreamer);
-                    newStreamer.setGroup(group);
-                    streamers.save(newStreamer);
-                    group.getStreamers().add(newStreamer);
+                    binder.writeBean(streamer);
+                    streamer.setGroup(group);
+                    streamers.save(streamer);
+                    group.getStreamers().add(streamer);
                     streamersGrid.getDataProvider().refreshAll();
                     addStreamerDialog.close();
 
@@ -193,6 +204,30 @@ public class StreamAnnouncementsView extends VerticalLayout
             addStreamerDialog.add(layout, buttons);
 
             addStreamerDialog.open();
+        }
+
+        private void deleteStreamer(Streamer streamer)
+        {
+            Dialog deleteStreamerDialog = new Dialog();
+            deleteStreamerDialog.setCloseOnOutsideClick(false);
+            Text message = new Text("Are you sure you want to delete " + streamer.getName() +
+                    " from the group " + streamer.getGroup().getName() + "?");
+            HorizontalLayout buttons = new HorizontalLayout();
+            Button yes = new Button("Yes", e ->
+            {
+                streamers.delete(streamer);
+                group.getStreamers().remove(streamer);
+                streamersGrid.getDataProvider().refreshAll();
+                deleteStreamerDialog.close();
+            });
+            yes.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            Button no = new Button("No", e -> deleteStreamerDialog.close());
+            no.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+            buttons.add(yes, no);
+            buttons.setJustifyContentMode(JustifyContentMode.END);
+
+            deleteStreamerDialog.add(message, buttons);
+            deleteStreamerDialog.open();
         }
 
         private void saveGroup()
