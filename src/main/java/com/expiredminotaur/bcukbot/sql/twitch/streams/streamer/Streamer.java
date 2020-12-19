@@ -2,13 +2,7 @@ package com.expiredminotaur.bcukbot.sql.twitch.streams.streamer;
 
 import com.expiredminotaur.bcukbot.sql.twitch.streams.group.Group;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 public class Streamer
@@ -17,7 +11,7 @@ public class Streamer
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     private Group group;
 

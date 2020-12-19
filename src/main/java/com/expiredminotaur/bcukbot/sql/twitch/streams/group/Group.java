@@ -26,7 +26,7 @@ public class Group
     private String multiTwitchMessage = "Multiple streams for %game% are live, watch them all at %link%";
     @OneToMany(
             mappedBy = "group",
-            cascade = CascadeType.PERSIST,
+            cascade = CascadeType.REMOVE,
             fetch = FetchType.EAGER
     )
     private Set<Streamer> streamers;
