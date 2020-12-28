@@ -30,6 +30,7 @@ public class AliasView extends VerticalLayout
     {
         this.aliasRepository = aliasRepository;
         setSizeFull();
+        Button addButton = new Button("Add", e -> edit(new Alias()));
         grid.setColumns("shortCommand", "fullCommand");
         grid.setItems(aliasRepository.findAll());
         grid.addColumn(new ComponentRenderer<>(alias -> new Button("Edit", e -> edit(alias))))
@@ -39,7 +40,7 @@ public class AliasView extends VerticalLayout
                 .setHeader("Delete")
                 .setFlexGrow(0);
         grid.getColumns().forEach(c -> c.setAutoWidth(true));
-        add(grid);
+        add(addButton, grid);
     }
 
     private void edit(Alias alias)
@@ -52,11 +53,13 @@ public class AliasView extends VerticalLayout
 
         TextField shortC = new TextField();
         shortC.setWidthFull();
+        shortC.setRequired(true);
         layout.addFormItem(shortC, "Short Command");
         binder.bind(shortC, "shortCommand");
 
         TextField fullC = new TextField();
         fullC.setWidthFull();
+        fullC.setRequired(true);
         layout.addFormItem(fullC, "Full Command");
         binder.bind(fullC, "fullCommand");
 
@@ -84,7 +87,7 @@ public class AliasView extends VerticalLayout
         {
             binder.writeBean(data);
             aliasRepository.save(data);
-            grid.getDataProvider().refreshItem(data);
+            grid.setItems(aliasRepository.findAll());
             editDialog.close();
 
         } catch (ValidationException ex)
