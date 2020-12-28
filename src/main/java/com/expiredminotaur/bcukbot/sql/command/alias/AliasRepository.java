@@ -7,7 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-//TODO: add a view to manage these
 public interface AliasRepository extends CrudRepository<Alias, Integer>
 {
     @Override
