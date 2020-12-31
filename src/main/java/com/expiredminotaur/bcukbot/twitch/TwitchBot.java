@@ -52,6 +52,7 @@ public class TwitchBot
     {
         this.userRepository = userRepository;
         start();
+        Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
 
     private static String getAccessToken() throws Exception
