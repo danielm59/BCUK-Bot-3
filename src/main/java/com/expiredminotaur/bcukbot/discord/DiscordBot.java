@@ -31,6 +31,7 @@ public class DiscordBot
     public DiscordBot()
     {
         start();
+        Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
 
     public void start()
