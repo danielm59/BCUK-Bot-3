@@ -72,7 +72,8 @@ public class StreamData
 
     private String replacePlaceholders(String message)
     {
-        message = message.replace("%channel%", stream.getUserName());
+        String name = stream.getUserName().replace("_", "\\_");
+        message = message.replace("%channel%", name);
         message = message.replace("%game%", getGame());
         message = message.replace("%link%", String.format("https://www.twitch.tv/%s", stream.getUserName().toLowerCase()));
         return message;
