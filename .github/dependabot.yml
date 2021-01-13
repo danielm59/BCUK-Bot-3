@@ -10,6 +10,6 @@ updates:
     schedule:
       interval: "daily"
     ignore:
-      - dependency-name: "vaadin*"
+      - dependency-name: "com.vaadin:*"
       #ignore version of vaddin that are not LTS
         versions: ["15.x", "16.x", "17.x", "18.x"]
