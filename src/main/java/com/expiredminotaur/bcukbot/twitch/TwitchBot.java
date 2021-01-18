@@ -84,7 +84,7 @@ public class TwitchBot
         start();
     }
 
-    private void start()
+    public void start()
     {
         try
         {
@@ -111,7 +111,7 @@ public class TwitchBot
         joinChannels();
     }
 
-    private void stop()
+    public void stop()
     {
         twitchClient.close();
         scheduledThreadPoolExecutor.shutdown();
