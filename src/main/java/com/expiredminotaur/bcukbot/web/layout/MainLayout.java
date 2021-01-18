@@ -1,6 +1,7 @@
 package com.expiredminotaur.bcukbot.web.layout;
 
 import com.expiredminotaur.bcukbot.web.view.MainView;
+import com.expiredminotaur.bcukbot.web.view.MinecraftWhitelistView;
 import com.expiredminotaur.bcukbot.web.view.MusicView;
 import com.expiredminotaur.bcukbot.web.view.bot.CommandsView;
 import com.expiredminotaur.bcukbot.web.view.bot.DiscordBotView;
@@ -52,6 +53,7 @@ public class MainLayout extends AppLayout
         MenuItem bots = menu.addItem("Bots");
         menu.addItem("Music", e -> UI.getCurrent().navigate(MusicView.class));
         MenuItem collections = menu.addItem("Collections");
+        menu.addItem("Minecraft Whitelist", e -> UI.getCurrent().navigate(MinecraftWhitelistView.class));
         MenuItem settings = menu.addItem("Settings");
         menu.addItem("Logout", e -> UI.getCurrent().getPage().setLocation("/logout"));
 

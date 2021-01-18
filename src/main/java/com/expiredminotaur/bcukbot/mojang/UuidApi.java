@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.stream.Collectors;
 
 public class UuidApi
 {
@@ -27,12 +28,8 @@ public class UuidApi
         try
         {
             BufferedReader br = request(new URL("https://api.mojang.com/users/profiles/minecraft/" + name));
-            String output;
-            if ((output = br.readLine()) != null)
-            {
-                return gson.fromJson(output, NameWithUUID.class);
-            }
-            return null;
+            String output = br.lines().collect(Collectors.joining());
+            return gson.fromJson(output, NameWithUUID.class);
         } catch (Exception e)
         {
             return null;
@@ -44,12 +41,8 @@ public class UuidApi
         try
         {
             BufferedReader br = request(new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + UUID));
-            String output;
-            if ((output = br.readLine()) != null)
-            {
-                return gson.fromJson(output, Profile.class);
-            }
-            return null;
+            String output = br.lines().collect(Collectors.joining());
+            return gson.fromJson(output, Profile.class);
         } catch (Exception e)
         {
             return null;
