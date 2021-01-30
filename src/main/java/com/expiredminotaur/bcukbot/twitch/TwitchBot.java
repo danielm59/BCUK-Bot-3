@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.twitch;
 
+import com.expiredminotaur.bcukbot.BotService;
 import com.expiredminotaur.bcukbot.discord.music.SFXHandler;
 import com.expiredminotaur.bcukbot.sql.user.User;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
@@ -32,7 +33,7 @@ import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 @Component
-public class TwitchBot
+public class TwitchBot implements BotService
 {
     private final Logger log = LoggerFactory.getLogger(TwitchBot.class);
     @Autowired
@@ -78,12 +79,7 @@ public class TwitchBot
             throw new RuntimeException(("Error reading access token"));
     }
 
-    public void restart()
-    {
-        stop();
-        start();
-    }
-
+    @Override
     public void start()
     {
         try
@@ -111,11 +107,19 @@ public class TwitchBot
         joinChannels();
     }
 
+    @Override
     public void stop()
     {
         twitchClient.close();
         scheduledThreadPoolExecutor.shutdown();
+        twitchClient = null;
         scheduledThreadPoolExecutor = null;
+    }
+
+    @Override
+    public boolean isRunning()
+    {
+        return twitchClient != null;
     }
 
     private void setupThreads()
@@ -142,7 +146,7 @@ public class TwitchBot
     private void onChannelMessage(ChannelMessageEvent event)
     {
         TwitchCommandEvent cEvent = new TwitchCommandEvent(event);
-        if(!banHandler.checkBannedPhrases(cEvent))
+        if (!banHandler.checkBannedPhrases(cEvent))
         {
             String command = event.getMessage().split(" ", 2)[0];
             sfxHandler.play(command);
