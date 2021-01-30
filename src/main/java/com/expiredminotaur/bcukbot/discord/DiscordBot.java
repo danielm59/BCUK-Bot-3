@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.discord;
 
+import com.expiredminotaur.bcukbot.BotService;
 import com.expiredminotaur.bcukbot.discord.command.DiscordCommands;
 import com.expiredminotaur.bcukbot.discord.music.SFXHandler;
 import discord4j.common.util.Snowflake;
@@ -17,7 +18,7 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 @Component
-public class DiscordBot
+public class DiscordBot implements BotService
 {
     private Thread thread;
     private BotThread botThread;
@@ -34,6 +35,7 @@ public class DiscordBot
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
 
+    @Override
     public void start()
     {
         if (botThread == null)
@@ -45,6 +47,7 @@ public class DiscordBot
         }
     }
 
+    @Override
     public void stop()
     {
         if (botThread != null && botThread.gateway != null)
@@ -55,12 +58,7 @@ public class DiscordBot
         thread = null;
     }
 
-    public void restart()
-    {
-        stop();
-        start();
-    }
-
+    @Override
     public boolean isRunning()
     {
         return botThread != null;
