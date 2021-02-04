@@ -44,12 +44,11 @@
             </snapshots>
         </repository>
         <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com/</url>
-        </repository>
-        <repository>
-            <id>jcenter-snapshot</id>
-            <url>https://oss.jfrog.org/artifactory/libs-release/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
