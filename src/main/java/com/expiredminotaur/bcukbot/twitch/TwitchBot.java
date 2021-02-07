@@ -2,6 +2,8 @@ package com.expiredminotaur.bcukbot.twitch;
 
 import com.expiredminotaur.bcukbot.BotService;
 import com.expiredminotaur.bcukbot.discord.music.SFXHandler;
+import com.expiredminotaur.bcukbot.sql.command.custom.CommandRepository;
+import com.expiredminotaur.bcukbot.sql.command.custom.CustomCommand;
 import com.expiredminotaur.bcukbot.sql.user.User;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import com.expiredminotaur.bcukbot.twitch.command.chat.TwitchCommandEvent;
@@ -44,6 +46,8 @@ public class TwitchBot implements BotService
     private SFXHandler sfxHandler;
     @Autowired
     private BanHandler banHandler;
+    @Autowired
+    private CommandRepository customCommands;
     private final UserRepository userRepository;
     private TwitchClient twitchClient;
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
@@ -151,6 +155,9 @@ public class TwitchBot implements BotService
             String command = event.getMessage().split(" ", 2)[0];
             sfxHandler.play(command);
             twitchCommands.processCommand(cEvent);
+            CustomCommand custom = customCommands.findTwitch(event.getChannel().getName().toLowerCase(), command.toLowerCase());
+            if(custom != null)
+                event.getTwitchChat().sendMessage(event.getChannel().getName(), custom.getOutput());
         }
     }
 

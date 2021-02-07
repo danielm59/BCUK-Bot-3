@@ -13,7 +13,7 @@ public interface SFXRepository extends CrudRepository<SFX, Integer>
     @Cacheable(value = "SFX")
     List<SFX> findAll();
 
-    @Query("from SFX where lower(trigger_command)=:trigger")
+    @Query("from SFX where lower(triggerCommand)=:trigger")
     @Cacheable(value = "SFX")
     List<SFX> findByTrigger(String trigger);
 

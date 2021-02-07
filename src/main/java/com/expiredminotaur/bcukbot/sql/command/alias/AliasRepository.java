@@ -13,7 +13,7 @@ public interface AliasRepository extends CrudRepository<Alias, Integer>
     @Cacheable(value = "Alias")
     List<Alias> findAll();
 
-    @Query("from Alias where lower(short_command)=:command")
+    @Query("from Alias where lower(shortCommand)=:command")
     @Cacheable(value = "Alias")
     List<Alias> findByTrigger(String command);
 

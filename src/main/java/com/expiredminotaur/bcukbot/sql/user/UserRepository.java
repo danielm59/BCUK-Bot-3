@@ -18,7 +18,7 @@ public interface UserRepository extends CrudRepository<User, Long>
     @Cacheable(value = "Users")
     Optional<User> findById(Long UserId);
 
-    @Query("from User where isTwitchBotEnabled=1")
+    @Query("from User where isTwitchBotEnabled=true")
     @Cacheable(value = "Users")
     List<User> chatBotUsers();
 

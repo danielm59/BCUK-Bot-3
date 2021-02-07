@@ -13,10 +13,10 @@ public interface CounterRepository extends CrudRepository<Counter, Integer>
     @Cacheable(value = "Counters")
     List<Counter> findAll();
 
-    @Query("from Counter where lower(trigger_command)=:message")
+    @Query("from Counter where lower(triggerCommand)=:message")
     List<Counter> findByTrigger(String message);
 
-    @Query("from Counter where lower(check_command)=:message")
+    @Query("from Counter where lower(checkCommand)=:message")
     List<Counter> findByCheck(String message);
 
     @Override
