@@ -12,7 +12,7 @@ public class UserPoints
     private int points;
     private long lastPointsReceived;
 
-    UserPoints()
+    protected UserPoints()
     {
     }
 

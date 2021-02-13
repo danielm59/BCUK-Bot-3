@@ -17,7 +17,7 @@ public class Quote
     private String source;
     private Date date;
 
-    private Quote()
+    protected Quote()
     {
     }
 
