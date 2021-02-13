@@ -9,7 +9,7 @@ public abstract class CollectionUtil
         String[] args = event.getFinalMessage().split(" ", 3);
         if (args.length > 1)
         {
-            if (args[1].toLowerCase().equals("add"))
+            if (args[1].equalsIgnoreCase("add"))
                 return event.respond(add(args[2], event.getSourceName()));
             try
             {
