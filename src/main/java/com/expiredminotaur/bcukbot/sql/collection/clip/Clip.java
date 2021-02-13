@@ -17,7 +17,7 @@ public class Clip
     private String source;
     private Date date;
 
-    private Clip()
+    protected Clip()
     {
     }
 

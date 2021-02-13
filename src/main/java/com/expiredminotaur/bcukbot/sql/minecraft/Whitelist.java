@@ -12,7 +12,7 @@ public class Whitelist
     private Long discordID;
     private String mcUUID;
 
-    private Whitelist()
+    protected Whitelist()
     {
     }
 

@@ -17,7 +17,7 @@ public class Joke
     private String source;
     private Date date;
 
-    private Joke()
+    protected Joke()
     {
     }
 
