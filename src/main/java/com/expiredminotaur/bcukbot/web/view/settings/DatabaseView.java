@@ -20,9 +20,6 @@ import org.springframework.cache.CacheManager;
 @Route(value = "settings/database", layout = MainLayout.class)
 public class DatabaseView extends VerticalLayout
 {
-    @Autowired
-    private CacheManager cacheManager;
-
     public DatabaseView(@Autowired UserRepository users, @Autowired CacheManager cacheManager)
     {
         Button registerUserButton = new Button("Register User", e -> registerUser(users));
