@@ -4,7 +4,7 @@ public class SettingsJson
 {
     protected int musicVolume = 30;
     protected int sfxVolume = 100;
-    protected int sfxDelay = 15;
+    protected long sfxDelay = 15;
     protected long songAnnouncementChannel = -1L;
 
     static String getFileName()

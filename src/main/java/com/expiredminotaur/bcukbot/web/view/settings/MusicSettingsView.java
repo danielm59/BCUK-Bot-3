@@ -39,8 +39,8 @@ public class MusicSettingsView extends VerticalLayout
                 .bind(Settings::getSfxVolume, Settings::setSfxVolume);
 
         settingsBinder.forField(sfxDelay)
-                .withConverter(new StringToIntegerConverter("Must be a number"))
-                .withValidator(new IntegerRangeValidator("Must be 0 or greater", 0, Integer.MAX_VALUE))
+                .withConverter(new StringToLongConverter("Must be a number"))
+                .withValidator(new LongRangeValidator("Must be 0 or greater", 0L, Long.MAX_VALUE))
                 .bind(Settings::getSfxDelay, Settings::setSfxDelay);
 
         settingsBinder.forField(songAnnouncementChannel)

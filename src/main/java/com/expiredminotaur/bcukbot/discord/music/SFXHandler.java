@@ -27,7 +27,7 @@ public class SFXHandler
     public void play(String trigger)
     {
         long time = System.currentTimeMillis();
-        if (time - lastSFX > settings.getSfxDelay() * 1000)
+        if (time - lastSFX > settings.getSfxDelay() * 1000L)
         {
             List<SFX> sfxList = sfxRepository.findByTrigger(trigger.toLowerCase());
             if (sfxList.size() > 0)
