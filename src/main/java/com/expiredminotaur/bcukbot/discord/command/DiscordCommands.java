@@ -129,8 +129,7 @@ public class DiscordCommands
                 }
             }
         }
-        counterHandler.processCommand(cEvent).subscribe();
-        return Mono.empty();
+        return counterHandler.processCommand(cEvent).then();
     }
 
     private Mono<Void> sfx(DiscordCommandEvent event)

@@ -91,8 +91,7 @@ public class MusicHandler
                 voiceConnection = null;
             }
         }
-        channel.join(spec -> spec.setProvider(provider)).subscribe(vc -> voiceConnection = vc);
-        return Mono.empty();
+        return channel.join(spec -> spec.setProvider(provider)).doOnNext(vc -> voiceConnection = vc).then();
     }
 
     public boolean leaveChannel()
