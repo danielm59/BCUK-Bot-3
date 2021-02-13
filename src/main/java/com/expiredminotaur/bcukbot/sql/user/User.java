@@ -1,7 +1,12 @@
 package com.expiredminotaur.bcukbot.sql.user;
 
+import com.expiredminotaur.bcukbot.sql.command.custom.CustomCommand;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import java.util.Set;
 
 @Entity
 public class User
@@ -13,11 +18,13 @@ public class User
     private String twitchOAuth;
     private boolean isAdmin = false;
     private boolean isTwitchBotEnabled = false;
+    @ManyToMany(mappedBy = "twitchEnabledUsers", fetch = FetchType.EAGER)
+    private Set<CustomCommand> EnabledTwitchCommands;
 
     /**
      * Only to be used by the database
      */
-    private User()
+    protected User()
     {
     }
 
@@ -84,5 +91,15 @@ public class User
     public void setTwitchBotEnabled(boolean twitchBotEnabled)
     {
         isTwitchBotEnabled = twitchBotEnabled;
+    }
+
+    public Set<CustomCommand> getEnabledTwitchCommands()
+    {
+        return EnabledTwitchCommands;
+    }
+
+    public void setEnabledTwitchCommands(Set<CustomCommand> enabledTwitchCommands)
+    {
+        EnabledTwitchCommands = enabledTwitchCommands;
     }
 }

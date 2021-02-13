@@ -3,6 +3,8 @@ package com.expiredminotaur.bcukbot.discord;
 import com.expiredminotaur.bcukbot.BotService;
 import com.expiredminotaur.bcukbot.discord.command.DiscordCommands;
 import com.expiredminotaur.bcukbot.discord.music.SFXHandler;
+import com.expiredminotaur.bcukbot.sql.command.custom.CommandRepository;
+import com.expiredminotaur.bcukbot.sql.command.custom.CustomCommand;
 import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
@@ -24,6 +26,8 @@ public class DiscordBot implements BotService
     private BotThread botThread;
     @Autowired
     DiscordCommands commands;
+    @Autowired
+    CommandRepository customCommands;
     @Autowired
     private SFXHandler sfxHandler;
     @Autowired
@@ -116,6 +120,9 @@ public class DiscordBot implements BotService
                 String command = event.getMessage().getContent().split(" ", 2)[0];
                 sfxHandler.play(command);
                 commands.processCommand(event).subscribe();
+                CustomCommand custom = customCommands.findDiscord(command.toLowerCase());
+                if (custom != null)
+                    event.getMessage().getChannel().flatMap(c -> c.createMessage(custom.getOutput())).subscribe();
                 event.getMember().ifPresent(m -> pointsSystem.addXP(m));
             }
         }

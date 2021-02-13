@@ -1,6 +1,8 @@
 package com.expiredminotaur.bcukbot.web.layout;
 
 import com.expiredminotaur.bcukbot.web.view.MainView;
+import com.expiredminotaur.bcukbot.web.view.MusicView;
+import com.expiredminotaur.bcukbot.web.view.bot.CommandsView;
 import com.expiredminotaur.bcukbot.web.view.bot.DiscordBotView;
 import com.expiredminotaur.bcukbot.web.view.bot.TwitchBotView;
 import com.expiredminotaur.bcukbot.web.view.collection.ClipView;
@@ -47,7 +49,7 @@ public class MainLayout extends AppLayout
 
         menu.addItem("Home", e -> UI.getCurrent().navigate(MainView.class));
         MenuItem bots = menu.addItem("Bots");
-        menu.addItem("Music", e -> UI.getCurrent().getPage().setLocation("/music"));
+        menu.addItem("Music", e -> UI.getCurrent().navigate(MusicView.class));
         MenuItem collections = menu.addItem("Collections");
         MenuItem settings = menu.addItem("Settings");
         menu.addItem("Logout", e -> UI.getCurrent().getPage().setLocation("/logout"));
@@ -55,6 +57,7 @@ public class MainLayout extends AppLayout
         SubMenu botsSubMenu = bots.getSubMenu();
         botsSubMenu.addItem("Discord", e -> UI.getCurrent().navigate(DiscordBotView.class));
         botsSubMenu.addItem("Twitch", e -> UI.getCurrent().navigate(TwitchBotView.class));
+        botsSubMenu.addItem("Commands", e -> UI.getCurrent().navigate(CommandsView.class));
 
         SubMenu collectionsSubMenu = collections.getSubMenu();
         collectionsSubMenu.addItem("Quotes", e -> UI.getCurrent().navigate(QuoteView.class));
