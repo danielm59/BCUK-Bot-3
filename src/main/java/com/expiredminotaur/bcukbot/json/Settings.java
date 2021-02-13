@@ -52,12 +52,12 @@ public class Settings
         saveSettings();
     }
 
-    public int getSfxDelay()
+    public long getSfxDelay()
     {
         return settings.sfxDelay;
     }
 
-    public void setSfxDelay(int delay)
+    public void setSfxDelay(long delay)
     {
         settings.sfxDelay = delay;
         saveSettings();
