@@ -87,15 +87,23 @@ public class CommandsView extends HorizontalLayout
 
     private void edit(CustomCommand command)
     {
-        //TODO edit dialog
         Dialog editDialog = new Dialog();
         editDialog.setWidth("60%");
         editDialog.setCloseOnOutsideClick(false);
+
+        Binder<CustomCommand> binder = new Binder<>(CustomCommand.class);
+        editDialog.add(createForm(binder), createButtons(binder, command, editDialog));
+
+        binder.readBean(command);
+        editDialog.open();
+    }
+
+    private FormLayout createForm(Binder<CustomCommand> binder)
+    {
         FormLayout layout = new FormLayout();
         layout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
                 new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
-
 
         TextField trigger = new TextField();
         TextField output = new TextField();
@@ -105,7 +113,6 @@ public class CommandsView extends HorizontalLayout
         twitchUsers.setItemLabelGenerator(User::getTwitchName);
         twitchUsers.setItems(users.chatBotUsers());
 
-        Binder<CustomCommand> binder = new Binder<>(CustomCommand.class);
         binder.bind(trigger, "trigger");
         binder.bind(output, "output");
         binder.bind(discord, "discordEnabled");
@@ -115,7 +122,11 @@ public class CommandsView extends HorizontalLayout
         layout.addFormItem(output, "Output");
         layout.addFormItem(discord, "Enable on Discord");
         layout.addFormItem(twitchUsers, "Users");
+        return layout;
+    }
 
+    private HorizontalLayout createButtons(Binder<CustomCommand> binder, CustomCommand command, Dialog editDialog)
+    {
         HorizontalLayout buttons = new HorizontalLayout();
         Button save = new Button("Save", e ->
         {
@@ -137,11 +148,7 @@ public class CommandsView extends HorizontalLayout
         cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         buttons.add(save, cancel);
         buttons.setJustifyContentMode(JustifyContentMode.END);
-
-        editDialog.add(layout, buttons);
-
-        binder.readBean(command);
-        editDialog.open();
+        return buttons;
     }
 
 }
