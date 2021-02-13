@@ -26,7 +26,7 @@ public class Questions
     }
 
 
-    public class Question
+    public static class Question
     {
 
         @SerializedName("category")
