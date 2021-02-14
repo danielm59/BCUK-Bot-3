@@ -106,10 +106,13 @@ public class DiscordBot implements BotService
             String token = System.getenv("BCUK_BOT_DISCORD_TOKEN");
             client = DiscordClient.create(token);
             gateway = client.login().block();
-
-            gateway.on(MessageCreateEvent.class).subscribe(this::onMessage);
-
-            gateway.onDisconnect().block();
+            if (gateway == null)
+                stop();
+            else
+            {
+                gateway.on(MessageCreateEvent.class).subscribe(this::onMessage);
+                gateway.onDisconnect().block();
+            }
         }
 
         private void onMessage(MessageCreateEvent event)
