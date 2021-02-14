@@ -17,7 +17,7 @@ public class BannedPhrasesView extends HorizontalLayout
 {
     private final BannedPhraseRepository data;
     private final Grid<BannedPhrase> grid = new Grid<>(BannedPhrase.class);
-    TextField newPhrase = new TextField("New Phrase");
+    private final TextField newPhrase = new TextField("New Phrase");
 
     public BannedPhrasesView(@Autowired BannedPhraseRepository data)
     {
