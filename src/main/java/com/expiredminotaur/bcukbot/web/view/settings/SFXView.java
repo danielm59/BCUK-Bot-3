@@ -10,6 +10,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -49,7 +50,11 @@ public class SFXView extends HorizontalLayout
         Grid<String> fileList = new Grid<>();
         if (!folder.exists())
         {
-            folder.mkdir();
+            if (!folder.mkdir())
+            {
+                add(new H1("SFX Folder is missing, contact Admin"));
+                return;
+            }
         }
 
         upload.setAcceptedFileTypes(".mp3", ".flac", ".wav", ".mp4", ".m4a", ".ogg", ".aac", ".opus");
@@ -63,10 +68,15 @@ public class SFXView extends HorizontalLayout
                 OutputStream outStream = new FileOutputStream(targetFile);
                 InputStream initialStream = buffer.getInputStream();
                 byte[] byteBuffer = new byte[initialStream.available()];
-                initialStream.read(byteBuffer);
-                outStream.write(byteBuffer);
-                upload.getElement().setPropertyJson("files", Json.createArray());
-                fileList.setItems(folder.list());
+                if (initialStream.read(byteBuffer) > 0)
+                {
+                    outStream.write(byteBuffer);
+                    upload.getElement().setPropertyJson("files", Json.createArray());
+                    fileList.setItems(folder.list());
+                } else
+                {
+                    message.setText("Error uploading file");
+                }
             } catch (IOException e)
             {
                 log.error("Error reading SFX upload", e);
