@@ -13,7 +13,7 @@ public class Questions
     private Integer responseCode;
     @SerializedName("results")
     @Expose
-    private List<Question> Questions = null;
+    private List<Question> Questions;
 
     public Integer getResponseCode()
     {
@@ -46,7 +46,7 @@ public class Questions
         private String correctAnswer;
         @SerializedName("incorrect_answers")
         @Expose
-        private List<String> incorrectAnswers = null;
+        private List<String> incorrectAnswers;
 
         public String getCategory()
         {

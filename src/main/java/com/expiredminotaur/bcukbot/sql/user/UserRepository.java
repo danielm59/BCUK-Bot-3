@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.sql.user;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.Query;
@@ -12,11 +13,13 @@ public interface UserRepository extends CrudRepository<User, Long>
 {
     @Override
     @Cacheable(value = "Users")
+    @NotNull
     List<User> findAll();
 
     @Override
     @Cacheable(value = "Users")
-    Optional<User> findById(Long UserId);
+    @NotNull
+    Optional<User> findById(@NotNull Long UserId);
 
     @Query("from User where isTwitchBotEnabled=true")
     @Cacheable(value = "Users")
@@ -24,13 +27,14 @@ public interface UserRepository extends CrudRepository<User, Long>
 
     @Override
     @CacheEvict(value = "Users", allEntries = true)
-    void deleteById(Long UserId);
+    void deleteById(@NotNull Long UserId);
 
     @Override
     @CacheEvict(value = "Users", allEntries = true)
-    void delete(User user);
+    void delete(@NotNull User user);
 
     @Override
     @CacheEvict(value = "Users", allEntries = true)
-    User save(User user);
+    @NotNull
+    <S extends User> S save(@NotNull S user);
 }

@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.sql.twitch.streams.streamer;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,17 +11,19 @@ public interface StreamerRepository extends JpaRepository<Streamer, Integer>
 {
     @Override
     @Cacheable(value = "Streams")
+    @NotNull
     List<Streamer> findAll();
 
     @Override
     @CacheEvict(value = "Streams", allEntries = true)
-    void deleteById(Integer StreamerId);
+    void deleteById(@NotNull Integer StreamerId);
 
     @Override
     @CacheEvict(value = "Streams", allEntries = true)
-    void delete(Streamer Streamer);
+    void delete(@NotNull Streamer Streamer);
 
     @Override
     @CacheEvict(value = "Streams", allEntries = true)
-    Streamer save(Streamer Streamer);
+    @NotNull
+    <S extends Streamer> S save(@NotNull S Streamer);
 }

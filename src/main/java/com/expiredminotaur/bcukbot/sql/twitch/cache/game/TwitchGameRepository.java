@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.sql.twitch.cache.game;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.repository.CrudRepository;
@@ -10,17 +11,19 @@ public interface TwitchGameRepository extends CrudRepository<TwitchGame, String>
 {
     @Override
     @Cacheable(value = "TwitchGame")
+    @NotNull
     List<TwitchGame> findAll();
 
     @Override
     @CacheEvict(value = "TwitchGame", allEntries = true)
-    void deleteById(String userID);
+    void deleteById(@NotNull String gameID);
 
     @Override
     @CacheEvict(value = "TwitchGame", allEntries = true)
-    void delete(TwitchGame game);
+    void delete(@NotNull TwitchGame game);
 
     @Override
     @CacheEvict(value = "TwitchGame", allEntries = true)
-    TwitchGame save(TwitchGame game);
+    @NotNull
+    <S extends TwitchGame> S save(@NotNull S game);
 }
