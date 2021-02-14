@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.expiredminotaur.bcukbot.web.security.OAuth2UserAgentUtils.withUserAgent;
@@ -66,7 +67,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
             @Override
             public RequestEntity<?> convert(OAuth2AuthorizationCodeGrantRequest oauth2Request)
             {
-                return withUserAgent(super.convert(oauth2Request));
+                return withUserAgent(Objects.requireNonNull(super.convert(oauth2Request)));
             }
         });
 
@@ -83,7 +84,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
             @Override
             public RequestEntity<?> convert(OAuth2UserRequest userRequest)
             {
-                return withUserAgent(super.convert(userRequest));
+                return withUserAgent(Objects.requireNonNull(super.convert(userRequest)));
             }
         });
 

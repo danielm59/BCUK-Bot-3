@@ -15,6 +15,7 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 @Route(value = "settings/database", layout = MainLayout.class)
@@ -79,7 +80,9 @@ public class DatabaseView extends VerticalLayout
     {
         for (String name : cacheManager.getCacheNames())
         {
-            cacheManager.getCache(name).clear();
+            Cache cache = cacheManager.getCache(name);
+            if (cache != null)
+                cache.clear();
         }
     }
 }
