@@ -27,8 +27,8 @@ public class LiveStreamManager
     @Autowired
     private GroupRepository groupRepository;
 
-    Map<String, Map<String, StreamData>> streams = new HashMap<>();
-    Map<String, MultiTwitchHandler> multiTwitchHandlers = new HashMap<>();
+    private final Map<String, Map<String, StreamData>> streams = new HashMap<>();
+    private final Map<String, MultiTwitchHandler> multiTwitchHandlers = new HashMap<>();
 
     @Scheduled(cron = "*/15 * * * * *")//every 15th second
     private void getStreams()

@@ -72,8 +72,8 @@ public class SlotGame
 
     public static class Outcome
     {
-        public String[] result;
-        public boolean win;
+        public final String[] result;
+        public final boolean win;
 
         Outcome()
         {

@@ -13,7 +13,7 @@ import java.util.function.Function;
  */
 public abstract class Command<E extends CommandEvent<?, R>, R>
 {
-    Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final Function<E, R> task;
     private final Function<E, Boolean> permission;
