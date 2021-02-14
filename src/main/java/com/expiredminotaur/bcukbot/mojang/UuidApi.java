@@ -10,7 +10,7 @@ import java.net.URL;
 
 public class UuidApi
 {
-    private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private static BufferedReader request(URL url) throws Exception
     {

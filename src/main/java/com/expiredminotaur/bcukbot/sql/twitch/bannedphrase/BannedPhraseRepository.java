@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.sql.twitch.bannedphrase;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.repository.CrudRepository;
@@ -10,13 +11,15 @@ public interface BannedPhraseRepository extends CrudRepository<BannedPhrase, Int
 {
     @Override
     @Cacheable(value = "BannedPhrase")
+    @NotNull
     List<BannedPhrase> findAll();
 
     @Override
     @CacheEvict(value = "BannedPhrase", allEntries = true)
-    void delete(BannedPhrase phase);
+    void delete(@NotNull BannedPhrase phase);
 
     @Override
     @CacheEvict(value = "BannedPhrase", allEntries = true)
-    BannedPhrase save(BannedPhrase phase);
+    @NotNull
+    <S extends BannedPhrase> S save(@NotNull S phase);
 }

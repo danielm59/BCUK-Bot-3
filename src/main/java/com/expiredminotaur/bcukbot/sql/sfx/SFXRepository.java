@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.sql.sfx;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,7 @@ public interface SFXRepository extends CrudRepository<SFX, Integer>
 {
     @Override
     @Cacheable(value = "SFX")
+    @NotNull
     List<SFX> findAll();
 
     @Query("from SFX where lower(triggerCommand)=:trigger")
@@ -19,13 +21,14 @@ public interface SFXRepository extends CrudRepository<SFX, Integer>
 
     @Override
     @CacheEvict(value = "SFX", allEntries = true)
-    void deleteById(Integer id);
+    void deleteById(@NotNull Integer id);
 
     @Override
     @CacheEvict(value = "SFX", allEntries = true)
-    void delete(SFX sfx);
+    void delete(@NotNull SFX sfx);
 
     @Override
     @CacheEvict(value = "SFX", allEntries = true)
-    SFX save(SFX sfx);
+    @NotNull
+    <S extends SFX> S save(@NotNull S sfx);
 }

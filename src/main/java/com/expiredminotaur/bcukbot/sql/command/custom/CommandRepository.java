@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.sql.command.custom;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,7 @@ public interface CommandRepository extends CrudRepository<CustomCommand, Integer
 {
     @Override
     @Cacheable(value = "CustomCommand")
+    @NotNull
     List<CustomCommand> findAll();
 
     @Query("from CustomCommand where isDiscordEnabled=true and lower(triggerString)=:trigger")
@@ -23,13 +25,14 @@ public interface CommandRepository extends CrudRepository<CustomCommand, Integer
 
     @Override
     @CacheEvict(value = "CustomCommand", allEntries = true)
-    void deleteById(Integer commandId);
+    void deleteById(@NotNull Integer commandId);
 
     @Override
     @CacheEvict(value = "CustomCommand", allEntries = true)
-    void delete(CustomCommand command);
+    void delete(@NotNull CustomCommand command);
 
     @Override
     @CacheEvict(value = "CustomCommand", allEntries = true)
-    CustomCommand save(CustomCommand command);
+    @NotNull
+    <S extends CustomCommand> S save(@NotNull S command);
 }
