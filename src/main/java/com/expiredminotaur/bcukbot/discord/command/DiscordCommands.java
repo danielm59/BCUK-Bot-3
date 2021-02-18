@@ -5,6 +5,7 @@ import com.expiredminotaur.bcukbot.fun.counters.CounterHandler;
 import com.expiredminotaur.bcukbot.fun.dadjokes.JokeAPI;
 import com.expiredminotaur.bcukbot.fun.slot.SlotGame;
 import com.expiredminotaur.bcukbot.fun.trivia.TriviaGame;
+import com.expiredminotaur.bcukbot.justgiving.JustGivingAPI;
 import com.expiredminotaur.bcukbot.sql.collection.clip.ClipUtils;
 import com.expiredminotaur.bcukbot.sql.collection.joke.JokeUtils;
 import com.expiredminotaur.bcukbot.sql.collection.quote.QuoteUtils;
@@ -62,6 +63,9 @@ public class DiscordCommands
 
     @Autowired
     private MinecraftCommands minecraftCommands;
+
+    @Autowired
+    private JustGivingAPI justGivingAPI;
     //endregion
 
     public DiscordCommands()
@@ -76,6 +80,7 @@ public class DiscordCommands
         commands.get(DiscordCommandCategory.GENERAL).put("!Quote", new DiscordCommand(e -> quoteUtils.processCommand(e), DiscordPermissions::general));
         commands.get(DiscordCommandCategory.GENERAL).put("!Clip", new DiscordCommand(e -> clipUtils.processCommand(e), DiscordPermissions::general));
         commands.get(DiscordCommandCategory.GENERAL).put("!Joke", new DiscordCommand(e -> jokeUtils.processCommand(e), DiscordPermissions::general));
+        commands.get(DiscordCommandCategory.GENERAL).put("!GameBlastTotal", new DiscordCommand(e->justGivingAPI.amountRaised(e), DiscordPermissions::general));
 
         commands.get(DiscordCommandCategory.GAMES).put("!Points", new DiscordCommand(e -> pointsSystem.points(e), DiscordPermissions::general));
         commands.get(DiscordCommandCategory.GAMES).put("!Slot", new DiscordCommand(e -> slotGame.startGame(e), DiscordPermissions::general));
