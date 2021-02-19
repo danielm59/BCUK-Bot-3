@@ -92,24 +92,14 @@ public class JustGivingAPI
         }
     }
 
-    private String processBR(BufferedReader br) throws IOException
-    {
-        String output;
-        if (br != null && (output = br.readLine()) != null)
-        {
-            return output;
-        }
-        return null;
-    }
-
     private void checkForNewData()
     {
         try
         {
             URL url = new URL(String.format("https://api.justgiving.com/%s/v1/fundraising/pages/%s", settings.appId, settings.campaignName));
             BufferedReader br = request(url);
-            String output = processBR(br);
-            if (output != null)
+            String output;
+            if (br != null && (output = br.readLine()) != null)
             {
                 updateData(output);
             }
