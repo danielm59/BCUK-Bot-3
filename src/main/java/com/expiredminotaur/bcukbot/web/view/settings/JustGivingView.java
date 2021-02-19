@@ -7,6 +7,7 @@ import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -54,7 +55,14 @@ public class JustGivingView extends VerticalLayout
             }
         });
 
-        add(enabled, channels, appId, campaignName, message, save);
+        Label test = new Label("Clear total raised to force twitch message and sfx");
+        Button testButton = new Button("Test", e ->
+        {
+            justGivingAPI.getSettings().setLastTotal("");
+            justGivingAPI.saveSettings();
+        });
+
+        add(enabled, channels, appId, campaignName, message, save, test, testButton);
         binder.readBean(justGivingAPI.getSettings());
     }
 }

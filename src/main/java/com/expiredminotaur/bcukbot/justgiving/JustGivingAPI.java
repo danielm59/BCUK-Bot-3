@@ -1,6 +1,7 @@
 package com.expiredminotaur.bcukbot.justgiving;
 
 import com.expiredminotaur.bcukbot.command.CommandEvent;
+import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
 import com.expiredminotaur.bcukbot.twitch.TwitchBot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,6 +11,7 @@ import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -31,13 +33,15 @@ public class JustGivingAPI
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final TwitchBot bot;
+    private final MusicHandler musicHandler;
     private final JustGivingSettings settings;
     private String data;
     private ScheduledFuture<?> task = null;
 
-    public JustGivingAPI(@Autowired TwitchBot bot)
+    public JustGivingAPI(@Autowired TwitchBot bot, @Autowired @Lazy MusicHandler musicHandler)
     {
         this.bot = bot;
+        this.musicHandler = musicHandler;
         JustGivingSettings settings;
         try (FileReader fr = new FileReader(JustGivingSettings.fileName))
         {
@@ -130,6 +134,7 @@ public class JustGivingAPI
                 settings.lastTotal = total;
                 saveSettings();
                 sendMessageToAll();
+                musicHandler.loadAndPlayPriority("justgiving.mp3");
             }
         }
     }
