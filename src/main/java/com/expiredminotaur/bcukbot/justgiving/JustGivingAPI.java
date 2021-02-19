@@ -65,19 +65,13 @@ public class JustGivingAPI
 
     public void updateScheduler()
     {
-        if (settings.autoCheckEnabled)
+        if (settings.autoCheckEnabled && task == null)
         {
-            if (task == null)
-            {
                 task = scheduler.scheduleAtFixedRate(this::updateData, 0, 1, TimeUnit.SECONDS);
-            }
-        } else
+        } else if(!settings.autoCheckEnabled && task != null)
         {
-            if (task != null)
-            {
                 task.cancel(false);
                 task = null;
-            }
         }
     }
 
