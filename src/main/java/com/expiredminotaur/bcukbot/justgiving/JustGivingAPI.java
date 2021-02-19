@@ -63,15 +63,15 @@ public class JustGivingAPI
         updateScheduler();
     }
 
-    public void updateScheduler()
+    private void updateScheduler()
     {
         if (settings.autoCheckEnabled && task == null)
         {
-                task = scheduler.scheduleAtFixedRate(this::updateData, 0, 1, TimeUnit.SECONDS);
-        } else if(!settings.autoCheckEnabled && task != null)
+            task = scheduler.scheduleAtFixedRate(this::checkForNewData, 0, 1, TimeUnit.SECONDS);
+        } else if (!settings.autoCheckEnabled && task != null)
         {
-                task.cancel(false);
-                task = null;
+            task.cancel(false);
+            task = null;
         }
     }
 
@@ -92,30 +92,26 @@ public class JustGivingAPI
         }
     }
 
-    public void updateData()
+    private String processBR(BufferedReader br) throws IOException
     {
+        String output;
+        if (br != null && (output = br.readLine()) != null)
+        {
+            return output;
+        }
+        return null;
+    }
 
+    private void checkForNewData()
+    {
         try
         {
             URL url = new URL(String.format("https://api.justgiving.com/%s/v1/fundraising/pages/%s", settings.appId, settings.campaignName));
             BufferedReader br = request(url);
-            String output;
-
-            if (br != null && (output = br.readLine()) != null)
+            String output = processBR(br);
+            if (output != null)
             {
-                data = output;
-                JsonElement jsonTree = JsonParser.parseString(data);
-                if (jsonTree.isJsonObject())
-                {
-                    JsonObject jsonObject = jsonTree.getAsJsonObject();
-                    String total = jsonObject.get("grandTotalRaisedExcludingGiftAid").getAsString();
-                    if (!total.equalsIgnoreCase(settings.lastTotal))
-                    {
-                        settings.lastTotal = total;
-                        saveSettings();
-                        sendMessageToAll();
-                    }
-                }
+                updateData(output);
             }
         } catch (Exception e)
         {
@@ -127,6 +123,23 @@ public class JustGivingAPI
             } catch (InterruptedException e2)
             {
                 log.error("Justgiving Sleep Interrupted Exception", e2);
+            }
+        }
+    }
+
+    private void updateData(String data)
+    {
+        this.data = data;
+        JsonElement jsonTree = JsonParser.parseString(data);
+        if (jsonTree.isJsonObject())
+        {
+            JsonObject jsonObject = jsonTree.getAsJsonObject();
+            String total = jsonObject.get("grandTotalRaisedExcludingGiftAid").getAsString();
+            if (!total.equalsIgnoreCase(settings.lastTotal))
+            {
+                settings.lastTotal = total;
+                saveSettings();
+                sendMessageToAll();
             }
         }
     }
