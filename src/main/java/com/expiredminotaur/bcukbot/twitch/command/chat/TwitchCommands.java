@@ -3,6 +3,7 @@ package com.expiredminotaur.bcukbot.twitch.command.chat;
 import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
 import com.expiredminotaur.bcukbot.fun.counters.CounterHandler;
 import com.expiredminotaur.bcukbot.fun.dadjokes.JokeAPI;
+import com.expiredminotaur.bcukbot.justgiving.JustGivingAPI;
 import com.expiredminotaur.bcukbot.sql.collection.joke.JokeUtils;
 import com.expiredminotaur.bcukbot.sql.command.alias.Alias;
 import com.expiredminotaur.bcukbot.sql.command.alias.AliasRepository;
@@ -42,6 +43,9 @@ public class TwitchCommands
 
     @Autowired
     private LiveStreamManager liveStreamManager;
+
+    @Autowired
+    private JustGivingAPI justGivingAPI;
     //endregion
 
     public TwitchCommands()
@@ -52,6 +56,7 @@ public class TwitchCommands
         commands.put("!Joke", new TwitchCommand(e -> jokeUtils.processCommand(e), TwitchPermissions::everyone));
         commands.put("!Playing", new TwitchCommand(this::playing, TwitchPermissions::everyone));
         commands.put("!Multi", new TwitchCommand(e -> liveStreamManager.getMultiTwitch(e), TwitchPermissions::everyone));
+        commands.put("!GameBlastTotal", new TwitchCommand(e -> justGivingAPI.amountRaised(e), TwitchPermissions::everyone));
     }
 
     private Void shoutOut(TwitchCommandEvent e)
