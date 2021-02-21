@@ -60,9 +60,12 @@ public class LiveStreamManager
     {
         for (MultiTwitchHandler mth : multiTwitchHandlers.values())
         {
-            String link = mth.getMultiTwitch(event.getEvent().getChannel().getName());
-            if (link != null)
-                return event.respond(link);
+            MultiTwitch mt = mth.getMultiTwitch(event.getEvent().getChannel().getName());
+            if (mt != null)
+            {
+                for (String channel : mt.getUsers())
+                    twitchBot.sendMessage(channel, mt.getLink());
+            }
         }
         return event.empty();
     }

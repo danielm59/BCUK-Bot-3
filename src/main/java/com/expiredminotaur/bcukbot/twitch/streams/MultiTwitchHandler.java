@@ -2,7 +2,6 @@ package com.expiredminotaur.bcukbot.twitch.streams;
 
 import com.expiredminotaur.bcukbot.discord.DiscordBot;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.group.Group;
-import discord4j.core.object.entity.Message;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,8 +47,9 @@ public class MultiTwitchHandler
         {
             if (currentStreams.get(game).size() > 1)
             {
-                Message message = formatAndSendMulti(group, currentStreams.get(game), game);
-                multiTwitchs.put(game, new MultiTwitch(currentStreams.get(game), message, System.currentTimeMillis()));
+                MultiTwitch multiTwitch = new MultiTwitch(currentStreams.get(game));
+                formatAndSendMulti(multiTwitch, group, game);
+                multiTwitchs.put(game, multiTwitch);
             }
         }
     }
@@ -57,71 +57,44 @@ public class MultiTwitchHandler
     private void updateGame(String game, Group group, Map<String, Set<String>> currentStreams)
     {
         MultiTwitch multiTwitch = multiTwitchs.get(game);
-        if (!currentStreams.get(game).equals(multiTwitch.users))
+        if (!currentStreams.get(game).equals(multiTwitch.getUsers()))
         {
             deleteOldMessage(group, multiTwitch);
             if (currentStreams.get(game).size() > 1)
             {
-                multiTwitch.message = formatAndSendMulti(group, currentStreams.get(game), game);
-                multiTwitch.users = currentStreams.get(game);
+                multiTwitch.setUsers(currentStreams.get(game));
+                formatAndSendMulti(multiTwitch, group, game);
 
             } else
             {
                 multiTwitchs.remove(game);
             }
         }
-        multiTwitch.lastOnline = System.currentTimeMillis();
     }
 
     private void deleteOldMessage(Group group, MultiTwitch multiTwitch)
     {
         if (group.isDeleteOldPosts())
         {
-            multiTwitch.message.delete("Offline Stream").subscribe();
+            multiTwitch.deleteMessage();
         }
     }
 
-    private Message formatAndSendMulti(Group group, Set<String> users, String game)
+    private void formatAndSendMulti(MultiTwitch mt, Group group, String game)
     {
         String message = group.getMultiTwitchMessage();
         message = message.replace("%game%", game);
-        message = message.replace("%link%", createLink(users));
-        return discordBot.sendAndGetMessage(group.getDiscordChannel(), message);
+        message = message.replace("%link%", mt.getLink());
+        mt.setMessage(discordBot.sendAndGetMessage(group.getDiscordChannel(), message));
     }
 
-    private static String createLink(Set<String> users)
-    {
-        StringBuilder link = new StringBuilder();
-        link.append("http://multitwitch.tv/");
-        for (String user : users)
-        {
-            link.append(user);
-            link.append("/");
-        }
-        return link.toString();
-    }
-
-    public String getMultiTwitch(String channel)
+    public MultiTwitch getMultiTwitch(String channel)
     {
         for (MultiTwitch mt : multiTwitchs.values())
         {
-            if (mt.users.contains(channel))
-                return createLink(mt.users);
+            if (mt.getUsers().contains(channel))
+                return mt;
         }
         return null;
-    }
-
-    private static class MultiTwitch
-    {
-        Set<String> users;
-        Message message;
-        Long lastOnline;
-
-        MultiTwitch(Set<String> users, Message message, Long lastOnline)
-        {
-            this.users = users;
-            this.message = message;
-            this.lastOnline = lastOnline;
-        }
     }
 }
