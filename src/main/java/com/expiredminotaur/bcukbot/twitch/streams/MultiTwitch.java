@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.twitch.streams;
 
+import com.expiredminotaur.bcukbot.twitch.TwitchBot;
 import discord4j.core.object.entity.Message;
 
 import java.util.Set;
@@ -54,5 +55,11 @@ public class MultiTwitch
             link.append("/");
         }
         this.link = link.toString();
+    }
+
+    public void sendToAllUsers(TwitchBot twitchBot)
+    {
+        for(String channel:users)
+            twitchBot.sendMessage(channel, link);
     }
 }
