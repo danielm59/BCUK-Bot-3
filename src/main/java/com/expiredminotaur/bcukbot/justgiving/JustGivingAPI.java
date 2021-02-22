@@ -137,6 +137,7 @@ public class JustGivingAPI
                 settings.lastTotal = total;
                 saveSettings();
                 sendMessageToAll();
+                sendMessageToDiscord();
                 musicHandler.loadAndPlayPriority("justgiving.mp3");
             }
         }
@@ -150,6 +151,11 @@ public class JustGivingAPI
             for (String channel : settings.channels)
                 twitchBot.sendMessage(channel, message);
         }
+    }
+
+    private void sendMessageToDiscord()
+    {
+        String message = getTotalRaisedMessage();
         if (message != null && settings.discordChannelId != -1L)
         {
             discordBot.sendMessage(settings.discordChannelId, message);
