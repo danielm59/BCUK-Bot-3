@@ -12,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.vaadin.flow.router.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ public class JustGivingView extends VerticalLayout
 
         Checkbox enabled = new Checkbox("Enabled");
         MultiselectComboBox<String> channels = new MultiselectComboBox<>("Twitch Channels");
+        TextField discordChannel = new TextField("Discord Channel ID (Set to -1 to disable)");
+        discordChannel.setWidthFull();
         TextField appId = new TextField("App ID");
         TextField campaignName = new TextField("Campaign Name");
         campaignName.setWidthFull();
@@ -39,6 +42,8 @@ public class JustGivingView extends VerticalLayout
 
         binder.bind(enabled, "autoCheckEnabled");
         binder.bind(channels, "channels");
+        binder.forField(discordChannel).withConverter(new StringToLongConverter("Invalid Discord ID"))
+                .bind("discordChannelId");
         binder.bind(appId, "appId");
         binder.bind(campaignName, "campaignName");
         binder.bind(message, "message");
@@ -62,7 +67,7 @@ public class JustGivingView extends VerticalLayout
             justGivingAPI.saveSettings();
         });
 
-        add(enabled, channels, appId, campaignName, message, save, test, testButton);
+        add(enabled, channels,discordChannel, appId, campaignName, message, save, test, testButton);
         binder.readBean(justGivingAPI.getSettings());
     }
 }
