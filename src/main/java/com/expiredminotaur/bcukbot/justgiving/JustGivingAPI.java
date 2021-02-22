@@ -1,6 +1,7 @@
 package com.expiredminotaur.bcukbot.justgiving;
 
 import com.expiredminotaur.bcukbot.command.CommandEvent;
+import com.expiredminotaur.bcukbot.discord.DiscordBot;
 import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
 import com.expiredminotaur.bcukbot.twitch.TwitchBot;
 import com.google.gson.Gson;
@@ -32,15 +33,17 @@ public class JustGivingAPI
     private final Logger log = LoggerFactory.getLogger(JustGivingAPI.class);
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private final TwitchBot bot;
+    private final TwitchBot twitchBot;
+    private final DiscordBot discordBot;
     private final MusicHandler musicHandler;
     private final JustGivingSettings settings;
     private String data;
     private ScheduledFuture<?> task = null;
 
-    public JustGivingAPI(@Autowired TwitchBot bot, @Autowired @Lazy MusicHandler musicHandler)
+    public JustGivingAPI(@Autowired TwitchBot twitchBot, @Autowired DiscordBot discordBot, @Autowired @Lazy MusicHandler musicHandler)
     {
-        this.bot = bot;
+        this.twitchBot = twitchBot;
+        this.discordBot = discordBot;
         this.musicHandler = musicHandler;
         JustGivingSettings settings;
         try (FileReader fr = new FileReader(JustGivingSettings.fileName))
@@ -145,7 +148,11 @@ public class JustGivingAPI
         if (message != null && settings.channels != null)
         {
             for (String channel : settings.channels)
-                bot.sendMessage(channel, message);
+                twitchBot.sendMessage(channel, message);
+        }
+        if (message != null && settings.discordChannelId != -1L)
+        {
+            discordBot.sendMessage(settings.discordChannelId, message);
         }
     }
 
@@ -165,9 +172,9 @@ public class JustGivingAPI
         if (jsonTree.isJsonObject())
         {
             JsonObject jsonObject = jsonTree.getAsJsonObject();
-            String total = jsonObject.get("grandTotalRaisedExcludingGiftAid").getAsString();
-            String target = jsonObject.get("fundraisingTarget").getAsString();
-            String percentage = jsonObject.get("totalRaisedPercentageOfFundraisingTarget").getAsString();
+            String total = toCurrency(jsonObject.get("grandTotalRaisedExcludingGiftAid").getAsString());
+            String target = toCurrency(jsonObject.get("fundraisingTarget").getAsString());
+            String percentage = jsonObject.get("totalRaisedPercentageOfFundraisingTarget").getAsString() + "%";
             String message = settings.message;
             message = message.replace("$total", total);
             message = message.replace("$target", target);
@@ -175,6 +182,17 @@ public class JustGivingAPI
             return message;
         }
         return null;
+    }
+
+    private String toCurrency(String amount)
+    {
+        String[] split = amount.split("\\.");
+        if (split.length < 2)
+            return "£" + split[0] + ".00";
+        else if (split[1].length() < 2)
+            return "£" + split[0] + "."+ split[1] + "0";
+        else
+            return "£" + amount;
     }
 
     public JustGivingSettings getSettings()

@@ -13,6 +13,7 @@ public class JustGivingSettings
     String campaignName;
     String lastTotal;
     String message;
+    Long discordChannelId = -1L;
 
     public static String getFileName()
     {
@@ -82,5 +83,15 @@ public class JustGivingSettings
     public void setMessage(String message)
     {
         this.message = message;
+    }
+
+    public Long getDiscordChannelId()
+    {
+        return discordChannelId;
+    }
+
+    public void setDiscordChannelId(Long discordChannelId)
+    {
+        this.discordChannelId = discordChannelId;
     }
 }
