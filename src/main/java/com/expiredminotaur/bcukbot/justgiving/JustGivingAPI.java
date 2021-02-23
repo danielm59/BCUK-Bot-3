@@ -160,6 +160,7 @@ public class JustGivingAPI
                 updateTotalRaisedMessage();
                 sendMessageToAll();
                 sendMessageToDiscord();
+                sendMessageToFacebook();
                 musicHandler.loadAndPlayPriority("justgiving.mp3");
             } else if (totalRaisedMessage == null)
                 updateTotalRaisedMessage(); //message will be null when the bot reloads
