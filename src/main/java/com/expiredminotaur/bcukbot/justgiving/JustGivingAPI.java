@@ -20,8 +20,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -100,6 +102,24 @@ public class JustGivingAPI
         }
     }
 
+    private void post(URL url, String inputJson) throws Exception
+    {
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setDoOutput(true);
+        try(OutputStream os = conn.getOutputStream()) {
+            byte[] input = inputJson.getBytes(StandardCharsets.UTF_8);
+            os.write(input, 0, input.length);
+        }
+        if (conn.getResponseCode() == 200)
+        {
+            return;
+        }
+        throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode() + " From:" + url.toString());
+    }
+
     private void checkForNewData()
     {
         try
@@ -140,6 +160,7 @@ public class JustGivingAPI
                 updateTotalRaisedMessage();
                 sendMessageToAll();
                 sendMessageToDiscord();
+                sendMessageToFacebook();
                 musicHandler.loadAndPlayPriority("justgiving.mp3");
             } else if (totalRaisedMessage == null)
                 updateTotalRaisedMessage(); //message will be null when the bot reloads
@@ -160,6 +181,23 @@ public class JustGivingAPI
         if (totalRaisedMessage != null && settings.discordChannelId != -1L)
         {
             discordBot.sendMessage(settings.discordChannelId, totalRaisedMessage);
+        }
+    }
+
+    private void sendMessageToFacebook()
+    {
+        try
+        {
+            if(totalRaisedMessage != null && settings.facebookWebhook != null)
+            {
+                JsonObject json = new JsonObject();
+                json.addProperty("message", totalRaisedMessage);
+                json.addProperty("link", "https://www.justgiving.com/fundraising/" + settings.campaignName);
+                post(new URL(settings.facebookWebhook), json.toString());
+            }
+        } catch (Exception e)
+        {
+            log.error("Error with facebook post", e);
         }
     }
 
