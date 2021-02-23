@@ -38,6 +38,7 @@ public class JustGivingAPI
     private final MusicHandler musicHandler;
     private final JustGivingSettings settings;
     private String data;
+    private String totalRaisedMessage = null;
     private ScheduledFuture<?> task = null;
 
     public JustGivingAPI(@Autowired TwitchBot twitchBot, @Autowired DiscordBot discordBot, @Autowired @Lazy MusicHandler musicHandler)
@@ -136,58 +137,53 @@ public class JustGivingAPI
             {
                 settings.lastTotal = total;
                 saveSettings();
+                updateTotalRaisedMessage();
                 sendMessageToAll();
                 sendMessageToDiscord();
                 musicHandler.loadAndPlayPriority("justgiving.mp3");
-            }
+            } else if (totalRaisedMessage == null)
+                updateTotalRaisedMessage(); //message will be null when the bot reloads
         }
     }
 
     private void sendMessageToAll()
     {
-        String message = getTotalRaisedMessage();
-        if (message != null && settings.channels != null)
+        if (totalRaisedMessage != null && settings.channels != null)
         {
             for (String channel : settings.channels)
-                twitchBot.sendMessage(channel, message);
+                twitchBot.sendMessage(channel, totalRaisedMessage);
         }
     }
 
     private void sendMessageToDiscord()
     {
-        String message = getTotalRaisedMessage();
-        if (message != null && settings.discordChannelId != -1L)
+        if (totalRaisedMessage != null && settings.discordChannelId != -1L)
         {
-            discordBot.sendMessage(settings.discordChannelId, message);
+            discordBot.sendMessage(settings.discordChannelId, totalRaisedMessage);
         }
     }
 
     public <R> R amountRaised(CommandEvent<?, R> event)
     {
-        String message = getTotalRaisedMessage();
-        if (message != null)
+        if (totalRaisedMessage != null)
         {
-            return event.respond(message);
+            return event.respond(totalRaisedMessage);
         }
         return event.empty();
     }
 
-    private String getTotalRaisedMessage()
+    private void updateTotalRaisedMessage()
     {
         JsonElement jsonTree = JsonParser.parseString(data);
-        if (jsonTree.isJsonObject())
-        {
-            JsonObject jsonObject = jsonTree.getAsJsonObject();
-            String total = toCurrency(jsonObject.get("grandTotalRaisedExcludingGiftAid").getAsString());
-            String target = toCurrency(jsonObject.get("fundraisingTarget").getAsString());
-            String percentage = jsonObject.get("totalRaisedPercentageOfFundraisingTarget").getAsString() + "%";
-            String message = settings.message;
-            message = message.replace("$total", total);
-            message = message.replace("$target", target);
-            message = message.replace("$percentage", percentage);
-            return message;
-        }
-        return null;
+        JsonObject jsonObject = jsonTree.getAsJsonObject();
+        String total = toCurrency(jsonObject.get("grandTotalRaisedExcludingGiftAid").getAsString());
+        String target = toCurrency(jsonObject.get("fundraisingTarget").getAsString());
+        String percentage = jsonObject.get("totalRaisedPercentageOfFundraisingTarget").getAsString() + "%";
+        String message = settings.message;
+        message = message.replace("$total", total);
+        message = message.replace("$target", target);
+        message = message.replace("$percentage", percentage);
+        totalRaisedMessage = message;
     }
 
     private String toCurrency(String amount)
@@ -196,7 +192,7 @@ public class JustGivingAPI
         if (split.length < 2)
             return "£" + split[0] + ".00";
         else if (split[1].length() < 2)
-            return "£" + split[0] + "."+ split[1] + "0";
+            return "£" + split[0] + "." + split[1] + "0";
         else
             return "£" + amount;
     }
