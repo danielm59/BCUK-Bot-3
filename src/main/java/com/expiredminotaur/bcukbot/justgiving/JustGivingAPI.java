@@ -38,7 +38,7 @@ public class JustGivingAPI
     private final MusicHandler musicHandler;
     private final JustGivingSettings settings;
     private String data;
-    private String totalRaisedMessage;
+    private String totalRaisedMessage = null;
     private ScheduledFuture<?> task = null;
 
     public JustGivingAPI(@Autowired TwitchBot twitchBot, @Autowired DiscordBot discordBot, @Autowired @Lazy MusicHandler musicHandler)
@@ -141,7 +141,8 @@ public class JustGivingAPI
                 sendMessageToAll();
                 sendMessageToDiscord();
                 musicHandler.loadAndPlayPriority("justgiving.mp3");
-            }
+            } else if (totalRaisedMessage == null)
+                updateTotalRaisedMessage(); //message will be null when the bot reloads
         }
     }
 
