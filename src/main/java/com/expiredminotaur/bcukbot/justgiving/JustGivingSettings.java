@@ -13,6 +13,7 @@ public class JustGivingSettings
     String campaignName;
     String lastTotal;
     String message;
+    String facebookWebhook;
     Long discordChannelId = -1L;
 
     public static String getFileName()
@@ -93,5 +94,15 @@ public class JustGivingSettings
     public void setDiscordChannelId(Long discordChannelId)
     {
         this.discordChannelId = discordChannelId;
+    }
+
+    public String getFacebookWebhook()
+    {
+        return facebookWebhook;
+    }
+
+    public void setFacebookWebhook(String facebookWebhook)
+    {
+        this.facebookWebhook = facebookWebhook;
     }
 }
