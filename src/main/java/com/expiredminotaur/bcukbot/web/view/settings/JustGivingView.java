@@ -37,6 +37,8 @@ public class JustGivingView extends VerticalLayout
         campaignName.setWidthFull();
         TextField message = new TextField("Message");
         message.setWidthFull();
+        TextField facebookWebhook = new TextField("Facebook Webhook");
+        facebookWebhook.setWidthFull();
 
         channels.setItems(users.chatBotUsers().stream().map(User::getTwitchName));
 
@@ -47,6 +49,7 @@ public class JustGivingView extends VerticalLayout
         binder.bind(appId, "appId");
         binder.bind(campaignName, "campaignName");
         binder.bind(message, "message");
+        binder.bind(facebookWebhook, "facebookWebhook");
 
         Button save = new Button("Save", e ->
         {
@@ -67,7 +70,7 @@ public class JustGivingView extends VerticalLayout
             justGivingAPI.saveSettings();
         });
 
-        add(enabled, channels,discordChannel, appId, campaignName, message, save, test, testButton);
+        add(enabled, channels, discordChannel, appId, campaignName, message, facebookWebhook, save, test, testButton);
         binder.readBean(justGivingAPI.getSettings());
     }
 }
