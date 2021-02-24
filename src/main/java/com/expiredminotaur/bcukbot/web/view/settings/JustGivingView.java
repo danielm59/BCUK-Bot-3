@@ -66,7 +66,7 @@ public class JustGivingView extends VerticalLayout
         Label test = new Label("Clear total raised to force twitch message and sfx");
         Button testButton = new Button("Test", e ->
         {
-            justGivingAPI.getSettings().setLastTotal("");
+            justGivingAPI.getSettings().setLastTotal(0);
             justGivingAPI.saveSettings();
         });
 

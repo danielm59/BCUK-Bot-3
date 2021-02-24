@@ -11,10 +11,10 @@ public class JustGivingSettings
     Set<String> channels;
     String appId;
     String campaignName;
-    String lastTotal;
+    double lastTotal;
     String message;
     String facebookWebhook;
-    Long discordChannelId = -1L;
+    long discordChannelId = -1L;
 
     public static String getFileName()
     {
@@ -66,12 +66,12 @@ public class JustGivingSettings
         this.campaignName = campaignName;
     }
 
-    public String getLastTotal()
+    public double getLastTotal()
     {
         return lastTotal;
     }
 
-    public void setLastTotal(String lastTotal)
+    public void setLastTotal(double lastTotal)
     {
         this.lastTotal = lastTotal;
     }
@@ -86,12 +86,12 @@ public class JustGivingSettings
         this.message = message;
     }
 
-    public Long getDiscordChannelId()
+    public long getDiscordChannelId()
     {
         return discordChannelId;
     }
 
-    public void setDiscordChannelId(Long discordChannelId)
+    public void setDiscordChannelId(long discordChannelId)
     {
         this.discordChannelId = discordChannelId;
     }

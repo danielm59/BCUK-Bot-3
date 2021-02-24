@@ -152,8 +152,8 @@ public class JustGivingAPI
         if (jsonTree.isJsonObject())
         {
             JsonObject jsonObject = jsonTree.getAsJsonObject();
-            String total = jsonObject.get("grandTotalRaisedExcludingGiftAid").getAsString();
-            if (!total.equalsIgnoreCase(settings.lastTotal))
+            double total = Double.parseDouble(jsonObject.get("grandTotalRaisedExcludingGiftAid").getAsString());
+            if (total > settings.lastTotal)
             {
                 settings.lastTotal = total;
                 saveSettings();
