@@ -15,8 +15,13 @@ public interface SFXRepository extends CrudRepository<SFX, Integer>
     @NotNull
     List<SFX> findAll();
 
+    @Query("from SFX where hidden=false")
+    @NotNull
+    List<SFX> getSFXList();
+
     @Query("from SFX where lower(triggerCommand)=:trigger")
     @Cacheable(value = "SFX")
+    @NotNull
     List<SFX> findByTrigger(String trigger);
 
     @Override

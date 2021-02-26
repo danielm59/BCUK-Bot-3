@@ -13,6 +13,7 @@ public class SFX
     int id;
     String triggerCommand;
     String file;
+    boolean hidden = true;
     int weight = 1;
 
     public int getId()
@@ -43,6 +44,16 @@ public class SFX
     public void setFile(String file)
     {
         this.file = file;
+    }
+
+    public boolean isHidden()
+    {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden)
+    {
+        this.hidden = hidden;
     }
 
     public int getWeight()

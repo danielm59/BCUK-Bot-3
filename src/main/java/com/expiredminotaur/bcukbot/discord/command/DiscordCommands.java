@@ -141,7 +141,7 @@ public class DiscordCommands
     {
         StringBuilder s = new StringBuilder();
         Set<String> triggers = new HashSet<>();
-        sfxRepository.findAll().forEach(sfx -> triggers.add(sfx.getTriggerCommand()));
+        sfxRepository.getSFXList().forEach(sfx -> triggers.add(sfx.getTriggerCommand()));
         triggers.forEach(trigger -> s.append(trigger).append(", "));
         s.setLength(s.length() - 2);
 
