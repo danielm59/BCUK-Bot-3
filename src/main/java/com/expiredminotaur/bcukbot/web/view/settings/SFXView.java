@@ -6,6 +6,7 @@ import com.expiredminotaur.bcukbot.web.layout.MainLayout;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -19,6 +20,7 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.validator.IntegerRangeValidator;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.router.Route;
@@ -91,10 +93,15 @@ public class SFXView extends HorizontalLayout
 
         VerticalLayout commandManagerLayout = new VerticalLayout();
 
-        Button addTriggerButton = new Button("Add Trigger", e -> addTrigger(sfxCommands));
+        Button addTriggerButton = new Button("Add Trigger", e -> editTrigger(sfxCommands, new SFX()));
 
-        sfxCommandGrid.setColumns("triggerCommand", "file", "weight");
+        sfxCommandGrid.setColumns("triggerCommand", "file", "weight", "hidden");
+        sfxCommandGrid.addColumn(new ComponentRenderer<>(sfx -> new Button("Edit", e -> editTrigger(sfxCommands, sfx))))
+                .setHeader("Edit")
+                .setFlexGrow(0);
         sfxCommandGrid.setItems(sfxCommands.findAll());
+        sfxCommandGrid.getColumns().forEach(c -> c.setAutoWidth(true));
+        sfxCommandGrid.recalculateColumnWidths();
         commandManagerLayout.add(addTriggerButton, sfxCommandGrid);
 
         add(fileManagerLayout, commandManagerLayout);
@@ -102,7 +109,7 @@ public class SFXView extends HorizontalLayout
         setFlexGrow(1, commandManagerLayout);
     }
 
-    private void addTrigger(SFXRepository sfxCommands)
+    private void editTrigger(SFXRepository sfxCommands, SFX sfx)
     {
         Dialog addTriggerDialog = new Dialog();
 
@@ -117,12 +124,14 @@ public class SFXView extends HorizontalLayout
         ComboBox<String> sfxFile = new ComboBox<>();
         sfxFile.setItems(folder.list());
         TextField weight = new TextField();
+        Checkbox hidden = new Checkbox();
 
         weight.setValue("1");
 
         formLayout.addFormItem(triggerCommand, "Trigger Command");
         formLayout.addFormItem(sfxFile, "SFX file");
         formLayout.addFormItem(weight, "Weight");
+        formLayout.addFormItem(hidden, "Hidden");
 
         binder.forField(triggerCommand)
                 .withValidator(new StringLengthValidator("Must be entered", 1, Integer.MAX_VALUE))
@@ -142,10 +151,10 @@ public class SFXView extends HorizontalLayout
             {
                 if (binder.isValid())
                 {
-                    SFX sfx = new SFX();
                     binder.writeBean(sfx);
                     sfxCommands.save(sfx);
                     sfxCommandGrid.setItems(sfxCommands.findAll());
+                    sfxCommandGrid.recalculateColumnWidths();
                     addTriggerDialog.close();
                 }
             } catch (ValidationException ex)
@@ -161,6 +170,7 @@ public class SFXView extends HorizontalLayout
 
         addTriggerDialog.add(formLayout, buttons);
 
+        binder.readBean(sfx);
         addTriggerDialog.open();
     }
 }
