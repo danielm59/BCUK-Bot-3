@@ -153,17 +153,22 @@ public class JustGivingAPI
         {
             JsonObject jsonObject = jsonTree.getAsJsonObject();
             double total = Double.parseDouble(jsonObject.get("grandTotalRaisedExcludingGiftAid").getAsString());
+            double target = Double.parseDouble(jsonObject.get("fundraisingTarget").getAsString());
             if (total > settings.lastTotal)
             {
                 settings.lastTotal = total;
+                settings.lastTarget =target;
                 saveSettings();
                 updateTotalRaisedMessage();
                 sendMessageToAll();
                 sendMessageToDiscord();
                 sendMessageToFacebook();
                 musicHandler.loadAndPlayPriority("justgiving.mp3");
-            } else if (totalRaisedMessage == null)
-                updateTotalRaisedMessage(); //message will be null when the bot reloads
+            } else if (totalRaisedMessage == null || target != settings.lastTarget)
+            {
+                settings.lastTarget = target;
+                updateTotalRaisedMessage();
+            }
         }
     }
 
