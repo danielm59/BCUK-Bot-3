@@ -167,6 +167,7 @@ public class JustGivingAPI
             } else if (totalRaisedMessage == null || target != settings.lastTarget)
             {
                 settings.lastTarget = target;
+                saveSettings();
                 updateTotalRaisedMessage();
             }
         }
