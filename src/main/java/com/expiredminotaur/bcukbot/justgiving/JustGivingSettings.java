@@ -12,6 +12,7 @@ public class JustGivingSettings
     String appId;
     String campaignName;
     double lastTotal;
+    double lastTarget;
     String message;
     String facebookWebhook;
     long discordChannelId = -1L;
@@ -74,6 +75,16 @@ public class JustGivingSettings
     public void setLastTotal(double lastTotal)
     {
         this.lastTotal = lastTotal;
+    }
+
+    public double getLastTarget()
+    {
+        return lastTarget;
+    }
+
+    public void setLastTarget(double lastTarget)
+    {
+        this.lastTarget = lastTarget;
     }
 
     public String getMessage()
