@@ -10,6 +10,7 @@ import com.github.twitch4j.helix.domain.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +57,7 @@ public class LiveStreamManager
         });
     }
 
-    public Void getMultiTwitch(TwitchCommandEvent event)
+    public Mono<Void> getMultiTwitch(TwitchCommandEvent event)
     {
         for (MultiTwitchHandler mth : multiTwitchHandlers.values())
         {

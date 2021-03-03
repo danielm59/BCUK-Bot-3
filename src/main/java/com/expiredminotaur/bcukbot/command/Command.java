@@ -2,6 +2,7 @@ package com.expiredminotaur.bcukbot.command;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
 
@@ -9,13 +10,12 @@ import java.util.function.Function;
  * An abstract generic class to hold a command
  *
  * @param <E> Command input event type
- * @param <R> Command return type
  */
-public abstract class Command<E extends CommandEvent<?, R>, R>
+public abstract class Command<E extends CommandEvent<?>>
 {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private final Function<E, R> task;
+    private final Function<E, Mono<Void>> task;
     private final Function<E, Boolean> permission;
 
     /**
@@ -24,7 +24,7 @@ public abstract class Command<E extends CommandEvent<?, R>, R>
      * @param task       The function the command should run if the even has permission
      * @param permission The function that determine if the event has permission to run the task
      */
-    public Command(Function<E, R> task, Function<E, Boolean> permission)
+    public Command(Function<E, Mono<Void>> task, Function<E, Boolean> permission)
     {
         this.task = task;
         this.permission = permission;
@@ -47,7 +47,7 @@ public abstract class Command<E extends CommandEvent<?, R>, R>
      * @param event The event running the command
      * @return The result of the command
      */
-    public R runTask(E event)
+    public Mono<Void> runTask(E event)
     {
         if (!hasPermission(event))
         {

@@ -218,7 +218,7 @@ public class MusicHandler
         });
     }
 
-    public <R> R setVolume(CommandEvent<?, R> event, String volume)
+    public Mono<Void> setVolume(CommandEvent<?> event, String volume)
     {
         int vol = getInt(volume);
         if (vol >= 0 && vol <= 100)
@@ -232,13 +232,13 @@ public class MusicHandler
         }
     }
 
-    public <R> R getVolume(CommandEvent<?, R> event)
+    public Mono<Void> getVolume(CommandEvent<?> event)
     {
         return event.respond("Volume set to " + player.getVolume());
     }
 
 
-    public <R> R togglePause(CommandEvent<?, R> event)
+    public Mono<Void> togglePause(CommandEvent<?> event)
     {
         player.setPaused(!player.isPaused());
 

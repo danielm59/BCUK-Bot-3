@@ -8,6 +8,7 @@ import com.expiredminotaur.bcukbot.sql.user.User;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import com.expiredminotaur.bcukbot.twitch.command.chat.TwitchCommandEvent;
 import com.expiredminotaur.bcukbot.twitch.command.chat.TwitchCommands;
+import com.expiredminotaur.bcukbot.twitch.command.whisper.WhisperCommandEvent;
 import com.expiredminotaur.bcukbot.twitch.command.whisper.WhisperCommands;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
@@ -107,7 +108,7 @@ public class TwitchBot implements BotService
                 .withScheduledThreadPoolExecutor(scheduledThreadPoolExecutor)
                 .withDefaultAuthToken(appOAuth)
                 .build();
-        setupEvents(accessToken);
+        setupEvents();
         joinChannels();
     }
 
@@ -140,7 +141,7 @@ public class TwitchBot implements BotService
         scheduledThreadPoolExecutor.setMaximumPoolSize(Runtime.getRuntime().availableProcessors() * 8);
     }
 
-    private void setupEvents(String accessToken)
+    private void setupEvents()
     {
         SimpleEventHandler handler = twitchClient.getEventManager().getEventHandler(SimpleEventHandler.class);
         handler.onEvent(ChannelMessageEvent.class, this::onChannelMessage);
@@ -163,7 +164,7 @@ public class TwitchBot implements BotService
 
     private void onWhisper(PrivateMessageEvent event)
     {
-        whisperCommands.processCommand(event, twitchClient);
+        whisperCommands.processCommand(new WhisperCommandEvent(event, twitchClient));
     }
 
     public void joinChannels()

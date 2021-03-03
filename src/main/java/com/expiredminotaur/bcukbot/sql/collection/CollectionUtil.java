@@ -1,10 +1,11 @@
 package com.expiredminotaur.bcukbot.sql.collection;
 
 import com.expiredminotaur.bcukbot.command.CommandEvent;
+import reactor.core.publisher.Mono;
 
 public abstract class CollectionUtil
 {
-    public <R> R processCommand(CommandEvent<?, R> event)
+    public Mono<Void> processCommand(CommandEvent<?> event)
     {
         String[] args = event.getFinalMessage().split(" ", 3);
         if (args.length > 1)

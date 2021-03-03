@@ -1,39 +1,21 @@
 package com.expiredminotaur.bcukbot.twitch.command.chat;
 
+import com.expiredminotaur.bcukbot.command.Commands;
 import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
-import com.expiredminotaur.bcukbot.fun.counters.CounterHandler;
 import com.expiredminotaur.bcukbot.fun.dadjokes.JokeAPI;
 import com.expiredminotaur.bcukbot.justgiving.JustGivingAPI;
 import com.expiredminotaur.bcukbot.sql.collection.joke.JokeUtils;
-import com.expiredminotaur.bcukbot.sql.command.alias.Alias;
-import com.expiredminotaur.bcukbot.sql.command.alias.AliasRepository;
-import com.expiredminotaur.bcukbot.sql.sfx.SFXRepository;
 import com.expiredminotaur.bcukbot.twitch.streams.LiveStreamManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
+import reactor.core.publisher.Mono;
 
 @Component
-public class TwitchCommands
+public class TwitchCommands extends Commands<TwitchCommand, TwitchCommandEvent>
 {
-    private final TreeMap<String, TwitchCommand> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-
     //region Autowired
-    @Autowired
-    private AliasRepository aliasRepository;
-
-    @Autowired
-    private SFXRepository sfxRepository;
-
-    @Autowired
-    private CounterHandler counterHandler;
-
     @Autowired
     private JokeUtils jokeUtils;
 
@@ -50,7 +32,7 @@ public class TwitchCommands
 
     public TwitchCommands()
     {
-        commands.put("!Sfx", new TwitchCommand(e -> e.respond(sfx()), TwitchPermissions::everyone));
+        commands.put("!Sfx", new TwitchCommand(e -> e.respond(sfxList()), TwitchPermissions::everyone));
         commands.put("!SO", new TwitchCommand(this::shoutOut, TwitchPermissions::modPlus));
         commands.put("!DadJoke", new TwitchCommand(JokeAPI::jokeCommand, TwitchPermissions::everyone));
         commands.put("!Joke", new TwitchCommand(e -> jokeUtils.processCommand(e), TwitchPermissions::everyone));
@@ -59,7 +41,7 @@ public class TwitchCommands
         commands.put("!GameBlastTotal", new TwitchCommand(e -> justGivingAPI.amountRaised(e), TwitchPermissions::everyone));
     }
 
-    private Void shoutOut(TwitchCommandEvent e)
+    private Mono<Void> shoutOut(TwitchCommandEvent e)
     {
         String[] args = e.getFinalMessage().split(" ", 2);
         if (args.length == 2)
@@ -72,7 +54,7 @@ public class TwitchCommands
         return null;
     }
 
-    public Void playing(TwitchCommandEvent event)
+    public Mono<Void> playing(TwitchCommandEvent event)
     {
         AudioTrack track = musicHandler.getScheduler().currentTrack();
         if (track != null)
@@ -82,43 +64,5 @@ public class TwitchCommands
         {
             return event.respond("Nothing is playing");
         }
-    }
-
-    public void processCommand(TwitchCommandEvent event)
-    {
-        String message = event.getOriginalMessage();
-        String[] command = message.split(" ", 2);
-
-        List<Alias> alias = aliasRepository.findByTrigger(command[0]);
-        if (alias.size() > 0)
-        {
-            String newCommand = alias.get(0).getFullCommand();
-            command = newCommand.split(" ", 2);
-            event.setAliased(newCommand);
-        }
-
-
-        if (commands.containsKey(command[0]))
-        {
-            TwitchCommand com = commands.get(command[0]);
-
-            if (com.hasPermission(event))
-            {
-                com.runTask(event);
-            }
-        }
-
-        counterHandler.processCommand(event);
-    }
-
-    private String sfx()
-    {
-        StringBuilder s = new StringBuilder();
-        Set<String> triggers = new HashSet<>();
-        sfxRepository.getSFXList().forEach(sfx -> triggers.add(sfx.getTriggerCommand()));
-        triggers.forEach(trigger -> s.append(trigger).append(", "));
-        s.setLength(s.length() - 2);
-
-        return s.toString();
     }
 }

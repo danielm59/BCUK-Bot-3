@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -207,7 +208,7 @@ public class JustGivingAPI
         }
     }
 
-    public <R> R amountRaised(CommandEvent<?, R> event)
+    public Mono<Void> amountRaised(CommandEvent<?> event)
     {
         if (totalRaisedMessage != null)
         {

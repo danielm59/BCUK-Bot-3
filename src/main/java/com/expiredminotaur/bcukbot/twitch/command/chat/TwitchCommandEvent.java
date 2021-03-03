@@ -3,8 +3,9 @@ package com.expiredminotaur.bcukbot.twitch.command.chat;
 
 import com.expiredminotaur.bcukbot.command.CommandEvent;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+import reactor.core.publisher.Mono;
 
-public class TwitchCommandEvent extends CommandEvent<ChannelMessageEvent, Void>
+public class TwitchCommandEvent extends CommandEvent<ChannelMessageEvent>
 {
 
     public TwitchCommandEvent(ChannelMessageEvent event)
@@ -18,15 +19,10 @@ public class TwitchCommandEvent extends CommandEvent<ChannelMessageEvent, Void>
         return event.getMessage();
     }
 
-    public Void respond(String message)
+    public Mono<Void> respond(String message)
     {
         event.getTwitchChat().sendMessage(event.getChannel().getName(), message);
-        return null;
-    }
-
-    public Void empty()
-    {
-        return null;
+        return empty();
     }
 
     @Override
