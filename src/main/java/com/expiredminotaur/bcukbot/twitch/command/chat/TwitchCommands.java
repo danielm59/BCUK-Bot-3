@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
-public class TwitchCommands extends Commands<TwitchCommand, TwitchCommandEvent>
+public class TwitchCommands extends Commands<TwitchCommandEvent>
 {
     //region Autowired
     @Autowired
