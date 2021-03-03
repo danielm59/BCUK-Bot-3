@@ -5,12 +5,14 @@ import com.expiredminotaur.bcukbot.sql.command.alias.Alias;
 import com.expiredminotaur.bcukbot.sql.command.alias.AliasRepository;
 import com.expiredminotaur.bcukbot.sql.sfx.SFXRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.publisher.Mono;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public abstract class Commands<C extends Command<E>, E extends CommandEvent<?>>
 {
@@ -19,7 +21,7 @@ public abstract class Commands<C extends Command<E>, E extends CommandEvent<?>>
     protected CounterHandler counterHandler;
     protected SFXRepository sfxRepository;
 
-    public void processCommand(E event)
+    public Mono<Void> processCommand(E event)
     {
         String message = event.getOriginalMessage();
         String[] command = message.split(" ", 2);
@@ -38,11 +40,10 @@ public abstract class Commands<C extends Command<E>, E extends CommandEvent<?>>
 
             if (com.hasPermission(event))
             {
-                com.runTask(event);
+                return com.runTask(event);
             }
         }
-
-        counterHandler.processCommand(event);
+        return event.empty();
     }
 
     protected String sfxList()
@@ -54,6 +55,13 @@ public abstract class Commands<C extends Command<E>, E extends CommandEvent<?>>
         s.setLength(s.length() - 2);
 
         return s.toString();
+    }
+
+    public List<String> getCommandList(E event)
+    {
+        return commands.entrySet().stream()
+                .filter(c -> c.getValue().hasPermission(event))
+                .map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
     @Autowired
