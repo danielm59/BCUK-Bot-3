@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.discord.command;
 
+import com.expiredminotaur.bcukbot.command.CommandEvent;
 import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import discord4j.core.object.VoiceState;
@@ -86,7 +87,7 @@ public class DiscordMusicCommands
         }
     }
 
-    public Mono<Void> volume(DiscordCommandEvent event)
+    public Mono<Void> volume(CommandEvent<?> event)
     {
         String content = event.getFinalMessage();
 
@@ -104,7 +105,7 @@ public class DiscordMusicCommands
         return Mono.empty();
     }
 
-    public Mono<Void> pause(DiscordCommandEvent event)
+    public Mono<Void> pause(CommandEvent<?> event)
     {
         return musicHandler.togglePause(event);
     }
