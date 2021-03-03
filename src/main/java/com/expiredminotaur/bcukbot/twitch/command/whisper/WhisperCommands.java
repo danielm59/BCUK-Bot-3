@@ -13,7 +13,7 @@ public class WhisperCommands extends Commands<WhisperCommand, WhisperCommandEven
 
     public WhisperCommands()
     {
-        commands.put("!volume", new WhisperCommand(discordMusicCommands::volume));
-        commands.put("!pause", new WhisperCommand(discordMusicCommands::pause));
+        commands.put("!volume", new WhisperCommand(e -> discordMusicCommands.volume(e)));
+        commands.put("!pause", new WhisperCommand(e -> discordMusicCommands.pause(e)));
     }
 }
