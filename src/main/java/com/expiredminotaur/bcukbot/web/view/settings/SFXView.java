@@ -41,9 +41,11 @@ public class SFXView extends HorizontalLayout
     private final Logger log = LoggerFactory.getLogger(SFXView.class);
     private final File folder = new File("sfx");
     private final Grid<SFX> sfxCommandGrid = new Grid<>(SFX.class);
+    private final SFXRepository sfxCommands;
 
     public SFXView(@Autowired SFXRepository sfxCommands)
     {
+        this.sfxCommands = sfxCommands;
         setSizeFull();
         VerticalLayout fileManagerLayout = new VerticalLayout();
         MemoryBuffer buffer = new MemoryBuffer();
@@ -93,10 +95,10 @@ public class SFXView extends HorizontalLayout
 
         VerticalLayout commandManagerLayout = new VerticalLayout();
 
-        Button addTriggerButton = new Button("Add Trigger", e -> editTrigger(sfxCommands, new SFX()));
+        Button addTriggerButton = new Button("Add Trigger", e -> new sfxForm(new SFX()).open());
 
         sfxCommandGrid.setColumns("triggerCommand", "file", "weight", "hidden");
-        sfxCommandGrid.addColumn(new ComponentRenderer<>(sfx -> new Button("Edit", e -> editTrigger(sfxCommands, sfx))))
+        sfxCommandGrid.addColumn(new ComponentRenderer<>(sfx -> new Button("Edit", e -> new sfxForm(sfx).open())))
                 .setHeader("Edit")
                 .setFlexGrow(0);
         sfxCommandGrid.setItems(sfxCommands.findAll());
@@ -109,43 +111,54 @@ public class SFXView extends HorizontalLayout
         setFlexGrow(1, commandManagerLayout);
     }
 
-    private void editTrigger(SFXRepository sfxCommands, SFX sfx)
+    private class sfxForm extends Dialog
     {
-        Dialog addTriggerDialog = new Dialog();
+        private final Binder<SFX> binder = new Binder<>(SFX.class);
 
-        Binder<SFX> binder = new Binder<>(SFX.class);
+        public sfxForm(SFX sfx)
+        {
+            FormLayout formLayout = new FormLayout();
+            formLayout.setResponsiveSteps(
+                    new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
+                    new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
 
-        FormLayout formLayout = new FormLayout();
-        formLayout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
-                new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
+            TextField triggerCommand = new TextField();
+            ComboBox<String> sfxFile = new ComboBox<>();
+            sfxFile.setItems(folder.list());
+            TextField weight = new TextField();
+            Checkbox hidden = new Checkbox();
 
-        TextField triggerCommand = new TextField();
-        ComboBox<String> sfxFile = new ComboBox<>();
-        sfxFile.setItems(folder.list());
-        TextField weight = new TextField();
-        Checkbox hidden = new Checkbox();
+            formLayout.addFormItem(triggerCommand, "Trigger Command");
+            formLayout.addFormItem(sfxFile, "SFX file");
+            formLayout.addFormItem(weight, "Weight");
+            formLayout.addFormItem(hidden, "Hidden");
 
-        weight.setValue("1");
+            binder.forField(triggerCommand)
+                    .withValidator(new StringLengthValidator("Must be entered", 1, Integer.MAX_VALUE))
+                    .bind("triggerCommand");
+            binder.forField(sfxFile)
+                    .withValidator(new StringLengthValidator("Must be entered", 1, Integer.MAX_VALUE))
+                    .bind("file");
+            binder.forField(weight)
+                    .withConverter(new StringToIntegerConverter("Invalid number"))
+                    .withValidator(new IntegerRangeValidator("Must be greater than zero", 1, Integer.MAX_VALUE))
+                    .bind("weight");
+            binder.forField(hidden).bind("hidden");
 
-        formLayout.addFormItem(triggerCommand, "Trigger Command");
-        formLayout.addFormItem(sfxFile, "SFX file");
-        formLayout.addFormItem(weight, "Weight");
-        formLayout.addFormItem(hidden, "Hidden");
+            HorizontalLayout buttons = new HorizontalLayout();
+            Button save = new Button("Save", e -> save(sfx));
+            save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            Button cancel = new Button("Cancel", e -> close());
+            cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+            buttons.add(save, cancel);
+            buttons.setJustifyContentMode(JustifyContentMode.END);
 
-        binder.forField(triggerCommand)
-                .withValidator(new StringLengthValidator("Must be entered", 1, Integer.MAX_VALUE))
-                .bind("triggerCommand");
-        binder.forField(sfxFile)
-                .withValidator(new StringLengthValidator("Must be entered", 1, Integer.MAX_VALUE))
-                .bind("file");
-        binder.forField(weight)
-                .withConverter(new StringToIntegerConverter("Invalid number"))
-                .withValidator(new IntegerRangeValidator("Must be greater than zero", 1, Integer.MAX_VALUE))
-                .bind("weight");
+            add(formLayout, buttons);
 
-        HorizontalLayout buttons = new HorizontalLayout();
-        Button save = new Button("Save", e ->
+            binder.readBean(sfx);
+        }
+
+        private void save(SFX sfx)
         {
             try
             {
@@ -155,22 +168,12 @@ public class SFXView extends HorizontalLayout
                     sfxCommands.save(sfx);
                     sfxCommandGrid.setItems(sfxCommands.findAll());
                     sfxCommandGrid.recalculateColumnWidths();
-                    addTriggerDialog.close();
+                    close();
                 }
             } catch (ValidationException ex)
             {
                 ex.printStackTrace();
             }
-        });
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Button cancel = new Button("Cancel", e -> addTriggerDialog.close());
-        cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-        buttons.add(save, cancel);
-        buttons.setJustifyContentMode(JustifyContentMode.END);
-
-        addTriggerDialog.add(formLayout, buttons);
-
-        binder.readBean(sfx);
-        addTriggerDialog.open();
+        }
     }
 }
