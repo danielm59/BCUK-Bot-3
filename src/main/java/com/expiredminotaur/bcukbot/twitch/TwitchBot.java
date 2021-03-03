@@ -2,12 +2,14 @@ package com.expiredminotaur.bcukbot.twitch;
 
 import com.expiredminotaur.bcukbot.BotService;
 import com.expiredminotaur.bcukbot.discord.music.SFXHandler;
+import com.expiredminotaur.bcukbot.fun.counters.CounterHandler;
 import com.expiredminotaur.bcukbot.sql.command.custom.CommandRepository;
 import com.expiredminotaur.bcukbot.sql.command.custom.CustomCommand;
 import com.expiredminotaur.bcukbot.sql.user.User;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import com.expiredminotaur.bcukbot.twitch.command.chat.TwitchCommandEvent;
 import com.expiredminotaur.bcukbot.twitch.command.chat.TwitchCommands;
+import com.expiredminotaur.bcukbot.twitch.command.whisper.WhisperCommandEvent;
 import com.expiredminotaur.bcukbot.twitch.command.whisper.WhisperCommands;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
@@ -48,6 +50,8 @@ public class TwitchBot implements BotService
     private BanHandler banHandler;
     @Autowired
     private CommandRepository customCommands;
+    @Autowired
+    private CounterHandler counterHandler;
     private final UserRepository userRepository;
     private TwitchClient twitchClient;
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
@@ -107,7 +111,7 @@ public class TwitchBot implements BotService
                 .withScheduledThreadPoolExecutor(scheduledThreadPoolExecutor)
                 .withDefaultAuthToken(appOAuth)
                 .build();
-        setupEvents(accessToken);
+        setupEvents();
         joinChannels();
     }
 
@@ -140,7 +144,7 @@ public class TwitchBot implements BotService
         scheduledThreadPoolExecutor.setMaximumPoolSize(Runtime.getRuntime().availableProcessors() * 8);
     }
 
-    private void setupEvents(String accessToken)
+    private void setupEvents()
     {
         SimpleEventHandler handler = twitchClient.getEventManager().getEventHandler(SimpleEventHandler.class);
         handler.onEvent(ChannelMessageEvent.class, this::onChannelMessage);
@@ -155,15 +159,16 @@ public class TwitchBot implements BotService
             String command = event.getMessage().split(" ", 2)[0];
             sfxHandler.play(command);
             twitchCommands.processCommand(cEvent);
+            counterHandler.processCommand(cEvent);
             CustomCommand custom = customCommands.findTwitch(event.getChannel().getName().toLowerCase(), command.toLowerCase());
-            if(custom != null)
+            if (custom != null)
                 event.getTwitchChat().sendMessage(event.getChannel().getName(), custom.getOutput());
         }
     }
 
     private void onWhisper(PrivateMessageEvent event)
     {
-        whisperCommands.processCommand(event, twitchClient);
+        whisperCommands.processCommand(new WhisperCommandEvent(event, twitchClient));
     }
 
     public void joinChannels()

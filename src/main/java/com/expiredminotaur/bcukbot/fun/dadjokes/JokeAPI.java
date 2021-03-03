@@ -3,6 +3,7 @@ package com.expiredminotaur.bcukbot.fun.dadjokes;
 import com.expiredminotaur.bcukbot.command.CommandEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -46,7 +47,7 @@ public class JokeAPI
         return "!API ERROR!";
     }
 
-    public static <R> R jokeCommand(CommandEvent<?, R> event)
+    public static Mono<Void> jokeCommand(CommandEvent<?> event)
     {
         return event.respond(getJoke());
     }

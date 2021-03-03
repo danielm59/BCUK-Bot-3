@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.function.Consumer;
 
-public class DiscordCommandEvent extends CommandEvent<MessageCreateEvent, Mono<Void>>
+public class DiscordCommandEvent extends CommandEvent<MessageCreateEvent>
 {
 
     public DiscordCommandEvent(MessageCreateEvent event)
@@ -31,12 +31,6 @@ public class DiscordCommandEvent extends CommandEvent<MessageCreateEvent, Mono<V
     public Mono<Message> respond(Consumer<EmbedCreateSpec> embed)
     {
         return event.getMessage().getChannel().flatMap(c -> c.createMessage(m -> m.setEmbed(embed)));
-    }
-
-    @Override
-    public Mono<Void> empty()
-    {
-        return Mono.empty();
     }
 
     @Override

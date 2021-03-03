@@ -1,6 +1,8 @@
 package com.expiredminotaur.bcukbot.command;
 
-public abstract class CommandEvent<T, R>
+import reactor.core.publisher.Mono;
+
+public abstract class CommandEvent<T>
 {
     protected final T event;
     private String aliased = null;
@@ -27,9 +29,12 @@ public abstract class CommandEvent<T, R>
 
     public abstract String getOriginalMessage();
 
-    public abstract R respond(String message);
+    public abstract Mono<Void> respond(String message);
 
-    public abstract R empty();
+    public Mono<Void> empty()
+    {
+        return Mono.empty();
+    }
 
     public abstract String getSourceName();
 }

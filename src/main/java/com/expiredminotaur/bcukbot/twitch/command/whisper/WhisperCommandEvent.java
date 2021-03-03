@@ -3,8 +3,9 @@ package com.expiredminotaur.bcukbot.twitch.command.whisper;
 import com.expiredminotaur.bcukbot.command.CommandEvent;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.common.events.user.PrivateMessageEvent;
+import reactor.core.publisher.Mono;
 
-public class WhisperCommandEvent extends CommandEvent<PrivateMessageEvent, Void>
+public class WhisperCommandEvent extends CommandEvent<PrivateMessageEvent>
 {
     private final TwitchClient client;
 
@@ -21,16 +22,10 @@ public class WhisperCommandEvent extends CommandEvent<PrivateMessageEvent, Void>
     }
 
     @Override
-    public Void respond(String message)
+    public Mono<Void> respond(String message)
     {
         client.getChat().sendPrivateMessage(event.getUser().getName(), message);
-        return null;
-    }
-
-    @Override
-    public Void empty()
-    {
-        return null;
+        return empty();
     }
 
     @Override
