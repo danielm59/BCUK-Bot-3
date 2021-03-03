@@ -143,6 +143,7 @@ public class SFXView extends HorizontalLayout
                 .withConverter(new StringToIntegerConverter("Invalid number"))
                 .withValidator(new IntegerRangeValidator("Must be greater than zero", 1, Integer.MAX_VALUE))
                 .bind("weight");
+        binder.forField(hidden).bind("hidden");
 
         HorizontalLayout buttons = new HorizontalLayout();
         Button save = new Button("Save", e ->
