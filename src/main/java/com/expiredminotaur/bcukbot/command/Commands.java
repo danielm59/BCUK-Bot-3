@@ -14,9 +14,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public abstract class Commands<C extends Command<E>, E extends CommandEvent<?>>
+public abstract class Commands<E extends CommandEvent<?>>
 {
-    protected final Map<String, C> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    protected final Map<String, Command<E>> commands = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     protected AliasRepository aliasRepository;
     protected CounterHandler counterHandler;
     protected SFXRepository sfxRepository;
@@ -36,7 +36,7 @@ public abstract class Commands<C extends Command<E>, E extends CommandEvent<?>>
 
         if (commands.containsKey(command[0]))
         {
-            C com = commands.get(command[0]);
+            Command<E> com = commands.get(command[0]);
 
             if (com.hasPermission(event))
             {
