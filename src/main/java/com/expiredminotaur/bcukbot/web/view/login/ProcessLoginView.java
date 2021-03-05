@@ -10,6 +10,8 @@ import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 @Route("login/process")
 public class ProcessLoginView extends Div implements AfterNavigationObserver
 {
@@ -24,10 +26,11 @@ public class ProcessLoginView extends Div implements AfterNavigationObserver
     {
         Long userID = userTools.getCurrentUsersID();
 
-        if(users.findById(userID).isPresent())
+        Optional<User> oUser =  users.findById(userID);
+        if(oUser.isPresent())
         {
             String username = userTools.getCurrentUsersName();
-            User user = users.findById(userID).orElse(new User(userID));
+            User user = oUser.get();
             user.setDiscordName(username);
             users.save(user);
             UI.getCurrent().getPage().setLocation("/");
