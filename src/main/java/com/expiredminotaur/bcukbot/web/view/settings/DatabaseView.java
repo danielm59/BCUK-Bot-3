@@ -40,32 +40,7 @@ public class DatabaseView extends VerticalLayout
         layout.addFormItem(discordID, "Discord ID/Reference");
 
         HorizontalLayout buttons = new HorizontalLayout();
-        Button save = new Button("Save", e ->
-        {
-            try
-            {
-                if (binder.isValid())
-                {
-                    User user = new User(-1L);
-                    binder.writeBean(user);
-                    if (user.getDiscordId() != null)
-                        if (users.findById(user.getDiscordId()).isPresent())
-                        {
-                            discordID.setErrorMessage("User already registered");
-                            discordID.setInvalid(true);
-                        } else
-                            users.save(user);
-                    else
-                    {
-                        discordID.setErrorMessage("Required");
-                        discordID.setInvalid(true);
-                    }
-                }
-            } catch (ValidationException ex)
-            {
-                ex.printStackTrace();
-            }
-        });
+        Button save = new Button("Save", e -> save(binder, discordID, users));
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         Button cancel = new Button("Cancel", e -> dialog.close());
         cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
@@ -74,6 +49,33 @@ public class DatabaseView extends VerticalLayout
         dialog.add(layout, buttons);
         dialog.setCloseOnOutsideClick(false);
         dialog.open();
+    }
+
+    private void save(Binder<User> binder, TextField discordID, UserRepository users)
+    {
+        try
+        {
+            if (binder.isValid())
+            {
+                User user = new User(-1L);
+                binder.writeBean(user);
+                if (user.getDiscordId() != null)
+                    if (users.findById(user.getDiscordId()).isPresent())
+                    {
+                        discordID.setErrorMessage("User already registered");
+                        discordID.setInvalid(true);
+                    } else
+                        users.save(user);
+                else
+                {
+                    discordID.setErrorMessage("Required");
+                    discordID.setInvalid(true);
+                }
+            }
+        } catch (ValidationException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     private void resetCache(CacheManager cacheManager)
