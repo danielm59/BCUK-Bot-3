@@ -21,18 +21,6 @@ public class User
     @ManyToMany(mappedBy = "twitchEnabledUsers", fetch = FetchType.EAGER)
     private Set<CustomCommand> EnabledTwitchCommands;
 
-    /**
-     * Only to be used by the database
-     */
-    protected User()
-    {
-    }
-
-    public User(Long discordId)
-    {
-        this.discordId = discordId;
-    }
-
     public Long getDiscordId()
     {
         return discordId;

@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
+import java.util.Objects;
+
 @Route(value = "settings/database", layout = MainLayout.class)
 public class DatabaseView extends VerticalLayout
 {
@@ -36,11 +38,13 @@ public class DatabaseView extends VerticalLayout
 
         TextField discordID = new TextField();
         binder.forField(discordID).withConverter(new StringToLongConverter("Invalid Discord ID"))
-                .bind(User::getDiscordId, User::setDiscordId);
+                .withValidator(Objects::nonNull, "Required")
+                .withValidator(v -> !users.findById(v).isPresent(), "User already registered")
+                .bind("discordId");
         layout.addFormItem(discordID, "Discord ID/Reference");
 
         HorizontalLayout buttons = new HorizontalLayout();
-        Button save = new Button("Save", e -> save(binder, discordID, users));
+        Button save = new Button("Save", e -> save(binder, users, dialog));
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         Button cancel = new Button("Cancel", e -> dialog.close());
         cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
@@ -51,27 +55,18 @@ public class DatabaseView extends VerticalLayout
         dialog.open();
     }
 
-    private void save(Binder<User> binder, TextField discordID, UserRepository users)
+    private void save(Binder<User> binder, UserRepository users, Dialog dialog)
     {
         try
         {
             if (binder.isValid())
             {
-                User user = new User(-1L);
+                User user = new User();
                 binder.writeBean(user);
-                if (user.getDiscordId() != null)
-                    if (users.findById(user.getDiscordId()).isPresent())
-                    {
-                        discordID.setErrorMessage("User already registered");
-                        discordID.setInvalid(true);
-                    } else
-                        users.save(user);
-                else
-                {
-                    discordID.setErrorMessage("Required");
-                    discordID.setInvalid(true);
-                }
+                users.save(user);
+                dialog.close();
             }
+            binder.validate();
         } catch (ValidationException ex)
         {
             ex.printStackTrace();
