@@ -24,7 +24,7 @@ public class UserTools
         return getPrincipalAttribute("username");
     }
 
-    public Long getCurrentUsersID()
+    public long getCurrentUsersID()
     {
         return Long.parseLong(getPrincipalAttribute("id"));
     }
