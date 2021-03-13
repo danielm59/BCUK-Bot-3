@@ -43,7 +43,7 @@ public abstract class CollectionView<T> extends VerticalLayout
         grid.setColumns("id", dataField, "source", "date");
         grid.setSizeFull();
 
-        if (userTools.isCurrentUserAdmin())
+        if (userTools.isCurrentUserMod() || userTools.isCurrentUserAdmin())
         {
             grid.addColumn(new ComponentRenderer<>(joke -> new Button("Edit", e -> edit(joke))))
                     .setHeader("Edit")

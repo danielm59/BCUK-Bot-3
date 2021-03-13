@@ -22,10 +22,12 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 import javax.annotation.PostConstruct;
 
 @Route(value = "settings/stream_announcements", layout = MainLayout.class)
+@Secured("ADMIN")
 public class StreamAnnouncementsView extends VerticalLayout
 {
     private final ComboBox<Group> groupList = new ComboBox<>();

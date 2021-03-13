@@ -34,6 +34,11 @@ public class UserTools
         return users.findById(getCurrentUsersID()).map(User::isAdmin).orElse(false);
     }
 
+    public boolean isCurrentUserMod()
+    {
+        return users.findById(getCurrentUsersID()).map(User::isMod).orElse(false);
+    }
+
     public String getCurrentUsersToken()
     {
         OAuth2AuthenticationToken oauthToken = getAuthentication();

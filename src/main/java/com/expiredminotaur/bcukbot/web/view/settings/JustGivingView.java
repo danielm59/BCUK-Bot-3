@@ -17,9 +17,11 @@ import com.vaadin.flow.router.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.vaadin.gatanaso.MultiselectComboBox;
 
 @Route(value = "settings/justgiving", layout = MainLayout.class)
+@Secured("ADMIN")
 public class JustGivingView extends VerticalLayout
 {
     private final Logger logger = LoggerFactory.getLogger(JustGivingView.class);

@@ -19,11 +19,13 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.vaadin.gatanaso.MultiselectComboBox;
 
 import java.util.stream.Collectors;
 
 @Route(value = "commands", layout = MainLayout.class)
+@Secured({"MOD","ADMIN"})
 public class CommandsView extends HorizontalLayout
 {
     private final UserRepository users;

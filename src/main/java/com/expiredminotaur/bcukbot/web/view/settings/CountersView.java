@@ -16,10 +16,12 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 import javax.annotation.PostConstruct;
 
 @Route(value = "settings/counters", layout = MainLayout.class)
+@Secured({"MOD", "ADMIN"})
 public class CountersView extends VerticalLayout
 {
     private final Grid<Counter> counterGrid = new Grid<>(Counter.class);

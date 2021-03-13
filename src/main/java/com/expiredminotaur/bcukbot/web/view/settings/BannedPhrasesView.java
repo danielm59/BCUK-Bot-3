@@ -11,8 +11,10 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 @Route(layout = MainLayout.class, value = "settings/banned_phrases")
+@Secured({"MOD", "ADMIN"})
 public class BannedPhrasesView extends HorizontalLayout
 {
     private final BannedPhraseRepository data;

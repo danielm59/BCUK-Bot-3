@@ -18,8 +18,10 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 @Route(value = "settings/alias", layout = MainLayout.class)
+@Secured({"MOD", "ADMIN"})
 public class AliasView extends VerticalLayout
 {
     private final AliasRepository aliasRepository;

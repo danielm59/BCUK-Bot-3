@@ -17,6 +17,7 @@ public class User
     private String twitchName;
     private String twitchOAuth;
     private boolean isAdmin = false;
+    private boolean isMod = false;
     private boolean isTwitchBotEnabled = false;
     @ManyToMany(mappedBy = "twitchEnabledUsers", fetch = FetchType.EAGER)
     private Set<CustomCommand> EnabledTwitchCommands;
@@ -69,6 +70,16 @@ public class User
     public void setAdmin(boolean admin)
     {
         isAdmin = admin;
+    }
+
+    public boolean isMod()
+    {
+        return isMod;
+    }
+
+    public void setMod(boolean mod)
+    {
+        isMod = mod;
     }
 
     public boolean isTwitchBotEnabled()

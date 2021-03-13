@@ -9,10 +9,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 
 import javax.annotation.PostConstruct;
 
 @Route(value = "minecraft", layout = MainLayout.class)
+@Secured("ADMIN")
 public class MinecraftWhitelistView extends VerticalLayout
 {
     private final WhitelistRepository whitelist;

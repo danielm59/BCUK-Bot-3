@@ -17,10 +17,12 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.security.access.annotation.Secured;
 
 import java.util.Objects;
 
 @Route(value = "settings/database", layout = MainLayout.class)
+@Secured("ADMIN")
 public class DatabaseView extends VerticalLayout
 {
     public DatabaseView(@Autowired UserRepository users, @Autowired CacheManager cacheManager)
