@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.web.layout;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.web.security.SecurityUtils;
 import com.expiredminotaur.bcukbot.web.security.UserTools;
 import com.expiredminotaur.bcukbot.web.view.MainView;
@@ -52,7 +53,7 @@ public class MainLayout extends AppLayout
         menu.addThemeVariants(MenuBarVariant.LUMO_PRIMARY);
 
         menu.addItem("Home", e -> UI.getCurrent().navigate(MainView.class));
-        if (userTools.isCurrentUserMod() || userTools.isCurrentUserAdmin())
+        if (userTools.hasAccess(Role.MOD))
         {
             setupBots(menu.addItem("Bots").getSubMenu());
         }
@@ -60,7 +61,7 @@ public class MainLayout extends AppLayout
         MenuItem collections = menu.addItem("Collections");
         if (SecurityUtils.isAccessGranted(MinecraftWhitelistView.class, userTools))
             menu.addItem("Minecraft Whitelist", e -> UI.getCurrent().navigate(MinecraftWhitelistView.class));
-        if (userTools.isCurrentUserMod() || userTools.isCurrentUserAdmin())
+        if (userTools.hasAccess(Role.MOD))
         {
             setupSettings(menu.addItem("Settings").getSubMenu());
         }

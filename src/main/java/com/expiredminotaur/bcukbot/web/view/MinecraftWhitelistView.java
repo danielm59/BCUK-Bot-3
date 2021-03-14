@@ -1,20 +1,21 @@
 package com.expiredminotaur.bcukbot.web.view;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.minecraft.Whitelist;
 import com.expiredminotaur.bcukbot.sql.minecraft.WhitelistRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 
 import javax.annotation.PostConstruct;
 
 @Route(value = "minecraft", layout = MainLayout.class)
-@Secured("ADMIN")
+@AccessLevel(Role.ADMIN)
 public class MinecraftWhitelistView extends VerticalLayout
 {
     private final WhitelistRepository whitelist;

@@ -1,8 +1,10 @@
 package com.expiredminotaur.bcukbot.web.view.settings;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.sfx.SFX;
 import com.expiredminotaur.bcukbot.sql.sfx.SFXRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -28,7 +30,6 @@ import elemental.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,7 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 @Route(value = "settings/sfx", layout = MainLayout.class)
-@Secured("ADMIN")
+@AccessLevel(Role.ADMIN)
 public class SFXView extends HorizontalLayout
 {
     private final Logger log = LoggerFactory.getLogger(SFXView.class);

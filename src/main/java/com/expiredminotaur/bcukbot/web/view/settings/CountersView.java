@@ -1,8 +1,10 @@
 package com.expiredminotaur.bcukbot.web.view.settings;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.counter.Counter;
 import com.expiredminotaur.bcukbot.sql.counter.CounterRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -16,12 +18,11 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 
 import javax.annotation.PostConstruct;
 
 @Route(value = "settings/counters", layout = MainLayout.class)
-@Secured({"MOD", "ADMIN"})
+@AccessLevel(Role.MOD)
 public class CountersView extends VerticalLayout
 {
     private final Grid<Counter> counterGrid = new Grid<>(Counter.class);

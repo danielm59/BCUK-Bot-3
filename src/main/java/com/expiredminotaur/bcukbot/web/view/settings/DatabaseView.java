@@ -1,8 +1,10 @@
 package com.expiredminotaur.bcukbot.web.view.settings;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.user.User;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -17,12 +19,11 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.security.access.annotation.Secured;
 
 import java.util.Objects;
 
 @Route(value = "settings/database", layout = MainLayout.class)
-@Secured("ADMIN")
+@AccessLevel(Role.ADMIN)
 public class DatabaseView extends VerticalLayout
 {
     public DatabaseView(@Autowired UserRepository users, @Autowired CacheManager cacheManager)

@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.web.view.collection;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.web.security.UserTools;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -43,7 +44,7 @@ public abstract class CollectionView<T> extends VerticalLayout
         grid.setColumns("id", dataField, "source", "date");
         grid.setSizeFull();
 
-        if (userTools.isCurrentUserMod() || userTools.isCurrentUserAdmin())
+        if (userTools.hasAccess(Role.MOD))
         {
             grid.addColumn(new ComponentRenderer<>(joke -> new Button("Edit", e -> edit(joke))))
                     .setHeader("Edit")

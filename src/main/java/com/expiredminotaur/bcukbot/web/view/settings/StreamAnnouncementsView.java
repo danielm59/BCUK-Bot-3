@@ -1,10 +1,12 @@
 package com.expiredminotaur.bcukbot.web.view.settings;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.group.Group;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.group.GroupRepository;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.streamer.Streamer;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.streamer.StreamerRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
@@ -22,12 +24,11 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 
 import javax.annotation.PostConstruct;
 
 @Route(value = "settings/stream_announcements", layout = MainLayout.class)
-@Secured("ADMIN")
+@AccessLevel(Role.ADMIN)
 public class StreamAnnouncementsView extends VerticalLayout
 {
     private final ComboBox<Group> groupList = new ComboBox<>();

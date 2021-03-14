@@ -1,10 +1,12 @@
 package com.expiredminotaur.bcukbot.web.view.bot;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.command.custom.CommandRepository;
 import com.expiredminotaur.bcukbot.sql.command.custom.CustomCommand;
 import com.expiredminotaur.bcukbot.sql.user.User;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -19,13 +21,12 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.vaadin.gatanaso.MultiselectComboBox;
 
 import java.util.stream.Collectors;
 
 @Route(value = "commands", layout = MainLayout.class)
-@Secured({"MOD","ADMIN"})
+@AccessLevel(Role.MOD)
 public class CommandsView extends HorizontalLayout
 {
     private final UserRepository users;

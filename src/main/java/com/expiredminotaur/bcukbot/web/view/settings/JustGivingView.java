@@ -1,10 +1,12 @@
 package com.expiredminotaur.bcukbot.web.view.settings;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.justgiving.JustGivingAPI;
 import com.expiredminotaur.bcukbot.justgiving.JustGivingSettings;
 import com.expiredminotaur.bcukbot.sql.user.User;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Label;
@@ -17,11 +19,10 @@ import com.vaadin.flow.router.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.vaadin.gatanaso.MultiselectComboBox;
 
 @Route(value = "settings/justgiving", layout = MainLayout.class)
-@Secured("ADMIN")
+@AccessLevel(Role.ADMIN)
 public class JustGivingView extends VerticalLayout
 {
     private final Logger logger = LoggerFactory.getLogger(JustGivingView.class);

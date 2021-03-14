@@ -1,8 +1,10 @@
 package com.expiredminotaur.bcukbot.web.view.settings;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.twitch.bannedphrase.BannedPhrase;
 import com.expiredminotaur.bcukbot.sql.twitch.bannedphrase.BannedPhraseRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -11,10 +13,9 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 
 @Route(layout = MainLayout.class, value = "settings/banned_phrases")
-@Secured({"MOD", "ADMIN"})
+@AccessLevel(Role.MOD)
 public class BannedPhrasesView extends HorizontalLayout
 {
     private final BannedPhraseRepository data;
