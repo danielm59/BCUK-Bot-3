@@ -8,7 +8,7 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "twitch/bot", layout = MainLayout.class)
-@AccessLevel(Role.MOD)
+@AccessLevel(Role.MANAGER)
 public class TwitchBotView extends BotView
 {
     public TwitchBotView(@Autowired TwitchBot bot)

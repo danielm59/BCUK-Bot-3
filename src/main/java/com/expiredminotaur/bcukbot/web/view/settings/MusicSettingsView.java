@@ -18,7 +18,7 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "settings/music", layout = MainLayout.class)
-@AccessLevel(Role.ADMIN)
+@AccessLevel(Role.MANAGER)
 public class MusicSettingsView extends VerticalLayout
 {
     public MusicSettingsView(@Autowired Settings settings)

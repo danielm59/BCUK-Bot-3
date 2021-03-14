@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 
 @Route(value = "settings/stream_announcements", layout = MainLayout.class)
-@AccessLevel(Role.ADMIN)
+@AccessLevel(Role.MANAGER)
 public class StreamAnnouncementsView extends VerticalLayout
 {
     private final ComboBox<Group> groupList = new ComboBox<>();

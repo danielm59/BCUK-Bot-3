@@ -1,4 +1,4 @@
-package com.expiredminotaur.bcukbot.web.view.settings;
+package com.expiredminotaur.bcukbot.web.view.commands;
 
 import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.sfx.SFX;
@@ -38,7 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 @Route(value = "settings/sfx", layout = MainLayout.class)
-@AccessLevel(Role.ADMIN)
+@AccessLevel(Role.MOD)
 public class SFXView extends HorizontalLayout
 {
     private final Logger log = LoggerFactory.getLogger(SFXView.class);

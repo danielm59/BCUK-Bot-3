@@ -6,25 +6,25 @@ import com.expiredminotaur.bcukbot.web.security.UserTools;
 import com.expiredminotaur.bcukbot.web.view.MainView;
 import com.expiredminotaur.bcukbot.web.view.MinecraftWhitelistView;
 import com.expiredminotaur.bcukbot.web.view.MusicView;
-import com.expiredminotaur.bcukbot.web.view.bot.CommandsView;
+import com.expiredminotaur.bcukbot.web.view.admin.DatabaseView;
 import com.expiredminotaur.bcukbot.web.view.bot.DiscordBotView;
 import com.expiredminotaur.bcukbot.web.view.bot.TwitchBotView;
 import com.expiredminotaur.bcukbot.web.view.collection.ClipView;
 import com.expiredminotaur.bcukbot.web.view.collection.JokeView;
 import com.expiredminotaur.bcukbot.web.view.collection.QuoteView;
-import com.expiredminotaur.bcukbot.web.view.settings.AliasView;
-import com.expiredminotaur.bcukbot.web.view.settings.BannedPhrasesView;
-import com.expiredminotaur.bcukbot.web.view.settings.CountersView;
-import com.expiredminotaur.bcukbot.web.view.settings.DatabaseView;
+import com.expiredminotaur.bcukbot.web.view.commands.AliasView;
+import com.expiredminotaur.bcukbot.web.view.commands.BannedPhrasesView;
+import com.expiredminotaur.bcukbot.web.view.commands.CommandsView;
+import com.expiredminotaur.bcukbot.web.view.commands.CountersView;
+import com.expiredminotaur.bcukbot.web.view.commands.SFXView;
 import com.expiredminotaur.bcukbot.web.view.settings.JustGivingView;
 import com.expiredminotaur.bcukbot.web.view.settings.MusicSettingsView;
-import com.expiredminotaur.bcukbot.web.view.settings.SFXView;
 import com.expiredminotaur.bcukbot.web.view.settings.StreamAnnouncementsView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
-import com.vaadin.flow.component.contextmenu.MenuItem;
+import com.vaadin.flow.component.contextmenu.HasMenuItems;
 import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -53,24 +53,26 @@ public class MainLayout extends AppLayout
         menu.addThemeVariants(MenuBarVariant.LUMO_PRIMARY);
 
         menu.addItem("Home", e -> UI.getCurrent().navigate(MainView.class));
-        if (userTools.hasAccess(Role.MOD))
+        setupCollections(menu.addItem("Collections").getSubMenu());
+        addMenuItem(menu,"Music", MusicView.class);
+        if(userTools.hasAccess(Role.MOD))
+        {
+            setupCommands(menu.addItem("Commands").getSubMenu());
+        }
+        if (userTools.hasAccess(Role.MANAGER))
         {
             setupBots(menu.addItem("Bots").getSubMenu());
         }
-        menu.addItem("Music", e -> UI.getCurrent().navigate(MusicView.class));
-        MenuItem collections = menu.addItem("Collections");
-        if (SecurityUtils.isAccessGranted(MinecraftWhitelistView.class, userTools))
-            menu.addItem("Minecraft Whitelist", e -> UI.getCurrent().navigate(MinecraftWhitelistView.class));
-        if (userTools.hasAccess(Role.MOD))
+        addMenuItem(menu,"Minecraft Whitelist", MinecraftWhitelistView.class);
+        if (userTools.hasAccess(Role.MANAGER))
         {
             setupSettings(menu.addItem("Settings").getSubMenu());
         }
+        if (userTools.hasAccess(Role.ADMIN))
+        {
+            setupAdmin(menu.addItem("Admin").getSubMenu());
+        }
         menu.addItem("Logout", e -> UI.getCurrent().getPage().setLocation("/logout"));
-
-        SubMenu collectionsSubMenu = collections.getSubMenu();
-        collectionsSubMenu.addItem("Quotes", e -> UI.getCurrent().navigate(QuoteView.class));
-        collectionsSubMenu.addItem("Jokes", e -> UI.getCurrent().navigate(JokeView.class));
-        collectionsSubMenu.addItem("Clips", e -> UI.getCurrent().navigate(ClipView.class));
 
         addToNavbar(true, logo, menu);
 
@@ -79,29 +81,44 @@ public class MainLayout extends AppLayout
         setContent(childWrapper);
     }
 
-    private void setupBots(SubMenu botsSubMenu)
+    private void setupBots(SubMenu subMenu)
     {
-        addSubMenuItem(botsSubMenu,"Discord", DiscordBotView.class);
-        addSubMenuItem(botsSubMenu,"Twitch", TwitchBotView.class);
-        addSubMenuItem(botsSubMenu,"Commands", CommandsView.class);
+        addMenuItem(subMenu,"Discord", DiscordBotView.class);
+        addMenuItem(subMenu,"Twitch", TwitchBotView.class);
     }
 
-    private void setupSettings(SubMenu settingSubMenu)
+    private void setupCommands(SubMenu subMenu)
     {
-        addSubMenuItem(settingSubMenu, "Stream Announcements", StreamAnnouncementsView.class);
-        addSubMenuItem(settingSubMenu, "Counters", CountersView.class);
-        addSubMenuItem(settingSubMenu, "SFX", SFXView.class);
-        addSubMenuItem(settingSubMenu, "Music", MusicSettingsView.class);
-        addSubMenuItem(settingSubMenu, "Database", DatabaseView.class);
-        addSubMenuItem(settingSubMenu, "Alias", AliasView.class);
-        addSubMenuItem(settingSubMenu, "Banned Phrases", BannedPhrasesView.class);
-        addSubMenuItem(settingSubMenu, "JustGiving", JustGivingView.class);
+        addMenuItem(subMenu,"Commands", CommandsView.class);
+        addMenuItem(subMenu, "Counters", CountersView.class);
+        addMenuItem(subMenu, "SFX", SFXView.class);
+        addMenuItem(subMenu, "Alias", AliasView.class);
+        addMenuItem(subMenu, "Banned Phrases", BannedPhrasesView.class);
     }
 
-    private void addSubMenuItem(SubMenu subMenu, String name, Class<? extends Component> view)
+    private void setupCollections(SubMenu subMenu)
+    {
+        addMenuItem(subMenu,"Quotes", QuoteView.class);
+        addMenuItem(subMenu,"Jokes", JokeView.class);
+        addMenuItem(subMenu,"Clips", ClipView.class);
+    }
+
+    private void setupSettings(SubMenu subMenu)
+    {
+        addMenuItem(subMenu, "Stream Announcements", StreamAnnouncementsView.class);
+        addMenuItem(subMenu, "Music", MusicSettingsView.class);
+        addMenuItem(subMenu, "JustGiving", JustGivingView.class);
+    }
+
+    private void setupAdmin(SubMenu subMenu)
+    {
+        addMenuItem(subMenu, "Database", DatabaseView.class);
+    }
+
+    private void addMenuItem(HasMenuItems menu, String name, Class<? extends Component> view)
     {
         if (SecurityUtils.isAccessGranted(view, userTools))
-            subMenu.addItem(name, e -> UI.getCurrent().navigate(view));
+            menu.addItem(name, e -> UI.getCurrent().navigate(view));
     }
 
     @Override

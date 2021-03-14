@@ -8,7 +8,7 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "discord/bot", layout = MainLayout.class)
-@AccessLevel(Role.MOD)
+@AccessLevel(Role.MANAGER)
 public class DiscordBotView extends BotView
 {
     public DiscordBotView(@Autowired DiscordBot bot)

@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.gatanaso.MultiselectComboBox;
 
 @Route(value = "settings/justgiving", layout = MainLayout.class)
-@AccessLevel(Role.ADMIN)
+@AccessLevel(Role.MANAGER)
 public class JustGivingView extends VerticalLayout
 {
     private final Logger logger = LoggerFactory.getLogger(JustGivingView.class);

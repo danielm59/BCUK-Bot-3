@@ -1,4 +1,4 @@
-package com.expiredminotaur.bcukbot.web.view.settings;
+package com.expiredminotaur.bcukbot.web.view.commands;
 
 import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.command.alias.Alias;

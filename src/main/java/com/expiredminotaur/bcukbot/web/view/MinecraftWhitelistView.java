@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.PostConstruct;
 
 @Route(value = "minecraft", layout = MainLayout.class)
-@AccessLevel(Role.ADMIN)
+@AccessLevel(Role.MANAGER)
 public class MinecraftWhitelistView extends VerticalLayout
 {
     private final WhitelistRepository whitelist;
