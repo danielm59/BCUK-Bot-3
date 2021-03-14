@@ -1,7 +1,9 @@
 package com.expiredminotaur.bcukbot.web.view.settings;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.json.Settings;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -15,7 +17,8 @@ import com.vaadin.flow.data.validator.LongRangeValidator;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "settings/music", layout = MainLayout.class)
+@Route(value = "music_settings", layout = MainLayout.class)
+@AccessLevel(Role.MANAGER)
 public class MusicSettingsView extends VerticalLayout
 {
     public MusicSettingsView(@Autowired Settings settings)

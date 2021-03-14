@@ -1,6 +1,6 @@
 package com.expiredminotaur.bcukbot.web.security;
 
-import com.expiredminotaur.bcukbot.sql.user.User;
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,14 +24,9 @@ public class UserTools
         return getPrincipalAttribute("username");
     }
 
-    public Long getCurrentUsersID()
+    public long getCurrentUsersID()
     {
         return Long.parseLong(getPrincipalAttribute("id"));
-    }
-
-    public boolean isCurrentUserAdmin()
-    {
-        return users.findById(getCurrentUsersID()).map(User::isAdmin).orElse(false);
     }
 
     public String getCurrentUsersToken()
@@ -59,5 +54,10 @@ public class UserTools
             }
         }
         return error;
+    }
+
+    public boolean hasAccess(Role accessLevel)
+    {
+        return users.findById(getCurrentUsersID()).map(u -> u.getAccessLevel().getValue() >= accessLevel.getValue()).orElse(false);
     }
 }

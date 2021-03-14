@@ -1,8 +1,10 @@
-package com.expiredminotaur.bcukbot.web.view.settings;
+package com.expiredminotaur.bcukbot.web.view.commands;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.command.alias.Alias;
 import com.expiredminotaur.bcukbot.sql.command.alias.AliasRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -19,7 +21,8 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "settings/alias", layout = MainLayout.class)
+@Route(value = "alias", layout = MainLayout.class)
+@AccessLevel(Role.MOD)
 public class AliasView extends VerticalLayout
 {
     private final AliasRepository aliasRepository;

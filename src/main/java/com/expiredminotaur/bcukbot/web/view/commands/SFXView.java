@@ -1,8 +1,10 @@
-package com.expiredminotaur.bcukbot.web.view.settings;
+package com.expiredminotaur.bcukbot.web.view.commands;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.sfx.SFX;
 import com.expiredminotaur.bcukbot.sql.sfx.SFXRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -35,7 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-@Route(value = "settings/sfx", layout = MainLayout.class)
+@Route(value = "sfx", layout = MainLayout.class)
+@AccessLevel(Role.MOD)
 public class SFXView extends HorizontalLayout
 {
     private final Logger log = LoggerFactory.getLogger(SFXView.class);

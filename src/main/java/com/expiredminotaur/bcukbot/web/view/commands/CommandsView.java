@@ -1,10 +1,12 @@
-package com.expiredminotaur.bcukbot.web.view.bot;
+package com.expiredminotaur.bcukbot.web.view.commands;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.command.custom.CommandRepository;
 import com.expiredminotaur.bcukbot.sql.command.custom.CustomCommand;
 import com.expiredminotaur.bcukbot.sql.user.User;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -24,6 +26,7 @@ import org.vaadin.gatanaso.MultiselectComboBox;
 import java.util.stream.Collectors;
 
 @Route(value = "commands", layout = MainLayout.class)
+@AccessLevel(Role.MOD)
 public class CommandsView extends HorizontalLayout
 {
     private final UserRepository users;
