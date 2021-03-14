@@ -7,6 +7,7 @@ import com.expiredminotaur.bcukbot.web.view.MainView;
 import com.expiredminotaur.bcukbot.web.view.MinecraftWhitelistView;
 import com.expiredminotaur.bcukbot.web.view.MusicView;
 import com.expiredminotaur.bcukbot.web.view.admin.DatabaseView;
+import com.expiredminotaur.bcukbot.web.view.admin.UsersView;
 import com.expiredminotaur.bcukbot.web.view.bot.DiscordBotView;
 import com.expiredminotaur.bcukbot.web.view.bot.TwitchBotView;
 import com.expiredminotaur.bcukbot.web.view.collection.ClipView;
@@ -113,6 +114,7 @@ public class MainLayout extends AppLayout
     private void setupAdmin(SubMenu subMenu)
     {
         addMenuItem(subMenu, "Database", DatabaseView.class);
+        addMenuItem(subMenu, "Users", UsersView.class);
     }
 
     private void addMenuItem(HasMenuItems menu, String name, Class<? extends Component> view)

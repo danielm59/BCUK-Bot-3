@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
-@Route(value = "settings/counters", layout = MainLayout.class)
+@Route(value = "counters", layout = MainLayout.class)
 @AccessLevel(Role.MOD)
 public class CountersView extends VerticalLayout
 {

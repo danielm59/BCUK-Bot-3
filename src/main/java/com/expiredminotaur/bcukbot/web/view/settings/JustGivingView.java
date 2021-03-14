@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.gatanaso.MultiselectComboBox;
 
-@Route(value = "settings/justgiving", layout = MainLayout.class)
+@Route(value = "justgiving", layout = MainLayout.class)
 @AccessLevel(Role.MANAGER)
 public class JustGivingView extends VerticalLayout
 {

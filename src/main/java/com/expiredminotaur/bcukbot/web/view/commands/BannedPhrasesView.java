@@ -14,7 +14,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(layout = MainLayout.class, value = "settings/banned_phrases")
+@Route(layout = MainLayout.class, value = "banned_phrases")
 @AccessLevel(Role.MOD)
 public class BannedPhrasesView extends HorizontalLayout
 {

@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-@Route(value = "settings/sfx", layout = MainLayout.class)
+@Route(value = "sfx", layout = MainLayout.class)
 @AccessLevel(Role.MOD)
 public class SFXView extends HorizontalLayout
 {

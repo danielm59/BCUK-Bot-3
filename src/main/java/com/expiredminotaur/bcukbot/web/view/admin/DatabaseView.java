@@ -22,7 +22,7 @@ import org.springframework.cache.CacheManager;
 
 import java.util.Objects;
 
-@Route(value = "settings/database", layout = MainLayout.class)
+@Route(value = "database", layout = MainLayout.class)
 @AccessLevel(Role.ADMIN)
 public class DatabaseView extends VerticalLayout
 {

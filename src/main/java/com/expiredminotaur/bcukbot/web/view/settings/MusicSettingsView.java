@@ -17,7 +17,7 @@ import com.vaadin.flow.data.validator.LongRangeValidator;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "settings/music", layout = MainLayout.class)
+@Route(value = "music_settings", layout = MainLayout.class)
 @AccessLevel(Role.MANAGER)
 public class MusicSettingsView extends VerticalLayout
 {

@@ -21,7 +21,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "settings/alias", layout = MainLayout.class)
+@Route(value = "alias", layout = MainLayout.class)
 @AccessLevel(Role.MOD)
 public class AliasView extends VerticalLayout
 {
