@@ -10,24 +10,29 @@ public enum Role
     MANAGER(2),
     ADMIN(3);
 
-    private int value;
-    private static Map<Integer, Role> map = new HashMap<>();
+    private final int value;
+    private static final Map<Integer, Role> map = new HashMap<>();
 
-    private Role(int value) {
+    Role(int value)
+    {
         this.value = value;
     }
 
-    static {
-        for (Role role : Role.values()) {
+    static
+    {
+        for (Role role : Role.values())
+        {
             map.put(role.value, role);
         }
     }
 
-    public static Role valueOf(int pageType) {
-        return map.get(pageType);
+    public static Role valueOf(int roleId)
+    {
+        return map.get(roleId);
     }
 
-    public int getValue() {
+    public int getValue()
+    {
         return value;
     }
 }
