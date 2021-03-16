@@ -3,12 +3,12 @@ package com.expiredminotaur.bcukbot.web.view.commands;
 import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.command.alias.Alias;
 import com.expiredminotaur.bcukbot.sql.command.alias.AliasRepository;
+import com.expiredminotaur.bcukbot.web.component.Form;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
 import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Paragraph;
@@ -16,7 +16,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +32,11 @@ public class AliasView extends VerticalLayout
     {
         this.aliasRepository = aliasRepository;
         setSizeFull();
-        Button addButton = new Button("Add", e -> edit(new Alias()));
+        EditForm editForm = new EditForm();
+        Button addButton = new Button("Add", e -> editForm.open(new Alias()));
         grid.setColumns("shortCommand", "fullCommand");
         grid.setItems(aliasRepository.findAll());
-        grid.addColumn(new ComponentRenderer<>(alias -> new Button("Edit", e -> edit(alias))))
+        grid.addColumn(new ComponentRenderer<>(alias -> new Button("Edit", e -> editForm.open(alias))))
                 .setHeader("Edit")
                 .setFlexGrow(0);
         grid.addColumn(new ComponentRenderer<>(alias -> new Button("Delete", e -> delete(alias))))
@@ -46,56 +46,28 @@ public class AliasView extends VerticalLayout
         add(addButton, grid);
     }
 
-    private void edit(Alias alias)
+    private class EditForm extends Form<Alias>
     {
-        Dialog dialog = new Dialog();
-        FormLayout layout = new FormLayout();
-        layout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
-                new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
-
-        TextField shortC = new TextField();
-        shortC.setWidthFull();
-        shortC.setRequired(true);
-        layout.addFormItem(shortC, "Short Command");
-        binder.bind(shortC, "shortCommand");
-
-        TextField fullC = new TextField();
-        fullC.setWidthFull();
-        fullC.setRequired(true);
-        layout.addFormItem(fullC, "Full Command");
-        binder.bind(fullC, "fullCommand");
-
-        dialog.add(layout, createEditButtons(alias, dialog));
-
-        binder.readBean(alias);
-        dialog.open();
-    }
-
-    private HorizontalLayout createEditButtons(Alias data, Dialog editDialog)
-    {
-        HorizontalLayout buttons = new HorizontalLayout();
-        Button save = new Button("Save", e -> save(data, editDialog));
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Button cancel = new Button("Cancel", e -> editDialog.close());
-        cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-        buttons.add(save, cancel);
-        buttons.setJustifyContentMode(JustifyContentMode.END);
-        return buttons;
-    }
-
-    private void save(Alias data, Dialog editDialog)
-    {
-        try
+        public EditForm()
         {
-            binder.writeBean(data);
+            super(Alias.class);
+
+            TextField shortC = new TextField();
+            shortC.setWidthFull();
+            shortC.setRequired(true);
+            addField("Short Command", shortC, "shortCommand", null);
+
+            TextField fullC = new TextField();
+            fullC.setWidthFull();
+            fullC.setRequired(true);
+            addField("Full Command", fullC, "fullCommand", null);
+        }
+
+        @Override
+        protected void saveData(Alias data)
+        {
             aliasRepository.save(data);
             grid.setItems(aliasRepository.findAll());
-            editDialog.close();
-
-        } catch (ValidationException ex)
-        {
-            ex.printStackTrace();
         }
     }
 
