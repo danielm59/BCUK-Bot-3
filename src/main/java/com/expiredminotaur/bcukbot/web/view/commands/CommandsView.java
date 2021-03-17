@@ -5,13 +5,11 @@ import com.expiredminotaur.bcukbot.sql.command.custom.CommandRepository;
 import com.expiredminotaur.bcukbot.sql.command.custom.CustomCommand;
 import com.expiredminotaur.bcukbot.sql.user.User;
 import com.expiredminotaur.bcukbot.sql.user.UserRepository;
+import com.expiredminotaur.bcukbot.web.component.Form;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
 import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -59,7 +57,8 @@ public class CommandsView extends HorizontalLayout
         grid.setItems(commands.findAll());
         grid.setColumns("trigger", "output", "discordEnabled");
         grid.addColumn(c -> c.getTwitchEnabledUsers().stream().map(User::getTwitchName).collect(Collectors.joining(", "))).setHeader("Twitch Enabled");
-        grid.addColumn(new ComponentRenderer<>(c -> new Button("Edit", e -> edit(c)))).setFlexGrow(0).setHeader("Edit");
+        EditForm editForm = new EditForm();
+        grid.addColumn(new ComponentRenderer<>(c -> new Button("Edit", e -> editForm.open(c)))).setFlexGrow(0).setHeader("Edit");
         grid.getColumns().forEach(c -> c.setAutoWidth(true));
         grid.recalculateColumnWidths();
 
@@ -88,70 +87,26 @@ public class CommandsView extends HorizontalLayout
         setFlexGrow(1, right);
     }
 
-    private void edit(CustomCommand command)
+    private class EditForm extends Form<CustomCommand>
     {
-        Dialog editDialog = new Dialog();
-        editDialog.setWidth("60%");
-        editDialog.setCloseOnOutsideClick(false);
 
-        Binder<CustomCommand> binder = new Binder<>(CustomCommand.class);
-        editDialog.add(createForm(binder), createButtons(binder, command, editDialog));
-
-        binder.readBean(command);
-        editDialog.open();
-    }
-
-    private FormLayout createForm(Binder<CustomCommand> binder)
-    {
-        FormLayout layout = new FormLayout();
-        layout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
-                new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
-
-        TextField trigger = new TextField();
-        TextField output = new TextField();
-        output.setWidthFull();
-        Checkbox discord = new Checkbox();
-        MultiselectComboBox<User> twitchUsers = new MultiselectComboBox<>();
-        twitchUsers.setItemLabelGenerator(User::getTwitchName);
-        twitchUsers.setItems(users.chatBotUsers());
-
-        binder.bind(trigger, "trigger");
-        binder.bind(output, "output");
-        binder.bind(discord, "discordEnabled");
-        binder.bind(twitchUsers, "twitchEnabledUsers");
-
-        layout.addFormItem(trigger, "Trigger");
-        layout.addFormItem(output, "Output");
-        layout.addFormItem(discord, "Enable on Discord");
-        layout.addFormItem(twitchUsers, "Users");
-        return layout;
-    }
-
-    private HorizontalLayout createButtons(Binder<CustomCommand> binder, CustomCommand command, Dialog editDialog)
-    {
-        HorizontalLayout buttons = new HorizontalLayout();
-        Button save = new Button("Save", e ->
+        public EditForm()
         {
-            try
-            {
-                binder.writeBean(command);
-                commands.save(command);
-                binder.readBean(new CustomCommand());
-                grid.setItems(commands.findAll());
-                grid.recalculateColumnWidths();
-            } catch (ValidationException validationException)
-            {
-                validationException.printStackTrace();
-            }
+            super(CustomCommand.class);
+            addField("Trigger", new TextField(), "trigger").setWidthFull();
+            addField("Output", new TextField(), "output").setWidthFull();
+            addField("Discord Enabled", new Checkbox(), "discordEnabled");
+            MultiselectComboBox<User> twitchUsers = addField("Users", new MultiselectComboBox<>(), "twitchEnabledUsers");
+            twitchUsers.setItemLabelGenerator(User::getTwitchName);
+            twitchUsers.setItems(users.chatBotUsers());
         }
-        );
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Button cancel = new Button("Cancel", e -> editDialog.close());
-        cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-        buttons.add(save, cancel);
-        buttons.setJustifyContentMode(JustifyContentMode.END);
-        return buttons;
-    }
 
+        @Override
+        protected void saveData(CustomCommand data)
+        {
+            commands.save(data);
+            grid.setItems(commands.findAll());
+            grid.recalculateColumnWidths();
+        }
+    }
 }
