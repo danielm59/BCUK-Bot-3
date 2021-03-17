@@ -24,13 +24,19 @@ public abstract class Form<T>
                 new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
     }
 
-    protected <S> void addField(String label, AbstractField<?, S> component, String field, Converter<S, ?> converter)
+    protected <F extends AbstractField<?, S>, S> F addField(String label, F component, String field)
+    {
+        return addField(label, component, field, null);
+    }
+
+    protected <F extends AbstractField<?, S>, S> F addField(String label, F component, String field, Converter<S, ?> converter)
     {
         layout.addFormItem(component, label);
         Binder.BindingBuilder<T, S> b = binder.forField(component);
         if (converter != null)
             b.withConverter(converter);
         b.bind(field);
+        return component;
     }
 
     public void open(T data)

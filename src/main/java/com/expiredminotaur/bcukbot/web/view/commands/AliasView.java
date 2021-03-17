@@ -15,7 +15,6 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ public class AliasView extends VerticalLayout
 {
     private final AliasRepository aliasRepository;
     private final Grid<Alias> grid = new Grid<>(Alias.class);
-    private final Binder<Alias> binder = new Binder<>(Alias.class);
 
     public AliasView(@Autowired AliasRepository aliasRepository)
     {
@@ -52,15 +50,13 @@ public class AliasView extends VerticalLayout
         {
             super(Alias.class);
 
-            TextField shortC = new TextField();
+            TextField shortC = addField("Short Command", new TextField(), "shortCommand");
             shortC.setWidthFull();
             shortC.setRequired(true);
-            addField("Short Command", shortC, "shortCommand", null);
 
-            TextField fullC = new TextField();
+            TextField fullC = addField("Full Command", new TextField(), "fullCommand");
             fullC.setWidthFull();
             fullC.setRequired(true);
-            addField("Full Command", fullC, "fullCommand", null);
         }
 
         @Override

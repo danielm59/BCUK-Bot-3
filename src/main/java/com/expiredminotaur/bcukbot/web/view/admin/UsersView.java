@@ -44,22 +44,11 @@ public class UsersView extends VerticalLayout
         EditForm()
         {
             super(User.class);
-
-            TextField discordId = new TextField();
-            addField("Discord ID", discordId, "discordId", new StringToLongConverter(""));
-            discordId.setEnabled(false);
-
-            TextField discordName = new TextField();
-            addField("Discord Name", discordName, "discordName", null);
-            discordName.setEnabled(false);
-
-            addField("Twitch Name", new TextField(), "twitchName", null);
-
-            ComboBox<Role> accessLevel = new ComboBox<>();
-            addField("Access Level", accessLevel, "accessLevel", null);
-            accessLevel.setItems(Role.values());
-
-            addField("Twitch Bot Enabled", new Checkbox(), "twitchBotEnabled", null);
+            addField("Discord ID", new TextField(), "discordId", new StringToLongConverter("")).setEnabled(false);
+            addField("Discord Name", new TextField(), "discordName").setEnabled(false);
+            addField("Twitch Name", new TextField(), "twitchName");
+            addField("Access Level", new ComboBox<>(), "accessLevel").setItems(Role.values());
+            addField("Twitch Bot Enabled", new Checkbox(), "twitchBotEnabled");
         }
 
         @Override
