@@ -18,23 +18,20 @@ public abstract class CollectionView<T> extends VerticalLayout
     private final Grid<T> grid;
     private final UserTools userTools;
     private final CrudRepository<T, Integer> repository;
-    private final EditForm editForm;
-    private String dataField;
-    private String label;
+    private final Class<T> type;
+    private EditForm editForm;
 
     public CollectionView(UserTools userTools, CrudRepository<T, Integer> repository, Class<T> type)
     {
         this.userTools = userTools;
         this.repository = repository;
         this.grid = new Grid<>(type);
-        this.editForm = new EditForm(type);
-
+        this.type = type;
     }
 
     protected void setup(String title, String dataField, String label)
     {
-        this.dataField = dataField;
-        this.label = label;
+        this.editForm = new EditForm(type, dataField, label);
         setSizeFull();
         H2 header = new H2(title);
         grid.setColumns("id", dataField, "source", "date");
@@ -57,7 +54,7 @@ public abstract class CollectionView<T> extends VerticalLayout
 
     private class EditForm extends Form<T>
     {
-        public EditForm(Class<T> type)
+        public EditForm(Class<T> type, String dataField, String label)
         {
             super(type);
             addField(label, new TextField(), dataField).setWidthFull();
