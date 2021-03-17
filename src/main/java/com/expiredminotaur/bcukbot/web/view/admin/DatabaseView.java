@@ -1,7 +1,6 @@
 package com.expiredminotaur.bcukbot.web.view.admin;
 
 import com.expiredminotaur.bcukbot.Role;
-import com.expiredminotaur.bcukbot.sql.user.UserRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
 import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
@@ -15,7 +14,7 @@ import org.springframework.cache.CacheManager;
 @AccessLevel(Role.ADMIN)
 public class DatabaseView extends VerticalLayout
 {
-    public DatabaseView(@Autowired UserRepository users, @Autowired CacheManager cacheManager)
+    public DatabaseView(@Autowired CacheManager cacheManager)
     {
         Button resetCacheButton = new Button("Reset Cache", e -> resetCache(cacheManager));
         add(resetCacheButton);
