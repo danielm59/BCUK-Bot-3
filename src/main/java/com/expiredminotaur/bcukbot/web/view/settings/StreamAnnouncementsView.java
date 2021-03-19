@@ -5,6 +5,7 @@ import com.expiredminotaur.bcukbot.sql.twitch.streams.group.Group;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.group.GroupRepository;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.streamer.Streamer;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.streamer.StreamerRepository;
+import com.expiredminotaur.bcukbot.web.component.Form;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
 import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
@@ -14,7 +15,6 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -45,7 +45,8 @@ public class StreamAnnouncementsView extends VerticalLayout
         groupList.setItemLabelGenerator(Group::getName);
         groupList.setClearButtonVisible(true);
         groupList.addValueChangeListener(this::groupChangeEvent);
-        Button addGroup = new Button("Add Group", e -> addGroup());
+        AddGroupForm addGroupForm = new AddGroupForm();
+        Button addGroup = new Button("Add Group", e -> addGroupForm.open(new Group()));
         groupLayout.add(groupList, addGroup);
         groupInfo.setVisible(false);
         add(groupLayout, groupInfo);
@@ -67,49 +68,6 @@ public class StreamAnnouncementsView extends VerticalLayout
             groupInfo.setGroup(event.getValue());
             groupInfo.setVisible(true);
         }
-    }
-
-    private void addGroup()
-    {
-        Dialog addGroupDialog = new Dialog();
-        addGroupDialog.setCloseOnOutsideClick(false);
-        FormLayout layout = new FormLayout();
-        layout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
-                new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
-
-        TextField nameFiled = new TextField();
-        nameFiled.setWidthFull();
-
-        Binder<Group> binder = new Binder<>(Group.class);
-        binder.forField(nameFiled).bind("name");
-        layout.addFormItem(nameFiled, "Name");
-
-        HorizontalLayout buttons = new HorizontalLayout();
-        Button save = new Button("Save", e ->
-        {
-            try
-            {
-                Group newGroup = new Group();
-                binder.writeBean(newGroup);
-                groups.save(newGroup);
-                initData();
-                addGroupDialog.close();
-
-            } catch (ValidationException ex)
-            {
-                ex.printStackTrace();
-            }
-        });
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Button cancel = new Button("Cancel", e -> addGroupDialog.close());
-        cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-        buttons.add(save, cancel);
-        buttons.setJustifyContentMode(JustifyContentMode.END);
-
-        addGroupDialog.add(layout, buttons);
-
-        addGroupDialog.open();
     }
 
     private class GroupInfo extends HorizontalLayout
@@ -136,8 +94,10 @@ public class StreamAnnouncementsView extends VerticalLayout
             Button save = new Button("Save", e -> saveGroup());
             save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
+            EditStreamerForm streamerForm = new EditStreamerForm();
+
             streamersGrid.setColumns("name");
-            streamersGrid.addColumn(new ComponentRenderer<>(streamer -> new Button("Edit", e -> editStreamer(streamer))))
+            streamersGrid.addColumn(new ComponentRenderer<>(streamer -> new Button("Edit", e -> streamerForm.open(streamer))))
                     .setHeader("Edit")
                     .setFlexGrow(0);
             streamersGrid.addColumn(new ComponentRenderer<>(streamer -> new Button("Delete", e -> deleteStreamer(streamer))))
@@ -146,7 +106,7 @@ public class StreamAnnouncementsView extends VerticalLayout
             streamersGrid.getColumns().forEach(c -> c.setAutoWidth(true));
             streamersGrid.recalculateColumnWidths();
 
-            Button addStreamer = new Button("Add Streamer", e -> editStreamer(new Streamer()));
+            Button addStreamer = new Button("Add Streamer", e -> streamerForm.open(new Streamer()));
             addStreamer.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
             binder.forField(discordChannelId)
@@ -162,51 +122,6 @@ public class StreamAnnouncementsView extends VerticalLayout
             StreamerLayout.add(streamersGrid, addStreamer);
 
             add(infoLayout, StreamerLayout);
-        }
-
-        private void editStreamer(Streamer streamer)
-        {
-            Dialog addStreamerDialog = new Dialog();
-            addStreamerDialog.setCloseOnOutsideClick(false);
-            FormLayout layout = new FormLayout();
-            layout.setResponsiveSteps(
-                    new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
-                    new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
-
-            TextField nameFiled = new TextField();
-            nameFiled.setWidthFull();
-
-            Binder<Streamer> binder = new Binder<>(Streamer.class);
-            binder.forField(nameFiled).bind("name");
-            layout.addFormItem(nameFiled, "Name");
-            binder.readBean(streamer);
-
-            HorizontalLayout buttons = new HorizontalLayout();
-            Button save = new Button("Save", e ->
-            {
-                try
-                {
-                    binder.writeBean(streamer);
-                    streamer.setGroup(group);
-                    streamers.save(streamer);
-                    group.getStreamers().add(streamer);
-                    streamersGrid.getDataProvider().refreshAll();
-                    addStreamerDialog.close();
-
-                } catch (ValidationException ex)
-                {
-                    ex.printStackTrace();
-                }
-            });
-            save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            Button cancel = new Button("Cancel", e -> addStreamerDialog.close());
-            cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-            buttons.add(save, cancel);
-            buttons.setJustifyContentMode(JustifyContentMode.END);
-
-            addStreamerDialog.add(layout, buttons);
-
-            addStreamerDialog.open();
         }
 
         private void deleteStreamer(Streamer streamer)
@@ -252,6 +167,41 @@ public class StreamAnnouncementsView extends VerticalLayout
             this.group = group;
             binder.readBean(group);
             streamersGrid.setItems(group.getStreamers());
+        }
+
+        private class EditStreamerForm extends Form<Streamer>
+        {
+
+            public EditStreamerForm()
+            {
+                super(Streamer.class);
+                addField("Name", new TextField(), "name").setWidthFull();
+            }
+
+            @Override
+            protected void saveData(Streamer data)
+            {
+                streamers.save(data);
+                group.getStreamers().add(data);
+                streamersGrid.getDataProvider().refreshAll();
+            }
+        }
+    }
+
+    private class AddGroupForm extends Form<Group>
+    {
+
+        public AddGroupForm()
+        {
+            super(Group.class);
+            addField("Name", new TextField(), "name").setWidthFull();
+        }
+
+        @Override
+        protected void saveData(Group data)
+        {
+            groups.save(data);
+            initData();
         }
     }
 }
