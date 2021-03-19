@@ -3,15 +3,13 @@ package com.expiredminotaur.bcukbot.web.view.commands;
 import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.sfx.SFX;
 import com.expiredminotaur.bcukbot.sql.sfx.SFXRepository;
+import com.expiredminotaur.bcukbot.web.component.Form;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
 import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -19,12 +17,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.data.validator.IntegerRangeValidator;
-import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.router.Route;
 import elemental.json.Json;
 import org.slf4j.Logger;
@@ -98,10 +92,11 @@ public class SFXView extends HorizontalLayout
 
         VerticalLayout commandManagerLayout = new VerticalLayout();
 
-        Button addTriggerButton = new Button("Add Trigger", e -> new sfxForm(new SFX()).open());
+        SfxForm sfxForm = new SfxForm();
+        Button addTriggerButton = new Button("Add Trigger", e -> sfxForm.open(new SFX()));
 
         sfxCommandGrid.setColumns("triggerCommand", "file", "weight", "hidden");
-        sfxCommandGrid.addColumn(new ComponentRenderer<>(sfx -> new Button("Edit", e -> new sfxForm(sfx).open())))
+        sfxCommandGrid.addColumn(new ComponentRenderer<>(sfx -> new Button("Edit", e -> sfxForm.open(sfx))))
                 .setHeader("Edit")
                 .setFlexGrow(0);
         sfxCommandGrid.setItems(sfxCommands.findAll());
@@ -114,69 +109,23 @@ public class SFXView extends HorizontalLayout
         setFlexGrow(1, commandManagerLayout);
     }
 
-    private class sfxForm extends Dialog
+    private class SfxForm extends Form<SFX>
     {
-        private final Binder<SFX> binder = new Binder<>(SFX.class);
-
-        public sfxForm(SFX sfx)
+        public SfxForm()
         {
-            FormLayout formLayout = new FormLayout();
-            formLayout.setResponsiveSteps(
-                    new FormLayout.ResponsiveStep("0", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
-                    new FormLayout.ResponsiveStep("600px", 1, FormLayout.ResponsiveStep.LabelsPosition.ASIDE));
-
-            TextField triggerCommand = new TextField();
-            ComboBox<String> sfxFile = new ComboBox<>();
-            sfxFile.setItems(folder.list());
-            TextField weight = new TextField();
-            Checkbox hidden = new Checkbox();
-
-            formLayout.addFormItem(triggerCommand, "Trigger Command");
-            formLayout.addFormItem(sfxFile, "SFX file");
-            formLayout.addFormItem(weight, "Weight");
-            formLayout.addFormItem(hidden, "Hidden");
-
-            binder.forField(triggerCommand)
-                    .withValidator(new StringLengthValidator("Must be entered", 1, Integer.MAX_VALUE))
-                    .bind("triggerCommand");
-            binder.forField(sfxFile)
-                    .withValidator(new StringLengthValidator("Must be entered", 1, Integer.MAX_VALUE))
-                    .bind("file");
-            binder.forField(weight)
-                    .withConverter(new StringToIntegerConverter("Invalid number"))
-                    .withValidator(new IntegerRangeValidator("Must be greater than zero", 1, Integer.MAX_VALUE))
-                    .bind("weight");
-            binder.forField(hidden).bind("hidden");
-
-            HorizontalLayout buttons = new HorizontalLayout();
-            Button save = new Button("Save", e -> save(sfx));
-            save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            Button cancel = new Button("Cancel", e -> close());
-            cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-            buttons.add(save, cancel);
-            buttons.setJustifyContentMode(JustifyContentMode.END);
-
-            add(formLayout, buttons);
-
-            binder.readBean(sfx);
+            super(SFX.class);
+            addField("Trigger Command", new TextField(), "triggerCommand");
+            addField("SFX File", new ComboBox<>(), "file").setItems(folder.list());
+            addField("Weight", new TextField(), "weight", new StringToIntegerConverter("Invalid number"));
+            addField("Hidden", new Checkbox(), "hidden");
         }
 
-        private void save(SFX sfx)
+        @Override
+        protected void saveData(SFX data)
         {
-            try
-            {
-                if (binder.isValid())
-                {
-                    binder.writeBean(sfx);
-                    sfxCommands.save(sfx);
-                    sfxCommandGrid.setItems(sfxCommands.findAll());
-                    sfxCommandGrid.recalculateColumnWidths();
-                    close();
-                }
-            } catch (ValidationException ex)
-            {
-                ex.printStackTrace();
-            }
+            sfxCommands.save(data);
+            sfxCommandGrid.setItems(sfxCommands.findAll());
+            sfxCommandGrid.recalculateColumnWidths();
         }
     }
 }
