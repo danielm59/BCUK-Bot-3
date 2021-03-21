@@ -23,7 +23,7 @@ public class BanHandler
             {
                 if (event.getOriginalMessage().toLowerCase().contains(bannedPhrase.getPhrase().toLowerCase()))
                 {
-                    event.respond("/ban " + event.getEvent().getUser().getName() + " Banned Phrase: " + bannedPhrase.getPhrase());
+                    event.getEvent().ban(event.getEvent().getUser().getName(), "Banned Phrase: " + bannedPhrase.getPhrase());
                     return true;
                 }
             }
