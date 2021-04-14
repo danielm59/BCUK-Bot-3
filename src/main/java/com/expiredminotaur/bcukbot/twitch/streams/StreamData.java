@@ -2,7 +2,6 @@ package com.expiredminotaur.bcukbot.twitch.streams;
 
 import com.expiredminotaur.bcukbot.discord.DiscordBot;
 import com.expiredminotaur.bcukbot.sql.twitch.streams.group.Group;
-import com.expiredminotaur.bcukbot.twitch.TwitchBot;
 import com.github.twitch4j.helix.domain.Stream;
 import discord4j.core.object.entity.Message;
 
@@ -11,15 +10,13 @@ import java.util.concurrent.TimeUnit;
 
 public class StreamData
 {
-    private final TwitchBot twitchBot;
     private final DiscordBot discordBot;
     private Stream stream;
     private long lastUpdated;
     private Message discordMessage;
 
-    public StreamData(TwitchBot twitchBot, DiscordBot discordBot)
+    public StreamData(DiscordBot discordBot)
     {
-        this.twitchBot = twitchBot;
         this.discordBot = discordBot;
         lastUpdated = System.currentTimeMillis();
     }
@@ -74,18 +71,16 @@ public class StreamData
     {
         String name = stream.getUserName().replace("_", "\\_");
         message = message.replace("%channel%", name);
-        message = message.replace("%game%", getGame());
+        message = message.replace("%game%", stream.getGameName());
         message = message.replace("%link%", String.format("https://www.twitch.tv/%s", stream.getUserName().toLowerCase()));
         return message;
     }
 
     public String getGame()
     {
-        return twitchBot.getGameName(stream.getGameId());
-    }
-
-    public DiscordBot getDiscordBot()
-    {
-        return discordBot;
+        String game = stream.getGameName();
+        if(game == null)
+            return "something";
+        return stream.getGameName();
     }
 }

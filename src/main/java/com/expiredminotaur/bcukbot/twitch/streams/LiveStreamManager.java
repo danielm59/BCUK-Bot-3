@@ -45,7 +45,7 @@ public class LiveStreamManager
                 List<Stream> streams = twitchBot.getStreams(streamerNames);
                 streams.forEach(s ->
                 {
-                    StreamData streamData = groupData.computeIfAbsent(s.getUserName().toLowerCase(), n -> new StreamData(twitchBot, discordBot));
+                    StreamData streamData = groupData.computeIfAbsent(s.getUserName().toLowerCase(), n -> new StreamData(discordBot));
                     streamData.update(group, s);
                 });
             }

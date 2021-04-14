@@ -17,7 +17,6 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import com.github.twitch4j.common.events.user.PrivateMessageEvent;
-import com.github.twitch4j.helix.domain.Game;
 import com.github.twitch4j.helix.domain.Stream;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -32,7 +31,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -192,19 +190,5 @@ public class TwitchBot implements BotService
     public List<Stream> getStreams(List<String> channels)
     {
         return twitchClient.getHelix().getStreams(accessToken, "", null, 1, null, null, null, channels).execute().getStreams();
-    }
-
-    //TODO: cache game names
-    public String getGameName(String gameId)
-    {
-        if (gameId != null)
-        {
-            List<Game> games = twitchClient.getHelix().getGames(accessToken, Collections.singletonList(gameId), null).execute().getGames();
-            if (games.size() == 1)
-            {
-                return games.get(0).getName();
-            }
-        }
-        return "?Unknown Game?";
     }
 }

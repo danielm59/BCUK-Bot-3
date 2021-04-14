@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.sql.user;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.command.custom.CustomCommand;
 
 import javax.persistence.Entity;
@@ -16,22 +17,10 @@ public class User
     private String discordName;
     private String twitchName;
     private String twitchOAuth;
-    private boolean isAdmin = false;
+    private int accessLevel;
     private boolean isTwitchBotEnabled = false;
     @ManyToMany(mappedBy = "twitchEnabledUsers", fetch = FetchType.EAGER)
     private Set<CustomCommand> EnabledTwitchCommands;
-
-    /**
-     * Only to be used by the database
-     */
-    protected User()
-    {
-    }
-
-    public User(Long discordId)
-    {
-        this.discordId = discordId;
-    }
 
     public Long getDiscordId()
     {
@@ -73,14 +62,14 @@ public class User
         this.twitchOAuth = twitchOAuth;
     }
 
-    public boolean isAdmin()
+    public Role getAccessLevel()
     {
-        return isAdmin;
+        return Role.valueOf(accessLevel);
     }
 
-    public void setAdmin(boolean admin)
+    public void setAccessLevel(Role accessLevel)
     {
-        isAdmin = admin;
+        this.accessLevel = accessLevel.getValue();
     }
 
     public boolean isTwitchBotEnabled()

@@ -1,8 +1,11 @@
-package com.expiredminotaur.bcukbot.web.view.settings;
+package com.expiredminotaur.bcukbot.web.view.commands;
 
+import com.expiredminotaur.bcukbot.Role;
 import com.expiredminotaur.bcukbot.sql.counter.Counter;
 import com.expiredminotaur.bcukbot.sql.counter.CounterRepository;
+import com.expiredminotaur.bcukbot.web.component.Form;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
+import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -12,19 +15,19 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
-@Route(value = "settings/counters", layout = MainLayout.class)
+@Route(value = "counters", layout = MainLayout.class)
+@AccessLevel(Role.MOD)
 public class CountersView extends VerticalLayout
 {
     private final Grid<Counter> counterGrid = new Grid<>(Counter.class);
     @Autowired
     private CounterRepository counters;
+    private final CounterForm counterForm = new CounterForm();
 
     public CountersView()
     {
@@ -35,7 +38,7 @@ public class CountersView extends VerticalLayout
         HorizontalLayout buttons = new HorizontalLayout();
         Button addBlameButton = new Button("Add Blame", e -> addBlame());
         addBlameButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Button addCounterButton = new Button("Add Counter", e -> addCounter(new Counter()));
+        Button addCounterButton = new Button("Add Counter", e -> counterForm.open(new Counter()));
         addCounterButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttons.add(addBlameButton, addCounterButton);
         add(header, counterGrid, buttons);
@@ -45,6 +48,7 @@ public class CountersView extends VerticalLayout
     private void initData()
     {
         counterGrid.setItems(counters.findAll());
+        counterGrid.recalculateColumnWidths();
     }
 
     private void addBlame()
@@ -66,7 +70,7 @@ public class CountersView extends VerticalLayout
             blameCounter.setIncrementMessage(String.format("%s has been blamed again!", name));
             blameCounter.setMessage(String.format("%s has been blamed %%d times this year", name));
 
-            addCounter(blameCounter);
+            counterForm.open(blameCounter);
 
             blameDialog.close();
         });
@@ -80,58 +84,23 @@ public class CountersView extends VerticalLayout
         blameDialog.open();
     }
 
-    private void addCounter(Counter counter)
+    private class CounterForm extends Form<Counter>
     {
-        Binder<Counter> binder = new Binder<>(Counter.class);
 
-        Dialog addCounterDialog = new Dialog();
-        addCounterDialog.setCloseOnOutsideClick(false);
-        FormLayout layout = new FormLayout();
-
-        TextField triggerCommand = new TextField();
-        layout.addFormItem(triggerCommand, "Trigger Command");
-        binder.bind(triggerCommand, "triggerCommand");
-        triggerCommand.setWidthFull();
-
-        TextField checkCommand = new TextField();
-        layout.addFormItem(checkCommand, "Check Command");
-        binder.bind(checkCommand, "checkCommand");
-        checkCommand.setWidthFull();
-
-        TextField incrementMessage = new TextField();
-        layout.addFormItem(incrementMessage, "Increment Message");
-        binder.bind(incrementMessage, "incrementMessage");
-        incrementMessage.setWidthFull();
-
-        TextField message = new TextField();
-        layout.addFormItem(message, "Message");
-        binder.bind(message, "message");
-        message.setWidthFull();
-
-        binder.readBean(counter);
-
-        HorizontalLayout buttons = new HorizontalLayout();
-        Button save = new Button("Save", e ->
+        public CounterForm()
         {
-            try
-            {
-                binder.writeBean(counter);
-                counters.save(counter);
-                initData();
-                addCounterDialog.close();
+            super(Counter.class);
+            addField("Trigger Command", new TextField(), "triggerCommand").setWidthFull();
+            addField("Check Command", new TextField(), "checkCommand").setWidthFull();
+            addField("Increment Message", new TextField(), "incrementMessage").setWidthFull();
+            addField("Message", new TextField(), "message").setWidthFull();
+        }
 
-            } catch (ValidationException ex)
-            {
-                ex.printStackTrace();
-            }
-        });
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Button cancel = new Button("Cancel", e -> addCounterDialog.close());
-        cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-        buttons.add(save, cancel);
-        buttons.setJustifyContentMode(JustifyContentMode.END);
-
-        addCounterDialog.add(layout, buttons);
-        addCounterDialog.open();
+        @Override
+        protected void saveData(Counter data)
+        {
+            counters.save(data);
+            initData();
+        }
     }
 }
