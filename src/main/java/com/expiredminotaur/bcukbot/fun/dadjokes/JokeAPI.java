@@ -18,7 +18,7 @@ public class JokeAPI
     {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Accept", "text/plain");
-        conn.setRequestProperty("User-Agent", "https://gitlab.com/BCUK_Dev/BCUK_Bot");
+        conn.setRequestProperty("User-Agent", "https://github.com/Battle-Cattle/BCUK-Bot-3");
         if (conn.getResponseCode() != 200)
         {
             throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode() + " From:" + url.toString());
