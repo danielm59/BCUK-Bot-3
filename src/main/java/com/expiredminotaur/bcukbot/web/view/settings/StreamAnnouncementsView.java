@@ -181,6 +181,7 @@ public class StreamAnnouncementsView extends VerticalLayout
             @Override
             protected void saveData(Streamer data)
             {
+                data.setGroup(group);
                 streamers.save(data);
                 group.getStreamers().add(data);
                 streamersGrid.getDataProvider().refreshAll();

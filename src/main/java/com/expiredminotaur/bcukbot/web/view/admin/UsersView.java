@@ -47,7 +47,7 @@ public class UsersView extends VerticalLayout
             addField("Discord ID", new TextField(), "discordId", new StringToLongConverter("")).setEnabled(false);
             addField("Discord Name", new TextField(), "discordName").setEnabled(false);
             addField("Twitch Name", new TextField(), "twitchName");
-            addField("Access Level", new ComboBox<>(), "accessLevel").setItems(Role.values());
+            addField("Access Level", new ComboBox<Role>(), "accessLevel").setItems(Role.values());
             addField("Twitch Bot Enabled", new Checkbox(), "twitchBotEnabled");
         }
 

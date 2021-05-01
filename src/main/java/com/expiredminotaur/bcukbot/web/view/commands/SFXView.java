@@ -115,7 +115,7 @@ public class SFXView extends HorizontalLayout
         {
             super(SFX.class);
             addField("Trigger Command", new TextField(), "triggerCommand");
-            addField("SFX File", new ComboBox<>(), "file").setItems(folder.list());
+            addField("SFX File", new ComboBox<String>(), "file").setItems(folder.list());
             addField("Weight", new TextField(), "weight", new StringToIntegerConverter("Invalid number"));
             addField("Hidden", new Checkbox(), "hidden");
         }
