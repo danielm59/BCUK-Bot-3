@@ -2,6 +2,7 @@ package com.expiredminotaur.bcukbot.discord.command;
 
 import com.expiredminotaur.bcukbot.command.CommandEvent;
 import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
+import com.expiredminotaur.bcukbot.discord.music.TrackData;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import discord4j.core.object.VoiceState;
 import discord4j.core.object.entity.Member;
@@ -80,7 +81,13 @@ public class DiscordMusicCommands
         AudioTrack track = musicHandler.getScheduler().currentTrack();
         if (track != null)
         {
-            return event.getEvent().getMessage().getChannel().flatMap(mc -> mc.createMessage("Playing: " + track.getInfo().title)).then();
+            String playing = "Playing: " + track.getInfo().title;
+            if (track.getUserData(TrackData.class).getRequestedBy() != null)
+            {
+                playing += " Requested by: " + track.getUserData(TrackData.class).getRequestedBy();
+            }
+            String finalPlaying = playing;
+            return event.getEvent().getMessage().getChannel().flatMap(mc -> mc.createMessage(finalPlaying)).then();
         } else
         {
             return event.getEvent().getMessage().getChannel().flatMap(mc -> mc.createMessage("No Track is currently Playing")).then();

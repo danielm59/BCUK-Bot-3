@@ -39,7 +39,6 @@ public class TrackScheduler extends AudioEventAdapter
     private AudioPlayer player;
     private LinkedBlockingDeque<AudioTrack> queue;
 
-    private boolean sfx = false;
     private boolean resume = false;
 
     void setup(final AudioPlayer player)
@@ -69,7 +68,6 @@ public class TrackScheduler extends AudioEventAdapter
         }
         queue.offerFirst(track);
         player.setVolume(settings.getSfxVolume());
-        sfx = true;
         nextTrack();
         player.setPaused(false);
     }
@@ -87,11 +85,12 @@ public class TrackScheduler extends AudioEventAdapter
     public void nextTrack()
     {
         discordBot.getGateway().updatePresence(Presence.online()).subscribe();
-        if (!sfx)
+        AudioTrack track = queue.poll();
+        if (track == null || !track.getUserData(TrackData.class).isSFX())
         {
             player.setVolume(settings.getMusicVolume());
         }
-        player.startTrack(queue.poll(), false);
+        player.startTrack(track, false);
     }
 
     public BlockingQueue<AudioTrack> getPlaylist()
@@ -102,16 +101,16 @@ public class TrackScheduler extends AudioEventAdapter
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track)
     {
-        if (!sfx)
+        if (!track.getUserData(TrackData.class).isSFX())
         {
             if (!resume)
             {
                 discordBot.getGateway().updatePresence(Presence.online(Activity.listening(currentTrack().getInfo().title))).subscribe();
 
                 String playing = "Playing: " + track.getInfo().title;
-                if (track.getUserData(String.class) != null)
+                if (track.getUserData(TrackData.class).getRequestedBy() != null)
                 {
-                    playing += " Requested by: " + track.getUserData(String.class);
+                    playing += " Requested by: " + track.getUserData(TrackData.class).getRequestedBy();
                 }
 
                 long channelId = settings.getSongAnnouncementChannel();
@@ -129,9 +128,6 @@ public class TrackScheduler extends AudioEventAdapter
             {
                 resume = false;
             }
-        } else
-        {
-            sfx = false;
         }
     }
 

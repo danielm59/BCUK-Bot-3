@@ -145,8 +145,10 @@ public class MusicHandler
             public void trackLoaded(AudioTrack track)
             {
                 event.getMessage().getChannel().flatMap(mc -> mc.createMessage("Adding to queue: " + track.getInfo().title)).subscribe();
+                TrackData data = new TrackData();
                 if (event.getMember().isPresent())
-                    track.setUserData(event.getMember().get().getDisplayName());
+                    data.setRequestedBy(event.getMember().get().getDisplayName());
+                track.setUserData(data);
                 scheduler.queue(track);
             }
 
@@ -157,8 +159,10 @@ public class MusicHandler
                 if (playlist.getName().startsWith("Search results for:"))
                 {
                     AudioTrack track = tracks.get(0);
+                    TrackData data = new TrackData();
                     if (event.getMember().isPresent())
-                        track.setUserData(event.getMember().get().getDisplayName());
+                        data.setRequestedBy(event.getMember().get().getDisplayName());
+                    track.setUserData(data);
                     scheduler.queue(track);
                     event.getMessage().getChannel().flatMap(mc -> mc.createMessage("Adding to queue: " + track.getInfo().title)).subscribe();
                 } else
@@ -166,8 +170,10 @@ public class MusicHandler
                     Collections.shuffle(tracks);
                     for (AudioTrack track : tracks)
                     {
+                        TrackData data = new TrackData();
                         if (event.getMember().isPresent())
-                            track.setUserData(event.getMember().get().getDisplayName());
+                            data.setRequestedBy(event.getMember().get().getDisplayName());
+                        track.setUserData(data);
                         scheduler.queue(track);
                     }
                     event.getMessage().getChannel().flatMap(mc -> mc.createMessage("Adding playlist to queue: " + playlist.getName())).subscribe();
@@ -195,6 +201,9 @@ public class MusicHandler
             @Override
             public void trackLoaded(AudioTrack track)
             {
+                TrackData data = new TrackData();
+                data.setSFX(true);
+                track.setUserData(data);
                 scheduler.playPriority(track);
             }
 
