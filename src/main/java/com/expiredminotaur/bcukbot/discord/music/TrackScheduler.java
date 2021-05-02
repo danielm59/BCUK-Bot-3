@@ -86,7 +86,7 @@ public class TrackScheduler extends AudioEventAdapter
     {
         discordBot.getGateway().updatePresence(Presence.online()).subscribe();
         AudioTrack track = queue.poll();
-        if (track == null || !track.getUserData(TrackData.class).isSFX())
+        if (track == null || !track.getUserData(TrackData.class).isSfx())
         {
             player.setVolume(settings.getMusicVolume());
         }
@@ -101,7 +101,7 @@ public class TrackScheduler extends AudioEventAdapter
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track)
     {
-        if (!track.getUserData(TrackData.class).isSFX())
+        if (!track.getUserData(TrackData.class).isSfx())
         {
             if (!resume)
             {

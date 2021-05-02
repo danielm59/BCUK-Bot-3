@@ -15,12 +15,12 @@ public class TrackData
         this.requestedBy = requestedBy;
     }
 
-    public Boolean isSFX()
+    public Boolean isSfx()
     {
         return sfx;
     }
 
-    public void setSFX(Boolean sfx)
+    public void setSfx(Boolean sfx)
     {
         this.sfx = sfx;
     }

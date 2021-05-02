@@ -202,7 +202,7 @@ public class MusicHandler
             public void trackLoaded(AudioTrack track)
             {
                 TrackData data = new TrackData();
-                data.setSFX(true);
+                data.setSfx(true);
                 track.setUserData(data);
                 scheduler.playPriority(track);
             }
