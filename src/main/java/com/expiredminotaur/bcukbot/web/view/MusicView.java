@@ -1,6 +1,7 @@
 package com.expiredminotaur.bcukbot.web.view;
 
 import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
+import com.expiredminotaur.bcukbot.discord.music.TrackData;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.vaadin.flow.component.grid.Grid;
@@ -30,7 +31,7 @@ public class MusicView extends VerticalLayout
         grid.addColumn(track -> track.getInfo().title).setHeader("Title");
         grid.addColumn(this::getLength).setHeader("Length");
         grid.addColumn(new ComponentRenderer<>(track -> new Anchor(track.getInfo().uri, track.getInfo().uri))).setHeader("Link");
-        grid.addColumn(track -> track.getUserData().toString()).setHeader("Requested By");
+        grid.addColumn(track -> track.getUserData(TrackData.class).getRequestedBy()).setHeader("Requested By");
         grid.getColumns().forEach(c -> c.setAutoWidth(true));
         grid.recalculateColumnWidths();
         add(playingHeader, grid);
