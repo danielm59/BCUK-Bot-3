@@ -59,7 +59,7 @@ public class TrackScheduler extends AudioEventAdapter
     void playPriority(AudioTrack track)
     {
         player.setPaused(true);
-        if (player.getPlayingTrack() != null)
+        if (player.getPlayingTrack() != null && !player.getPlayingTrack().getUserData(TrackData.class).isSfx())
         {
             AudioTrack clone = player.getPlayingTrack().makeClone();
             clone.setPosition(player.getPlayingTrack().getPosition());
