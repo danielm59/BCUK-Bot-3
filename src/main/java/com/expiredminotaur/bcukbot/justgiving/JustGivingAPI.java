@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.justgiving;
 
+import com.expiredminotaur.bcukbot.HttpHandler;
 import com.expiredminotaur.bcukbot.command.CommandEvent;
 import com.expiredminotaur.bcukbot.discord.DiscordBot;
 import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
@@ -20,11 +21,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -86,47 +83,12 @@ public class JustGivingAPI
         }
     }
 
-    private BufferedReader request(URL url) throws Exception
-    {
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-Type", "application/json");
-        switch (conn.getResponseCode())
-        {
-            case 200:
-                return new BufferedReader(new InputStreamReader((conn.getInputStream())));
-            case 304:
-                //no change
-                return null;
-            default:
-                throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode() + " From:" + url.toString());
-        }
-    }
-
-    private void post(URL url, String inputJson) throws Exception
-    {
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/json");
-        conn.setRequestProperty("Accept", "application/json");
-        conn.setDoOutput(true);
-        try(OutputStream os = conn.getOutputStream()) {
-            byte[] input = inputJson.getBytes(StandardCharsets.UTF_8);
-            os.write(input, 0, input.length);
-        }
-        if (conn.getResponseCode() == 200)
-        {
-            return;
-        }
-        throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode() + " From:" + url.toString());
-    }
-
     private void checkForNewData()
     {
         try
         {
             URL url = new URL(String.format("https://api.justgiving.com/%s/v1/fundraising/pages/%s", settings.appId, settings.campaignName));
-            BufferedReader br = request(url);
+            BufferedReader br = HttpHandler.getRequest(url);
             String output;
             if (br != null && (output = br.readLine()) != null)
             {
@@ -200,7 +162,7 @@ public class JustGivingAPI
                 JsonObject json = new JsonObject();
                 json.addProperty("message", totalRaisedMessage);
                 json.addProperty("link", "https://www.justgiving.com/fundraising/" + settings.campaignName);
-                post(new URL(settings.facebookWebhook), json.toString());
+                HttpHandler.postUTF8Request(new URL(settings.facebookWebhook), json.toString());
             }
         } catch (Exception e)
         {
