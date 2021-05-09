@@ -30,7 +30,7 @@ public class SlotGame
         Consumer<EmbedCreateSpec> embedWithResult = embed.andThen(spec ->
                 spec.addField("Outcome", String.join(" ", display), false)
         );
-        Message message = event.respond(embed).block();
+        Message message = event.respond(embedWithResult).block();
         if (message != null)
         {
             scheduler.schedule(() -> update(message, embed, outcome, display, 0), delay, TimeUnit.SECONDS);
