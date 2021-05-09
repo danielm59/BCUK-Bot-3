@@ -1,6 +1,7 @@
 package com.expiredminotaur.bcukbot.twitch;
 
 import com.expiredminotaur.bcukbot.BotService;
+import com.expiredminotaur.bcukbot.HttpHandler;
 import com.expiredminotaur.bcukbot.discord.music.SFXHandler;
 import com.expiredminotaur.bcukbot.fun.counters.CounterHandler;
 import com.expiredminotaur.bcukbot.sql.command.custom.CommandRepository;
@@ -27,8 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
@@ -68,16 +67,7 @@ public class TwitchBot implements BotService
                 "client_id=" + URLEncoder.encode(System.getenv("BCUK_BOT_TWITCH_CLIENT_ID"), "UTF-8") +
                 "&client_secret=" + URLEncoder.encode(System.getenv("BCUK_BOT_TWITCH_CLIENT_SECRET"), "UTF-8") +
                 "&grant_type=client_credentials";
-
-        HttpURLConnection conn = (HttpURLConnection) (new URL(url)).openConnection();
-        conn.setRequestMethod("POST");
-        conn.connect();
-
-        if (conn.getResponseCode() != 200)
-        {
-            throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode() + " Getting access token");
-        }
-        JsonElement json = JsonParser.parseReader(new InputStreamReader(conn.getInputStream()));
+        JsonElement json = JsonParser.parseReader(HttpHandler.postRequest(new URL(url)));
         if (json.isJsonObject())
         {
             return ((JsonObject) json).get("access_token").getAsString();

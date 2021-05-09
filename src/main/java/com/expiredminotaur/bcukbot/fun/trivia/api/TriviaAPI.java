@@ -1,5 +1,6 @@
 package com.expiredminotaur.bcukbot.fun.trivia.api;
 
+import com.expiredminotaur.bcukbot.HttpHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
@@ -7,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Component
@@ -23,21 +22,11 @@ public class TriviaAPI
         getSessionToken();
     }
 
-    private BufferedReader request(URL url) throws Exception
-    {
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        if (conn.getResponseCode() != 200)
-        {
-            throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode() + " From:" + url.toString());
-        }
-        return new BufferedReader(new InputStreamReader((conn.getInputStream())));
-    }
-
     public void getSessionToken()
     {
         try
         {
-            BufferedReader br = request(new URL("https://opentdb.com/api_token.php?command=request"));
+            BufferedReader br = HttpHandler.textRequest(new URL("https://opentdb.com/api_token.php?command=request"));
             String output;
             if ((output = br.readLine()) != null)
             {
@@ -60,7 +49,7 @@ public class TriviaAPI
 
     public Questions.Question getQuestion() throws Exception
     {
-        BufferedReader br = request(new URL(String.format("https://opentdb.com/api.php?amount=1&token=%s", token)));
+        BufferedReader br = HttpHandler.textRequest(new URL(String.format("https://opentdb.com/api.php?amount=1&token=%s", token)));
         String output;
         Questions.Question question = null;
         if ((output = br.readLine()) != null)
@@ -100,7 +89,7 @@ public class TriviaAPI
 
     private void resetSessionToken() throws Exception
     {
-        BufferedReader br = request(new URL(String.format("https://opentdb.com/api_token.php?command=reset&token=%s", token)));
+        BufferedReader br = HttpHandler.textRequest(new URL(String.format("https://opentdb.com/api_token.php?command=reset&token=%s", token)));
         String output;
         if ((output = br.readLine()) != null)
         {
