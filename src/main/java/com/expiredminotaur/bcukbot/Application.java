@@ -8,9 +8,6 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.util.FileSystemUtils;
-
-import java.io.File;
 
 @SpringBootApplication(exclude = {ErrorMvcAutoConfiguration.class})
 @EnableCaching
@@ -21,18 +18,6 @@ public class Application extends SpringBootServletInitializer
 
     public static void main(String[] args)
     {
-        removeConfigFoler();
         SpringApplication.run(Application.class, args);
-    }
-
-    private static void removeConfigFoler()
-    {
-        String directoryPath = "/config/";
-        File file = new File(directoryPath);
-
-        if (!FileSystemUtils.deleteRecursively(file))
-        {
-            logger.warn("Problem occurs when deleting the directory : " + directoryPath);
-        }
     }
 }
