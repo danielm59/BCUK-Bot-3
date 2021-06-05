@@ -21,13 +21,13 @@ public class Application extends SpringBootServletInitializer
 
     public static void main(String[] args)
     {
-        removeConfigFoler();
+        removeConfigFolder();
         SpringApplication.run(Application.class, args);
     }
 
-    private static void removeConfigFoler()
+    private static void removeConfigFolder()
     {
-        String directoryPath = "/config/";
+        String directoryPath = "./config";
         File file = new File(directoryPath);
 
         if (!FileSystemUtils.deleteRecursively(file))
