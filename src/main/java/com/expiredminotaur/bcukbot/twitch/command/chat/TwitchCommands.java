@@ -38,7 +38,7 @@ public class TwitchCommands extends Commands<TwitchCommandEvent>
         commands.put("!Joke", new TwitchCommand(e -> jokeUtils.processCommand(e), TwitchPermissions::everyone));
         commands.put("!Playing", new TwitchCommand(this::playing, TwitchPermissions::everyone));
         commands.put("!Multi", new TwitchCommand(e -> liveStreamManager.getMultiTwitch(e), TwitchPermissions::everyone));
-        commands.put("!GameBlastTotal", new TwitchCommand(e -> justGivingAPI.amountRaised(e), TwitchPermissions::everyone));
+        commands.put("!TotalRaised", new TwitchCommand(e -> justGivingAPI.amountRaised(e), TwitchPermissions::everyone));
     }
 
     private Mono<Void> shoutOut(TwitchCommandEvent e)

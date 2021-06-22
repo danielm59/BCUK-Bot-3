@@ -31,7 +31,7 @@ public class GeneralCategory extends Category
         commands.put("!Quote", new DiscordCommand(e -> quoteUtils.processCommand(e), DiscordPermissions::general));
         commands.put("!Clip", new DiscordCommand(e -> clipUtils.processCommand(e), DiscordPermissions::general));
         commands.put("!Joke", new DiscordCommand(e -> jokeUtils.processCommand(e), DiscordPermissions::general));
-        commands.put("!GameBlastTotal", new DiscordCommand(e -> justGivingAPI.amountRaised(e), DiscordPermissions::general));
+        commands.put("!TotalRaised", new DiscordCommand(e -> justGivingAPI.amountRaised(e), DiscordPermissions::general));
         commands.put("!DadJoke", new DiscordCommand(JokeAPI::jokeCommand, DiscordPermissions::general));
         commands.put("!SFX", new DiscordCommand(e -> e.respond(sfxList()), DiscordPermissions::general));
     }
