@@ -7,6 +7,8 @@ import com.expiredminotaur.bcukbot.web.view.MainView;
 import com.expiredminotaur.bcukbot.web.view.MinecraftWhitelistView;
 import com.expiredminotaur.bcukbot.web.view.MusicView;
 import com.expiredminotaur.bcukbot.web.view.admin.DatabaseView;
+import com.expiredminotaur.bcukbot.web.view.admin.StreamBroadcasterView;
+import com.expiredminotaur.bcukbot.web.view.admin.TaskManagerView;
 import com.expiredminotaur.bcukbot.web.view.admin.UsersView;
 import com.expiredminotaur.bcukbot.web.view.bot.DiscordBotView;
 import com.expiredminotaur.bcukbot.web.view.bot.TwitchBotView;
@@ -55,8 +57,8 @@ public class MainLayout extends AppLayout
 
         menu.addItem("Home", e -> UI.getCurrent().navigate(MainView.class));
         setupCollections(menu.addItem("Collections").getSubMenu());
-        addMenuItem(menu,"Music", MusicView.class);
-        if(userTools.hasAccess(Role.MOD))
+        addMenuItem(menu, "Music", MusicView.class);
+        if (userTools.hasAccess(Role.MOD))
         {
             setupCommands(menu.addItem("Commands").getSubMenu());
         }
@@ -64,7 +66,7 @@ public class MainLayout extends AppLayout
         {
             setupBots(menu.addItem("Bots").getSubMenu());
         }
-        addMenuItem(menu,"Minecraft Whitelist", MinecraftWhitelistView.class);
+        addMenuItem(menu, "Minecraft Whitelist", MinecraftWhitelistView.class);
         if (userTools.hasAccess(Role.MANAGER))
         {
             setupSettings(menu.addItem("Settings").getSubMenu());
@@ -84,13 +86,13 @@ public class MainLayout extends AppLayout
 
     private void setupBots(SubMenu subMenu)
     {
-        addMenuItem(subMenu,"Discord", DiscordBotView.class);
-        addMenuItem(subMenu,"Twitch", TwitchBotView.class);
+        addMenuItem(subMenu, "Discord", DiscordBotView.class);
+        addMenuItem(subMenu, "Twitch", TwitchBotView.class);
     }
 
     private void setupCommands(SubMenu subMenu)
     {
-        addMenuItem(subMenu,"Commands", CommandsView.class);
+        addMenuItem(subMenu, "Commands", CommandsView.class);
         addMenuItem(subMenu, "Counters", CountersView.class);
         addMenuItem(subMenu, "SFX", SFXView.class);
         addMenuItem(subMenu, "Alias", AliasView.class);
@@ -99,9 +101,9 @@ public class MainLayout extends AppLayout
 
     private void setupCollections(SubMenu subMenu)
     {
-        addMenuItem(subMenu,"Quotes", QuoteView.class);
-        addMenuItem(subMenu,"Jokes", JokeView.class);
-        addMenuItem(subMenu,"Clips", ClipView.class);
+        addMenuItem(subMenu, "Quotes", QuoteView.class);
+        addMenuItem(subMenu, "Jokes", JokeView.class);
+        addMenuItem(subMenu, "Clips", ClipView.class);
     }
 
     private void setupSettings(SubMenu subMenu)
@@ -115,6 +117,8 @@ public class MainLayout extends AppLayout
     {
         addMenuItem(subMenu, "Database", DatabaseView.class);
         addMenuItem(subMenu, "Users", UsersView.class);
+        addMenuItem(subMenu, "Stream Broadcaster", StreamBroadcasterView.class);
+        addMenuItem(subMenu, "Task Manager", TaskManagerView.class);
     }
 
     private void addMenuItem(HasMenuItems menu, String name, Class<? extends Component> view)

@@ -106,6 +106,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
                 "/unauthorised",
                 "/playsfx",
                 "/join",
-                "/leave");
+                "/leave",
+                "/stream");
     }
 }
