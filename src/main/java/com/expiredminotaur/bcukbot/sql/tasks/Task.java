@@ -12,7 +12,7 @@ public class Task
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String task;
-    private boolean completed;
+    private boolean completed = false;
 
     public long getId()
     {
