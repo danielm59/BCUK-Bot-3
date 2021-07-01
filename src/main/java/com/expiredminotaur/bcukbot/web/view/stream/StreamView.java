@@ -19,17 +19,17 @@ import java.util.function.Consumer;
 @Route("/stream")
 public class StreamView extends HorizontalLayout
 {
-    private final Paragraph p = new Paragraph();
+    private final Paragraph message = new Paragraph();
     private Registration broadcasterRegistration;
 
     public StreamView()
     {
         setSizeFull();
         setAlignItems(Alignment.CENTER);
-        p.getStyle().set("font-size", "10em")
+        message.getStyle().set("font-size", "10em")
                 .set("text-align", "center");
-        p.setWidthFull();
-        add(p);
+        message.setWidthFull();
+        add(message);
     }
 
     @Override
@@ -37,8 +37,8 @@ public class StreamView extends HorizontalLayout
     {
         UI ui = attachEvent.getUI();
         broadcasterRegistration = Service.register(newMessage ->
-                ui.access(() -> p.setText(newMessage)));
-        ui.access(() -> p.setText(Service.getLastMessage()));
+                ui.access(() -> message.setText(newMessage)));
+        ui.access(() -> message.setText(Service.getLastMessage()));
     }
 
     @Override
@@ -72,10 +72,22 @@ public class StreamView extends HorizontalLayout
 
         public static synchronized void broadcast(String message)
         {
-            lastMessage = message;
-            for (Consumer<String> listener : listeners)
+            try
             {
-                executor.execute(() -> listener.accept(message));
+                for (int i = 0; i <= message.length(); i++)
+                {
+                    String sendMessage = message.substring(0, i);
+                    lastMessage = sendMessage;
+                    for (Consumer<String> listener : listeners)
+                    {
+                        executor.execute(() -> listener.accept(sendMessage));
+                    }
+                    Thread.sleep(100);
+                }
+                Thread.sleep(400);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
             }
         }
 

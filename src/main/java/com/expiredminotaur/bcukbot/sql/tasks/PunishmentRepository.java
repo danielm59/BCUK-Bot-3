@@ -5,11 +5,11 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface TaskRepository extends CrudRepository<Task, Long>
+public interface PunishmentRepository extends CrudRepository<Punishment, Long>
 {
     @Override
     @NotNull
-    List<Task> findAll();
+    List<Punishment> findAll();
 
-    List<Task> findByCompleted(boolean isCompleted);
+    List<Punishment> findByPunishmentGiven(boolean b);
 }

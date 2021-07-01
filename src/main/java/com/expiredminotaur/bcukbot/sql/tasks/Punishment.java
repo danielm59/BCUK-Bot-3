@@ -6,13 +6,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Task
+public class Punishment
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String task;
-    private boolean completed = false;
+    private String punishment;
+    private boolean punishmentGiven = false;
 
     public long getId()
     {
@@ -24,23 +24,23 @@ public class Task
         this.id = id;
     }
 
-    public String getTask()
+    public String getPunishment()
     {
-        return task;
+        return punishment;
     }
 
-    public void setTask(String task)
+    public void setPunishment(String punishment)
     {
-        this.task = task;
+        this.punishment = punishment;
     }
 
-    public boolean isCompleted()
+    public boolean isPunishmentGiven()
     {
-        return completed;
+        return punishmentGiven;
     }
 
-    public void setCompleted(boolean completed)
+    public void setPunishmentGiven(boolean punishmentGiven)
     {
-        this.completed = completed;
+        this.punishmentGiven = punishmentGiven;
     }
 }
