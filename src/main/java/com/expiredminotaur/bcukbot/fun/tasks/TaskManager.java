@@ -4,6 +4,7 @@ import com.expiredminotaur.bcukbot.sql.tasks.Punishment;
 import com.expiredminotaur.bcukbot.sql.tasks.PunishmentRepository;
 import com.expiredminotaur.bcukbot.sql.tasks.Task;
 import com.expiredminotaur.bcukbot.sql.tasks.TaskRepository;
+import com.expiredminotaur.bcukbot.web.view.stream.StreamView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -97,7 +98,7 @@ public class TaskManager
 
     public void broadcast(String message)
     {
-        executor.submit(() -> broadcast(message));
+        executor.submit(() -> StreamView.Service.broadcast(message));
         lastMessage = message;
     }
 
