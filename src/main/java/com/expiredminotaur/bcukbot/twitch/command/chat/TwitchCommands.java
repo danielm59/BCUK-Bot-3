@@ -3,8 +3,11 @@ package com.expiredminotaur.bcukbot.twitch.command.chat;
 import com.expiredminotaur.bcukbot.command.Commands;
 import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
 import com.expiredminotaur.bcukbot.fun.dadjokes.JokeAPI;
+import com.expiredminotaur.bcukbot.fun.tasks.TaskManager;
 import com.expiredminotaur.bcukbot.justgiving.JustGivingAPI;
 import com.expiredminotaur.bcukbot.sql.collection.joke.JokeUtils;
+import com.expiredminotaur.bcukbot.sql.tasks.Punishment;
+import com.expiredminotaur.bcukbot.sql.tasks.Task;
 import com.expiredminotaur.bcukbot.twitch.streams.LiveStreamManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,9 @@ public class TwitchCommands extends Commands<TwitchCommandEvent>
 
     @Autowired
     private JustGivingAPI justGivingAPI;
+
+    @Autowired
+    private TaskManager taskManager;
     //endregion
 
     public TwitchCommands()
@@ -39,6 +45,7 @@ public class TwitchCommands extends Commands<TwitchCommandEvent>
         commands.put("!Playing", new TwitchCommand(this::playing, TwitchPermissions::everyone));
         commands.put("!Multi", new TwitchCommand(e -> liveStreamManager.getMultiTwitch(e), TwitchPermissions::everyone));
         commands.put("!TotalRaised", new TwitchCommand(e -> justGivingAPI.amountRaised(e), TwitchPermissions::everyone));
+        commands.put("!task", new TwitchCommand(this::task, TwitchPermissions::everyone));
     }
 
     private Mono<Void> shoutOut(TwitchCommandEvent e)
@@ -54,7 +61,7 @@ public class TwitchCommands extends Commands<TwitchCommandEvent>
         return null;
     }
 
-    public Mono<Void> playing(TwitchCommandEvent event)
+    private Mono<Void> playing(TwitchCommandEvent event)
     {
         AudioTrack track = musicHandler.getScheduler().currentTrack();
         if (track != null)
@@ -64,5 +71,16 @@ public class TwitchCommands extends Commands<TwitchCommandEvent>
         {
             return event.respond("Nothing is playing");
         }
+    }
+
+    private Mono<Void> task(TwitchCommandEvent event)
+    {
+        Task task = taskManager.getTask();
+        if (task != null)
+            return event.respond(String.format("Current Task: %s", task.getTask()));
+        Punishment punishment = taskManager.getPunishment();
+        if (punishment != null)
+            return event.respond(String.format("Current Punishment: %s", punishment.getPunishment()));
+        return event.respond("No Active Task");
     }
 }
