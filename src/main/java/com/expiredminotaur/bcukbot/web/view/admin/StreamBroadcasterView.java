@@ -104,20 +104,20 @@ public class StreamBroadcasterView extends VerticalLayout
         punishmentButton.setEnabled(false);
         finishPunishmentButton.setEnabled(false);
 
-        if (taskManager.getTask() == null)
+        if (taskManager.getTask() != null)
         {
-            newTaskButton.setEnabled(true);
-            punishmentButton.setEnabled(true);
-            currentTask.setText("No Task Active");
+            completeTaskButton.setEnabled(true);
+            failTaskButton.setEnabled(true);
+            currentTask.setText("Active Task: " + taskManager.getTask().getTask());
         } else if (taskManager.getPunishment() != null)
         {
             finishPunishmentButton.setEnabled(true);
             currentTask.setText("Active punishment: " + taskManager.getPunishment().getPunishment());
         } else
         {
-            completeTaskButton.setEnabled(true);
-            failTaskButton.setEnabled(true);
-            currentTask.setText("Active Task: " + taskManager.getTask().getTask());
+            newTaskButton.setEnabled(true);
+            punishmentButton.setEnabled(true);
+            currentTask.setText("No Task Active");
         }
         info.setText(String.format("Tasks Available = %d ---- Punishments Available = %d",
                 taskManager.availableTasks(),
