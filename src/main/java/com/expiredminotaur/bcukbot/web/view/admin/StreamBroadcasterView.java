@@ -1,10 +1,10 @@
 package com.expiredminotaur.bcukbot.web.view.admin;
 
 import com.expiredminotaur.bcukbot.Role;
+import com.expiredminotaur.bcukbot.discord.music.MusicHandler;
+import com.expiredminotaur.bcukbot.fun.tasks.TaskManager;
 import com.expiredminotaur.bcukbot.sql.tasks.Punishment;
-import com.expiredminotaur.bcukbot.sql.tasks.PunishmentRepository;
 import com.expiredminotaur.bcukbot.sql.tasks.Task;
-import com.expiredminotaur.bcukbot.sql.tasks.TaskRepository;
 import com.expiredminotaur.bcukbot.web.layout.MainLayout;
 import com.expiredminotaur.bcukbot.web.security.AccessLevel;
 import com.vaadin.flow.component.button.Button;
@@ -14,23 +14,12 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static com.expiredminotaur.bcukbot.web.view.stream.StreamView.Service.broadcast;
-
 @AccessLevel(Role.ADMIN)
 @Route(value = "/stream_broadcaster", layout = MainLayout.class)
 public class StreamBroadcasterView extends VerticalLayout
 {
-    private static final Random rand = new Random();
-    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private static String lastMessage = "";
-
-    private final TaskRepository tasks;
-    private final PunishmentRepository punishments;
+    private final TaskManager taskManager;
+    private final MusicHandler musicHandler;
 
     private final Paragraph info;
     private final Paragraph currentTask;
@@ -39,35 +28,38 @@ public class StreamBroadcasterView extends VerticalLayout
     private final Button completeTaskButton;
     private final Button failTaskButton;
     private final Button punishmentButton;
+    private final Button finishPunishmentButton;
 
-    private static Task cTask = null;
-
-    public StreamBroadcasterView(@Autowired TaskRepository tasks, @Autowired PunishmentRepository punishments)
+    public StreamBroadcasterView(@Autowired TaskManager taskManager, @Autowired MusicHandler musicHandler)
     {
-        this.tasks = tasks;
-        this.punishments = punishments;
+        this.taskManager = taskManager;
+        this.musicHandler = musicHandler;
         TextField input = new TextField();
         Button sendButton = new Button("Send Message", e -> sendBroadcast(input.getValue()));
         info = new Paragraph();
         currentTask = new Paragraph();
-        lastMessageDisplay = new Paragraph("Last Message: " + lastMessage);
+        lastMessageDisplay = new Paragraph("Last Message: " + taskManager.getLastMessage());
+        Button taskWarningButton = new Button("Task Warning", e -> playTaskWarning());
         newTaskButton = new Button("New Task", e -> selectTask());
         completeTaskButton = new Button("Complete Task", e -> completeTask());
         failTaskButton = new Button("Fail Task", e -> failTask());
         punishmentButton = new Button("Punishment", e -> selectPunishment());
-        add(input, sendButton, info, currentTask, lastMessageDisplay, newTaskButton, completeTaskButton, failTaskButton, punishmentButton);
+        finishPunishmentButton = new Button("Finish Punishment", e -> finishPunishment());
+        add(input, sendButton, info, currentTask, lastMessageDisplay, taskWarningButton, newTaskButton, completeTaskButton, failTaskButton, punishmentButton, finishPunishmentButton);
         updateButtonStates();
+    }
+
+    private void playTaskWarning()
+    {
+        musicHandler.loadAndPlayPriority("klaxon.mp3");
     }
 
     private void selectTask()
     {
-        List<Task> tasksToDo = tasks.findByCompleted(false);
-        int size = tasksToDo.size();
-        if (size > 0)
+        Task task = taskManager.newTask();
+        if (task != null)
         {
-            int taskIdx = rand.nextInt(size);
-            cTask = tasksToDo.get(taskIdx);
-            sendBroadcast(cTask.getTask());
+            sendBroadcast(task.getTask());
         } else
             sendBroadcast("No Tasks Available");
         updateButtonStates();
@@ -75,33 +67,32 @@ public class StreamBroadcasterView extends VerticalLayout
 
     private void completeTask()
     {
-        cTask.setCompleted(true);
-        tasks.save(cTask);
-        cTask = null;
+        taskManager.completeTask();
         sendBroadcast("Task Complete");
         updateButtonStates();
     }
 
     private void failTask()
     {
-        cTask = null;
+        taskManager.clearTask();
         sendBroadcast("Task Failed: Punishment Time!");
         updateButtonStates();
     }
 
     private void selectPunishment()
     {
-        List<Punishment> punishmentOptions = punishments.findByPunishmentGiven(false);
-        int size = punishmentOptions.size();
-        if (size > 0)
+        Punishment punishment = taskManager.newPunishment();
+        if (punishment != null)
         {
-            int punishmentIdx = rand.nextInt(size);
-            Punishment cPunishment = punishmentOptions.get(punishmentIdx);
-            sendBroadcast(cPunishment.getPunishment());
-            cPunishment.setPunishmentGiven(true);
-            punishments.save(cPunishment);
+            sendBroadcast(punishment.getPunishment());
         } else
             sendBroadcast("No Punishments Available");
+        updateButtonStates();
+    }
+
+    private void finishPunishment()
+    {
+        taskManager.finishPunishment();
         updateButtonStates();
     }
 
@@ -111,27 +102,31 @@ public class StreamBroadcasterView extends VerticalLayout
         completeTaskButton.setEnabled(false);
         failTaskButton.setEnabled(false);
         punishmentButton.setEnabled(false);
+        finishPunishmentButton.setEnabled(false);
 
-        if (cTask == null)
+        if (taskManager.getTask() == null)
         {
             newTaskButton.setEnabled(true);
             punishmentButton.setEnabled(true);
             currentTask.setText("No Task Active");
+        } else if (taskManager.getPunishment() != null)
+        {
+            finishPunishmentButton.setEnabled(true);
+            currentTask.setText("Active punishment: " + taskManager.getPunishment().getPunishment());
         } else
         {
             completeTaskButton.setEnabled(true);
             failTaskButton.setEnabled(true);
-            currentTask.setText("Active Task: " + cTask.getTask());
+            currentTask.setText("Active Task: " + taskManager.getTask().getTask());
         }
         info.setText(String.format("Tasks Available = %d ---- Punishments Available = %d",
-                tasks.findByCompleted(false).size(),
-                punishments.findByPunishmentGiven(false).size()));
+                taskManager.availableTasks(),
+                taskManager.availablePunishments()));
     }
 
-    private void sendBroadcast(String message)
+    public void sendBroadcast(String message)
     {
-        executor.submit(() -> broadcast(message));
-        lastMessage = message;
-        lastMessageDisplay.setText("Last Message: " + lastMessage);
+        taskManager.broadcast(message);
+        lastMessageDisplay.setText("Last Message: " + message);
     }
 }

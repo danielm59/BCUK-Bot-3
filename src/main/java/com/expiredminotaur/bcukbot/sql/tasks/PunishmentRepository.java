@@ -11,5 +11,5 @@ public interface PunishmentRepository extends CrudRepository<Punishment, Long>
     @NotNull
     List<Punishment> findAll();
 
-    List<Punishment> findByPunishmentGiven(boolean b);
+    List<Punishment> findByPunishmentGiven(boolean hasBeenGiven);
 }
