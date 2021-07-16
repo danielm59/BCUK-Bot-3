@@ -32,6 +32,7 @@ public class HttpHandler
     public static void postUTF8Request(URL url, String inputJson) throws Exception
     {
         HttpURLConnection conn = setupPostConnection(url);
+        conn.setDoOutput(true);
         try (OutputStream os = conn.getOutputStream())
         {
             byte[] input = inputJson.getBytes(StandardCharsets.UTF_8);
